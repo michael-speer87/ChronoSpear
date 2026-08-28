@@ -9,7 +9,18 @@ def test_relationship_type_requires_canonical_name() -> None:
     assert relationship.name == "MEMBER_OF"
 
 
-@pytest.mark.parametrize("bad_name", ["member_of", "member of", "", "_MEMBER_OF"])
+@pytest.mark.parametrize(
+    "good_name",
+    ["IS_A", "MEMBER_OF", "KNOWS_PERSON", "A", "A1"],
+)
+def test_relationship_type_accepts_canonical_names(good_name: str) -> None:
+    assert RelationshipType(good_name).name == good_name
+
+
+@pytest.mark.parametrize(
+    "bad_name",
+    ["A_", "A__B", "_A", "member_of", "member of", ""],
+)
 def test_relationship_type_rejects_noncanonical_names(bad_name: str) -> None:
     with pytest.raises(ValueError, match="UPPER_SNAKE_CASE"):
         RelationshipType(bad_name)

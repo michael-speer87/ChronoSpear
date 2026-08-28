@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
-_RELATIONSHIP_NAME = re.compile(r"^[A-Z][A-Z0-9_]*$")
+_RELATIONSHIP_NAME = re.compile(r"^[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)*$")
 
 
 @dataclass(frozen=True, slots=True)

@@ -55,3 +55,9 @@ class ChronoStamp:
 
     world_time: WorldTime
     system_time: SystemTime
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.world_time, WorldTime):
+            raise TypeError("ChronoStamp world_time must be a WorldTime.")
+        if not isinstance(self.system_time, SystemTime):
+            raise TypeError("ChronoStamp system_time must be a SystemTime.")

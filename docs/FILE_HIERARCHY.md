@@ -11,7 +11,8 @@ ChronoSpear/
 │   ├── CODEX_NEXT_STEPS.md
 │   ├── FILE_HIERARCHY.md
 │   ├── GRAPH_OBJECT_TAXONOMY.md
-│   └── SLICE_1_CONTRACT.md
+│   ├── SLICE_1_CONTRACT.md
+│   └── VALIDATION.md
 ├── src/
 │   └── chronospear/
 │       ├── __init__.py
@@ -28,6 +29,7 @@ ChronoSpear/
     ├── test_public_api.py
     └── cam/
         ├── test_associations.py
+        ├── test_architecture_guardrails.py
         ├── test_identifiers.py
         ├── test_identity.py
         ├── test_relationships.py

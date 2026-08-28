@@ -9,10 +9,12 @@ from chronospear.cam import ChronoStamp, SystemTime, WorldTime
 def test_world_time_and_system_time_are_distinct_types() -> None:
     wt = WorldTime(50)
     st = SystemTime(50)
+    wt_as_object: object = wt
+    st_as_object: object = st
 
     assert wt.value == st.value == 50
-    assert type(wt) is not type(st)
-    assert wt != st
+    assert (type(wt), type(st)) == (WorldTime, SystemTime)
+    assert wt_as_object != st_as_object
 
 
 def test_chronostamp_pairs_the_two_coordinates() -> None:
@@ -27,6 +29,24 @@ def test_chronostamp_is_immutable() -> None:
 
     with pytest.raises(FrozenInstanceError):
         setattr(stamp, "world_time", WorldTime(101))
+
+
+@pytest.mark.parametrize(
+    ("world_time", "system_time", "message"),
+    [
+        (cast(WorldTime, SystemTime(1)), SystemTime(2), "world_time must be a WorldTime"),
+        (WorldTime(1), cast(SystemTime, WorldTime(2)), "system_time must be a SystemTime"),
+        (cast(WorldTime, 1), SystemTime(2), "world_time must be a WorldTime"),
+        (WorldTime(1), cast(SystemTime, 2), "system_time must be a SystemTime"),
+    ],
+)
+def test_chronostamp_rejects_incorrect_temporal_types(
+    world_time: WorldTime,
+    system_time: SystemTime,
+    message: str,
+) -> None:
+    with pytest.raises(TypeError, match=message):
+        ChronoStamp(world_time=world_time, system_time=system_time)
 
 
 @pytest.mark.parametrize("time_type", [WorldTime, SystemTime])

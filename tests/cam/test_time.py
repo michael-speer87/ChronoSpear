@@ -28,7 +28,7 @@ def test_chronostamp_is_immutable() -> None:
     stamp = ChronoStamp(WorldTime(100), SystemTime(500))
 
     with pytest.raises(FrozenInstanceError):
-        setattr(stamp, "world_time", WorldTime(101))
+        setattr(stamp, "world_time", WorldTime(101)) # noqa: B010
 
 
 @pytest.mark.parametrize(

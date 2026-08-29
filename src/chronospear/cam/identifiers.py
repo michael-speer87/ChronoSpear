@@ -25,7 +25,7 @@ class NodeId:
         object.__setattr__(self, "value", _validated_identifier(self.value, "Node ID"))
 
     @classmethod
-    def new(cls) -> "NodeId":
+    def new(cls) -> NodeId:
         return cls(f"node_{uuid4().hex}")
 
     def __str__(self) -> str:
@@ -46,7 +46,7 @@ class AssociationId:
         )
 
     @classmethod
-    def new(cls) -> "AssociationId":
+    def new(cls) -> AssociationId:
         return cls(f"assoc_{uuid4().hex}")
 
     def __str__(self) -> str:

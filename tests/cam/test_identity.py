@@ -36,7 +36,7 @@ def test_identity_node_is_immutable() -> None:
     node = IdentityNode(NodeId("alric"), "Alric", IdentityKind.ENTITY)
 
     with pytest.raises(FrozenInstanceError):
-        setattr(node, "name", "Someone Else")
+        setattr(node, "name", "Someone Else") # noqa: B010
 
 
 def test_identity_catalog_rejects_conflicting_node_id() -> None:

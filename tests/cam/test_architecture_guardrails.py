@@ -11,8 +11,11 @@ def test_slice_one_domain_models_do_not_reintroduce_ambiguous_tick_fields() -> N
     for path in source_root.rglob("*.py"):
         tree = ast.parse(path.read_text(encoding="utf-8"))
         for node in ast.walk(tree):
-            if isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name):
-                if node.target.id in {"tick", "at_tick", "known_at"}:
-                    offenders.append(f"{path.name}:{node.lineno}:{node.target.id}")
+            if (
+                isinstance(node, ast.AnnAssign)
+                and isinstance(node.target, ast.Name)
+                and node.target.id in {"tick", "at_tick", "known_at"}
+            ):
+                offenders.append(f"{path.name}:{node.lineno}:{node.target.id}")
 
     assert offenders == []

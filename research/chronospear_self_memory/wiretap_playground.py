@@ -34,7 +34,7 @@ LOCKED=current architecture, EXPERIMENTALLY_PROVEN=test evidence, HYPOTHESIS=not
 PARKED=deferred, REJECTED=historical only, UNRESOLVED=open question.
 Never upgrade a hypothesis into a decision.
 
-You have ONLY this CAM control vocabulary. Output exactly ONE action per response:
+You have ONLY this CAM control vocabulary:
 
 ACTIVATE <exact concept name or alias>
   Use ONLY for a concept that is not currently surfaced.
@@ -46,10 +46,17 @@ EXPAND <surfaced concept> ASSOCIATIONS
 EXPAND <surfaced concept> HISTORY
   Use ONLY a command explicitly listed under 'Valid EXPAND commands right now'.
 
+AND
+  You may join up to FOUR independent ACTIVATE/EXPAND commands on ONE response line.
+  Example: EXPAND Identity Node DESCRIPTION AND EXPAND Relationship Type DESCRIPTION
+  Every command in the chain must already be valid against the current CAM CONTROL SURFACE before any command executes.
+  AND is parallel request glue, not a script. Do not ACTIVATE a concept and then EXPAND that newly activated concept in the same chain.
+
 If the supplied memory is sufficient, output exactly:
 ANSWER: <concise answer>
 EVIDENCE: <comma-separated evidence IDs, or none if the answer uses synopsis/description only>
 
+Return either one memory command, one AND chain, or one final ANSWER per response.
 Do not request memory in ordinary language. Do not invent new CAM verbs, channels, filters, or semantic queries.
 CAM requests are memory operations, never statements about why the evidence is relevant.
 """
@@ -78,8 +85,9 @@ Conversation rules:
   2. You inspect it.
   3. 'send' is the only command that calls the LLM.
   4. The raw LLM response is parsed but NEVER executed automatically.
-  5. You decide whether to perform the requested ACTIVATE/EXPAND operation.
-  6. A CAM operation creates a new pending delta. Run 'send' again when you choose.
+  5. You decide whether to perform the requested ACTIVATE/EXPAND operations.
+  6. AND may contain several independent requests; you can inspect every one before acting.
+  7. A CAM operation creates a new pending delta. Run 'send' again when you choose.
 """
 
 
@@ -88,9 +96,14 @@ PROTOCOL_HELP = """LLM -> CAM protocol:
   EXPAND <surfaced concept> DESCRIPTION
   EXPAND <surfaced concept> ASSOCIATIONS
   EXPAND <surfaced concept> HISTORY
+
+  Independent memory commands may be joined on one line with AND, up to four commands:
+  EXPAND Concept A DESCRIPTION AND EXPAND Concept B HISTORY
+
   ANSWER: <answer>
   EVIDENCE: <ids or none>
 
+Every command in an AND chain must already be valid against the same current control surface.
 Every concept shown in the CAM CONTROL SURFACE is already surfaced.
 ACTIVATE may only name a concept not shown there.
 Use only EXPAND commands explicitly listed by the current control surface.
@@ -173,9 +186,22 @@ def queue_packet(state: WiretapState, packet: MemoryPacket, label: str) -> None:
     print("\nThis CAM delta is pending. Inspect it, then type 'send' when you choose.")
 
 
+def _decision_text(decision: ProtocolDecision) -> str:
+    if decision.kind == "activate":
+        return f"ACTIVATE {decision.concept}"
+    if decision.kind == "expand":
+        return f"EXPAND {decision.concept} {decision.channel}"
+    return decision.kind.upper()
+
+
 def print_parsed_decision(decision: ProtocolDecision) -> None:
     print("\nPARSED ONLY, NOT EXECUTED:")
     print(f"  kind: {decision.kind}")
+    if decision.kind == "batch":
+        for index, operation in enumerate(decision.operations, start=1):
+            print(f"  {index}. {_decision_text(operation)}")
+        print("\nThe LLM requested an AND batch. YOU decide which operations, if any, to execute.")
+        return
     if decision.concept is not None:
         print(f"  concept: {decision.concept}")
     if decision.channel is not None:

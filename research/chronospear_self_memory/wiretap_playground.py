@@ -4,10 +4,10 @@ from dataclasses import dataclass, field
 import json
 import os
 
-from live_quest import SYSTEM_PROMPT, call_provider, parse_decision
+from cam_protocol import CHANNELS, ProtocolDecision, parse_protocol_response
+from live_quest import call_provider
 from memory import MemoryPacket, MemorySession
 from playground import (
-    EXPANSION_BUDGET,
     INITIAL_BUDGET,
     PlaygroundState,
     handle_memory_command,
@@ -20,28 +20,70 @@ from playground import (
 from seed import build_memory
 
 
+WIRETAP_SYSTEM_PROMPT = """You are the reasoning component talking to ChronoSpear CAM.
+CAM is a memory-management system. CAM does not reason about the question for you.
+You interpret the user's question, decide whether supplied memory is sufficient, and choose what memory to request next.
+Use only supplied evidence. Respect evidence-state labels exactly:
+LOCKED=current architecture, EXPERIMENTALLY_PROVEN=test evidence, HYPOTHESIS=not locked,
+PARKED=deferred, REJECTED=historical only, UNRESOLVED=open question.
+Never upgrade a hypothesis into a decision.
+
+You have ONLY this CAM control vocabulary. Output exactly ONE action per response:
+
+ACTIVATE <exact concept name or alias>
+  Use when you need a stored concept that is not currently surfaced.
+
+EXPAND <surfaced concept> DESCRIPTION
+EXPAND <surfaced concept> ASSOCIATIONS
+EXPAND <surfaced concept> HISTORY
+  Use one of these when the memory map says that channel has more memory.
+
+If the supplied memory is sufficient, output exactly:
+ANSWER: <concise answer>
+EVIDENCE: <comma-separated evidence IDs, or none if the answer uses synopsis/description only>
+
+Do not request memory in ordinary language. Do not invent new CAM verbs, channels, filters, or semantic queries.
+CAM requests are memory operations, never statements about why the evidence is relevant.
+"""
+
+
 HELP = """Wiretap commands:
-  send                        Send the pending CAM delta to the LLM. Nothing is auto-executed.
-  response                    Reprint the most recent raw LLM response.
-  conversation                Show the complete LLM message transcript so far.
-  packet                      Reprint the pending/current CAM delta.
-  map                         Show the current CAM memory availability map.
-  surfaced                    List surfaced concepts.
-  admitted                    Show evidence already admitted by CAM this session.
-  expand <concept>            YOU execute a bounded expansion of a surfaced concept.
-  activate <exact concept>    YOU explicitly surface a stored concept by exact name/alias.
-  memory ...                  Use the same mutable memory controls as playground.py.
-  new                         Start a fresh question while keeping memory edits.
-  help                        Show this help.
-  quit                        Exit.
+  send                                  Send the pending CAM delta to the LLM.
+  response                              Reprint the most recent raw LLM response.
+  conversation                          Show the complete LLM message transcript.
+  packet                                Reprint the pending/current CAM delta.
+  map                                   Show the current CAM memory availability map.
+  surfaced                              List surfaced concepts.
+  admitted                              Show evidence already admitted by CAM.
+  activate <exact concept>              YOU execute exact activation.
+  expand <concept> DESCRIPTION           YOU request only the Description channel.
+  expand <concept> ASSOCIATIONS          YOU request the next Association page.
+  expand <concept> HISTORY               YOU request the next History page.
+  protocol                              Reprint the LLM -> CAM vocabulary.
+  memory ...                            Use the mutable memory controls from playground.py.
+  new                                   Start a fresh question while keeping memory edits.
+  help                                  Show this help.
+  quit                                  Exit.
 
 Conversation rules:
   1. CAM builds and displays a packet/delta.
   2. You inspect it.
   3. 'send' is the only command that calls the LLM.
-  4. The raw LLM response is displayed but NEVER executed automatically.
-  5. You decide whether to expand/activate memory, ignore the request, or do something else.
-  6. A CAM action creates a new pending delta. Run 'send' again when you choose.
+  4. The raw LLM response is parsed but NEVER executed automatically.
+  5. You decide whether to perform the requested ACTIVATE/EXPAND operation.
+  6. A CAM operation creates a new pending delta. Run 'send' again when you choose.
+"""
+
+
+PROTOCOL_HELP = """LLM -> CAM protocol:
+  ACTIVATE <exact concept name or alias>
+  EXPAND <surfaced concept> DESCRIPTION
+  EXPAND <surfaced concept> ASSOCIATIONS
+  EXPAND <surfaced concept> HISTORY
+  ANSWER: <answer>
+  EVIDENCE: <ids or none>
+
+CAM does not interpret ordinary-language memory requests in wiretap mode.
 """
 
 
@@ -52,6 +94,7 @@ class WiretapState:
     pending_packet: MemoryPacket | None = None
     last_response: str | None = None
     last_usage: dict[str, object] = field(default_factory=dict)
+    last_decision: ProtocolDecision | None = None
 
 
 def provider_label() -> str:
@@ -88,7 +131,7 @@ def build_initial_state(memory) -> WiretapState | None:
         )
         state = WiretapState(
             playground=playground,
-            messages=[{"role": "system", "content": SYSTEM_PROMPT}],
+            messages=[{"role": "system", "content": WIRETAP_SYSTEM_PROMPT}],
             pending_packet=packet,
         )
         print_packet(packet, label="WIRETAP PACKET #1: INSPECT BEFORE SEND")
@@ -113,9 +156,24 @@ def queue_packet(state: WiretapState, packet: MemoryPacket, label: str) -> None:
     print("\nThis CAM delta is pending. Inspect it, then type 'send' when you choose.")
 
 
+def print_parsed_decision(decision: ProtocolDecision) -> None:
+    print("\nPARSED ONLY, NOT EXECUTED:")
+    print(f"  kind: {decision.kind}")
+    if decision.concept is not None:
+        print(f"  concept: {decision.concept}")
+    if decision.channel is not None:
+        print(f"  channel: {decision.channel}")
+    if decision.answer is not None:
+        print(f"  answer: {decision.answer}")
+    if decision.evidence_ids:
+        print(f"  evidence IDs: {', '.join(decision.evidence_ids)}")
+    if decision.kind in {"activate", "expand"}:
+        print("\nThe LLM requested a CAM operation. YOU must decide whether to execute it.")
+
+
 def send_pending(state: WiretapState) -> None:
     if state.pending_packet is None:
-        print("No new CAM delta is pending. Perform an expansion/activation first, or inspect the last response.")
+        print("No new CAM delta is pending. Perform an activation/expansion first, or inspect the last response.")
         return
 
     packet = state.pending_packet
@@ -143,29 +201,39 @@ def send_pending(state: WiretapState) -> None:
     print(f"\nPROVIDER USAGE: {json.dumps(result.usage, sort_keys=True)}")
 
     try:
-        decision = parse_decision(result.text)
+        decision = parse_protocol_response(result.text)
     except ValueError as exc:
-        print(f"\nPARSE NOTE: response did not follow the research protocol exactly: {exc}")
-        print("No action is taken. You decide what to do next.")
+        state.last_decision = None
+        print(f"\nPROTOCOL VIOLATION: {exc}")
+        print("No CAM action is taken. The model wandered outside the allowed vocabulary.")
         return
 
-    print("\nPARSED ONLY, NOT EXECUTED:")
-    print(f"  kind: {decision.kind}")
-    print(f"  text: {decision.text}")
-    if decision.evidence_ids:
-        print(f"  evidence IDs: {', '.join(decision.evidence_ids)}")
-    if decision.kind == "request_more":
-        print("\nThe LLM requested more memory. YOU must decide whether/how to satisfy it.")
+    state.last_decision = decision
+    print_parsed_decision(decision)
 
 
-def expand_manual(state: WiretapState, requested: str) -> None:
+def parse_manual_expand(argument: str) -> tuple[str, str]:
+    body = argument.strip()
+    parts = body.rsplit(maxsplit=1)
+    if len(parts) != 2:
+        raise ValueError("Usage: expand <surfaced concept> DESCRIPTION|ASSOCIATIONS|HISTORY")
+    concept, channel = parts[0].strip(), parts[1].upper()
+    if not concept:
+        raise ValueError("expand requires a surfaced concept")
+    if channel not in CHANNELS:
+        raise ValueError(f"channel must be {'|'.join(CHANNELS)}")
+    return concept, channel
+
+
+def expand_manual(state: WiretapState, argument: str) -> None:
     if state.pending_packet is not None:
         print("A CAM delta is already pending. Send or inspect it before creating another delta.")
         return
 
-    requested = requested.strip()
-    if not requested:
-        print("Usage: expand <surfaced concept>")
+    try:
+        requested, channel = parse_manual_expand(argument)
+    except ValueError as exc:
+        print(exc)
         return
 
     canonical = state.playground.memory.resolve_surfaced_request(requested, state.playground.session)
@@ -175,7 +243,12 @@ def expand_manual(state: WiretapState, requested: str) -> None:
         return
 
     try:
-        packet = state.playground.memory.expand(canonical, state.playground.session, EXPANSION_BUDGET)
+        packet = state.playground.memory.expand_channel(
+            canonical,
+            channel,
+            state.playground.session,
+            page_size=1,
+        )
     except (KeyError, ValueError) as exc:
         print(f"CAM expansion failed: {exc}")
         return
@@ -183,12 +256,16 @@ def expand_manual(state: WiretapState, requested: str) -> None:
     state.playground.expansion_count += 1
     if not packet_has_memory(packet):
         state.playground.last_packet = packet
-        print_header(f"EXPANSION: {canonical}")
-        print("No new evidence remains for this bounded path.")
+        print_header(f"EXPAND {canonical} {channel}")
+        print("No new memory remains in this channel.")
         print_map(packet)
         return
 
-    queue_packet(state, packet, f"HUMAN-EXECUTED EXPANSION {state.playground.expansion_count}: {canonical}")
+    queue_packet(
+        state,
+        packet,
+        f"HUMAN-EXECUTED: EXPAND {canonical} {channel}",
+    )
 
 
 def activate_manual(state: WiretapState, requested: str) -> None:
@@ -211,14 +288,12 @@ def activate_manual(state: WiretapState, requested: str) -> None:
         return
 
     if canonical in session.surfaced_concepts:
-        print(f"{canonical} is already surfaced. Use 'expand {canonical}' if you want more memory.")
+        print(f"{canonical} is already surfaced. Use an EXPAND channel if you want more memory.")
         return
 
     session.surfaced_concepts.add(canonical)
-    # Research-only harness: use the same internal packet builder as initial activation,
-    # but with a zero evidence budget so activation itself stays synopsis-only.
     packet = memory._packet("ACTIVATION", (canonical,), session, INITIAL_BUDGET, include_description=False)
-    queue_packet(state, packet, f"HUMAN-EXECUTED EXACT ACTIVATION: {canonical}")
+    queue_packet(state, packet, f"HUMAN-EXECUTED: ACTIVATE {canonical}")
 
 
 def print_conversation(state: WiretapState) -> None:
@@ -238,10 +313,12 @@ def print_last_response(state: WiretapState) -> None:
         return
     print(state.last_response)
     print(f"\nPROVIDER USAGE: {json.dumps(state.last_usage, sort_keys=True)}")
+    if state.last_decision is not None:
+        print_parsed_decision(state.last_decision)
 
 
 def run_wiretap(state: WiretapState) -> str:
-    print("\nYou are the interceptor. The LLM cannot execute CAM actions in this mode.")
+    print("\nYou are the interceptor. The LLM cannot execute CAM operations in this mode.")
     while True:
         raw = input("wiretap> ").strip()
         if not raw:
@@ -256,6 +333,8 @@ def run_wiretap(state: WiretapState) -> str:
             return "new"
         if command == "help":
             print(HELP)
+        elif command == "protocol":
+            print(PROTOCOL_HELP)
         elif command == "send":
             send_pending(state)
         elif command == "response":
@@ -286,10 +365,11 @@ def run_wiretap(state: WiretapState) -> str:
 
 def main() -> None:
     print_header("CHRONOSPEAR CAM ↔ LLM WIRETAP PLAYGROUND")
-    print("Human-intercepted conversation mode.")
+    print("Human-intercepted conversation mode with a tiny LLM -> CAM command vocabulary.")
     print(f"Configured provider: {provider_label()}")
     print("CAM never calls the LLM by itself, and LLM requests never execute by themselves.")
-    print("\n" + HELP)
+    print("\n" + PROTOCOL_HELP)
+    print(HELP)
 
     memory = build_memory()
     while True:

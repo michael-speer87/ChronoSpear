@@ -28,15 +28,31 @@ python playground.py
 Useful commands inside the playground:
 
 ```text
-expand <concept>   reveal the next bounded delta for a surfaced concept
-map                show the current memory availability map
-surfaced           list concepts currently available for expansion
-admitted           inspect everything already admitted to this reasoning session
-packet             reprint the most recent CAM delta
-new                start a fresh question/session
-help               show commands
-quit               exit
+expand <concept>              reveal the next bounded delta for a surfaced concept
+map                           show the current memory availability map
+surfaced                      list concepts currently available for expansion
+admitted                      inspect everything already admitted to this reasoning session
+packet                        reprint the most recent CAM delta
+memory                        show the memory-interface commands
+memory summary                count stored Concepts, Associations, and Occurrences
+memory concepts               list all stored Concepts
+memory associations           list all stored Associations
+memory history                list all stored Historical Occurrences
+memory show <concept>         inspect one Concept
+memory add concept            interactively add a Concept
+memory add association        interactively add an Association
+memory add occurrence         interactively add a Historical Occurrence
+memory remove concept <name>  remove only the Concept; references are not cascaded
+memory remove association <id>
+memory remove occurrence <id>
+memory integrity              report dangling Concept references
+memory reset                  discard all playground edits and reload the clean seed
+new                           start a fresh question/session while keeping memory edits
+help                          show commands
+quit                          exit
 ```
+
+Memory edits are session-local to the running playground. They never rewrite `seed.py`. Concept removal is intentionally non-cascading so broken references remain observable. `memory reset` restores a clean seed and discards the current reasoning session.
 
 The playground makes no LLM calls. It exists so the architecture can be explored directly before comparing human navigation with model navigation.
 
@@ -45,10 +61,12 @@ The playground makes no LLM calls. It exists so the architecture can be explored
 - Current associative statements carry explicit confidence/state labels.
 - Immutable design occurrences preserve how the architecture changed.
 - Literal concept-name/alias recognition is the only language activation used by this harness.
+- Unknown or misspelled Concept names do not fuzzy-match; strict activation is intentional for the current experiment.
 - The automated live quest sends synopses, a tiny fixed evidence budget, and a memory-availability map in Packet #1.
 - The manual playground uses an even smaller synopsis-only Packet #1 so expansion behavior is visible.
 - Expanding a surfaced concept sends its full Description at most once plus another tiny evidence page.
 - Every later CAM packet is a delta: previously admitted synopses/descriptions/associations/history are removed from the new packet, not from CAM.
+- Manual memory mutation never silently cascades Concept deletion into Associations or Historical Occurrences.
 - The LLM must cite evidence IDs with its answer in the automated live quest.
 - A right-sounding answer with unsupported evidence counts as a failure worth investigating.
 
@@ -56,7 +74,7 @@ The playground makes no LLM calls. It exists so the architecture can be explored
 
 ```bash
 cd research/chronospear_self_memory
-python -m unittest -v test_memory.py test_playground.py
+python -m unittest -v test_memory.py test_playground.py test_memory_interface.py
 ```
 
 ## Live quest with Groq
@@ -93,4 +111,5 @@ The benchmark is deliberately small and human-checkable. Useful failure classes 
 - correct prose supported by the wrong evidence;
 - excessive expansion rounds;
 - requests for unsurfaced concepts;
-- token growth caused by repeated memory rather than genuinely new evidence.
+- token growth caused by repeated memory rather than genuinely new evidence;
+- dangling references or packet failures caused by destructive manual memory edits.

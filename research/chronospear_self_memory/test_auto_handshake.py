@@ -42,6 +42,7 @@ class AutoHandshakeTests(unittest.TestCase):
         self.assertIn("EXPAND Expansion DESCRIPTION", rendered)
         self.assertIn("EXPAND Expansion ASSOCIATIONS", rendered)
         self.assertIn("EXPAND Expansion HISTORY", rendered)
+        self.assertIn("using AND", rendered)
 
     def test_expansion_commands_execute_until_answer(self) -> None:
         provider = FakeProvider(
@@ -69,6 +70,45 @@ class AutoHandshakeTests(unittest.TestCase):
         first_user_message = provider.messages_seen[0][-1]["content"]
         self.assertIn("ALREADY SURFACED", first_user_message)
         self.assertIn("EXPAND Expansion HISTORY", first_user_message)
+
+    def test_and_batch_combines_two_independent_description_requests(self) -> None:
+        provider = FakeProvider(
+            [
+                "EXPAND Identity Node DESCRIPTION AND EXPAND Relationship Type DESCRIPTION",
+                "ANSWER: Relationship Type is vocabulary while Identity Node is an enduring identity.\nEVIDENCE: none",
+            ]
+        )
+
+        result = run_question(
+            "Why is Relationship Type not an Identity Node?",
+            provider_fn=provider,
+            verbose=False,
+        )
+
+        self.assertEqual(result.status, "answered")
+        self.assertEqual(provider.calls, 2)
+        self.assertEqual(result.commands["AND_BATCH"], 1)
+        self.assertEqual(result.commands["EXPAND DESCRIPTION"], 2)
+        self.assertEqual(result.commands["ANSWER"], 1)
+        self.assertEqual(len(result.rounds[0].decision.operations), 2)  # type: ignore[union-attr]
+
+    def test_and_batch_rejects_dependent_activate_then_expand(self) -> None:
+        provider = FakeProvider(
+            [
+                "ACTIVATE Historical Occurrence AND EXPAND Historical Occurrence DESCRIPTION",
+            ]
+        )
+
+        result = run_question(
+            "How does Description differ from Historical Occurence?",
+            provider_fn=provider,
+            verbose=False,
+        )
+
+        self.assertEqual(result.status, "cam_operation_failure")
+        self.assertIn("pre-batch surface", (result.error or "").casefold())
+        self.assertEqual(provider.calls, 1)
+        self.assertEqual(result.commands["AND_BATCH"], 1)
 
     def test_exact_activation_can_recover_concept_missed_by_initial_typo(self) -> None:
         provider = FakeProvider(

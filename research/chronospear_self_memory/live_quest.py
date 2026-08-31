@@ -73,7 +73,11 @@ def call_groq(messages: list[dict[str, str]]) -> ProviderResult:
     request = urllib.request.Request(
         "https://api.groq.com/openai/v1/chat/completions",
         data=body,
-        headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+            "User-Agent": "ChronoSpear-Research/2026-08-31",
+        },
         method="POST",
     )
     try:

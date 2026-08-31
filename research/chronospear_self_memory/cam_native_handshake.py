@@ -8,6 +8,38 @@ from cam_native_dataset import CAM_NATIVE_SYSTEM_PROMPT
 from cam_native_provider import LocalCamNativeProvider
 
 
+_ORIGINAL_EXECUTE_MEMORY_ACTION = base.execute_memory_action
+
+
+def _strict_execute_memory_action(memory, session, decision):
+    """Enforce the rendered control surface for standalone EXPAND commands too.
+
+    auto_handshake already validates EXPAND availability inside AND batches. The
+    standalone path previously skipped that check, which allowed a model to keep
+    requesting an exhausted DESCRIPTION/HISTORY/ASSOCIATIONS channel and receive
+    empty deltas indefinitely.
+    """
+    if decision.kind == "expand":
+        assert decision.concept is not None
+        assert decision.channel is not None
+        canonical = memory._resolve_name(decision.concept)
+        if canonical not in session.surfaced_concepts:
+            raise ValueError(f"Cannot expand unsurfaced concept: {canonical}")
+
+        state = base._expand_request_state(memory, session, canonical, decision.channel)
+        if state == "already_supplied":
+            raise ValueError(
+                f"EXPAND {canonical} {decision.channel} is no longer valid; "
+                "that channel has already been fully supplied"
+            )
+        if state == "invalid":
+            raise ValueError(
+                f"EXPAND {canonical} {decision.channel} is unavailable on the current control surface"
+            )
+
+    return _ORIGINAL_EXECUTE_MEMORY_ACTION(memory, session, decision)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run the real ChronoSpear CAM handshake with a local base or CAM-native LoRA model.")
     parser.add_argument("--model", default="Qwen/Qwen3-0.6B")
@@ -21,6 +53,11 @@ def main() -> None:
     # Deliberately remove CAM School. The trained model receives only the compact native contract.
     base.WIRETAP_SYSTEM_PROMPT = CAM_NATIVE_SYSTEM_PROMPT
 
+    # The generic handshake historically validated stale channels only inside AND.
+    # The CAM-native experiment must enforce the same memory-management rule for
+    # standalone EXPAND commands so an exhausted channel cannot loop on empty deltas.
+    base.execute_memory_action = _strict_execute_memory_action
+
     provider = LocalCamNativeProvider(
         model_name=args.model,
         adapter_path=None if args.base_only else args.adapter,
@@ -30,7 +67,7 @@ def main() -> None:
     print(f"model={args.model}")
     print(f"adapter={'none/base-only' if args.base_only else args.adapter}")
     print(f"system_prompt_characters={len(CAM_NATIVE_SYSTEM_PROMPT)}")
-    print("CAM behavior=unchanged")
+    print("CAM behavior=strict standalone channel validation")
     print("CAM School=disabled")
     print(f"max_rounds={args.max_rounds}")
 

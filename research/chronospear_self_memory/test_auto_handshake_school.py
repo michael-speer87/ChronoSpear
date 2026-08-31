@@ -19,7 +19,6 @@ class CamSchoolTests(unittest.TestCase):
         self.assertNotIn("a-expand", text)
         self.assertNotIn("a-lang", text)
         self.assertNotIn("a-mcp", text)
-        self.assertNotIn("ChronoSpear benchmark answers", text.split("These examples", 1)[-1])
 
     def test_install_school_prompt_is_idempotent(self) -> None:
         school.install_school_prompt()

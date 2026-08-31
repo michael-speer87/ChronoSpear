@@ -25,6 +25,28 @@ class CamProtocolTests(unittest.TestCase):
         self.assertEqual(decision.kind, "activate")
         self.assertEqual(decision.concept, "Historical Occurrence")
 
+    def test_and_chain_parses_multiple_independent_commands(self) -> None:
+        decision = parse_protocol_response(
+            "EXPAND Identity Node DESCRIPTION AND EXPAND Relationship Type DESCRIPTION"
+        )
+        self.assertEqual(decision.kind, "batch")
+        self.assertEqual(len(decision.operations), 2)
+        self.assertEqual(decision.operations[0].concept, "Identity Node")
+        self.assertEqual(decision.operations[1].concept, "Relationship Type")
+        self.assertTrue(all(operation.channel == "DESCRIPTION" for operation in decision.operations))
+
+    def test_and_chain_is_capped(self) -> None:
+        with self.assertRaises(ValueError):
+            parse_protocol_response(
+                "ACTIVATE A AND ACTIVATE B AND ACTIVATE C AND ACTIVATE D AND ACTIVATE E"
+            )
+
+    def test_multiple_command_lines_require_and(self) -> None:
+        with self.assertRaises(ValueError):
+            parse_protocol_response(
+                "EXPAND Identity Node DESCRIPTION\nEXPAND Relationship Type DESCRIPTION"
+            )
+
     def test_answer_requires_evidence_line(self) -> None:
         with self.assertRaises(ValueError):
             parse_protocol_response("ANSWER: CAM remembers and the LLM reasons.")
@@ -79,6 +101,24 @@ class WiretapPlaygroundTests(unittest.TestCase):
         self.assertEqual(state.last_decision.kind, "expand")
         self.assertEqual(state.playground.session.seen_history, initial_seen_history)
         self.assertEqual(state.playground.expansion_count, 0)
+
+    def test_llm_and_batch_is_parsed_but_not_auto_executed(self) -> None:
+        state = self.make_state()
+        initial_seen_history = set(state.playground.session.seen_history)
+        initial_seen_descriptions = set(state.playground.session.seen_descriptions)
+
+        self.send_fake(
+            state,
+            "EXPAND Expansion DESCRIPTION AND EXPAND Expansion HISTORY",
+        )
+
+        self.assertIsNone(state.pending_packet)
+        self.assertIsNotNone(state.last_decision)
+        assert state.last_decision is not None
+        self.assertEqual(state.last_decision.kind, "batch")
+        self.assertEqual(len(state.last_decision.operations), 2)
+        self.assertEqual(state.playground.session.seen_history, initial_seen_history)
+        self.assertEqual(state.playground.session.seen_descriptions, initial_seen_descriptions)
 
     def test_human_history_expansion_creates_pending_history_only_delta(self) -> None:
         state = self.make_state()

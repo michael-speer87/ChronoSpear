@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import argparse
-from importlib.metadata import version
+from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 
 
@@ -28,6 +28,7 @@ def main() -> None:
     try:
         import torch
         from datasets import load_dataset
+        from packaging.version import Version
         from peft import LoraConfig
         from trl import SFTConfig, SFTTrainer
     except ImportError as exc:
@@ -35,6 +36,21 @@ def main() -> None:
             "Missing training dependencies. Install the CAM-native training requirements first. "
             f"Original import error: {exc}"
         ) from exc
+
+    # Google Colab may preinstall an old optional torchao package. Current PEFT
+    # raises during LoRA injection when torchao is present but < 0.16.0, even
+    # though this experiment does not use torchao quantization. Fail before the
+    # model download with a precise remediation instead of crashing later.
+    try:
+        torchao_version = version("torchao")
+    except PackageNotFoundError:
+        torchao_version = None
+    if torchao_version is not None and Version(torchao_version) < Version("0.16.0"):
+        raise SystemExit(
+            f"Incompatible optional torchao detected: {torchao_version}. "
+            "This experiment does not use torchao. Remove the stale package with "
+            "`python -m pip uninstall -y torchao`, then rerun training."
+        )
 
     train_path = Path(args.train)
     eval_path = Path(args.eval)

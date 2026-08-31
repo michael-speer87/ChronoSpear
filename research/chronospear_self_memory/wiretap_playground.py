@@ -4,7 +4,13 @@ from dataclasses import dataclass, field
 import json
 import os
 
-from cam_protocol import CHANNELS, ProtocolDecision, parse_protocol_response
+from cam_protocol import (
+    CHANNELS,
+    ProtocolDecision,
+    parse_protocol_response,
+    render_control_surface,
+    render_protocol_packet,
+)
 from live_quest import call_provider
 from memory import MemoryPacket, MemorySession
 from playground import (
@@ -31,12 +37,14 @@ Never upgrade a hypothesis into a decision.
 You have ONLY this CAM control vocabulary. Output exactly ONE action per response:
 
 ACTIVATE <exact concept name or alias>
-  Use when you need a stored concept that is not currently surfaced.
+  Use ONLY for a concept that is not currently surfaced.
+  Every concept listed in the CAM CONTROL SURFACE is already surfaced.
+  NEVER ACTIVATE a concept listed there.
 
 EXPAND <surfaced concept> DESCRIPTION
 EXPAND <surfaced concept> ASSOCIATIONS
 EXPAND <surfaced concept> HISTORY
-  Use one of these when the memory map says that channel has more memory.
+  Use ONLY a command explicitly listed under 'Valid EXPAND commands right now'.
 
 If the supplied memory is sufficient, output exactly:
 ANSWER: <concise answer>
@@ -51,14 +59,14 @@ HELP = """Wiretap commands:
   send                                  Send the pending CAM delta to the LLM.
   response                              Reprint the most recent raw LLM response.
   conversation                          Show the complete LLM message transcript.
-  packet                                Reprint the pending/current CAM delta.
+  packet                                Reprint the pending/current CAM delta and control surface.
   map                                   Show the current CAM memory availability map.
   surfaced                              List surfaced concepts.
   admitted                              Show evidence already admitted by CAM.
   activate <exact concept>              YOU execute exact activation.
-  expand <concept> DESCRIPTION           YOU request only the Description channel.
-  expand <concept> ASSOCIATIONS          YOU request the next Association page.
-  expand <concept> HISTORY               YOU request the next History page.
+  expand <concept> DESCRIPTION          YOU request only the Description channel.
+  expand <concept> ASSOCIATIONS         YOU request the next Association page.
+  expand <concept> HISTORY              YOU request the next History page.
   protocol                              Reprint the LLM -> CAM vocabulary.
   memory ...                            Use the mutable memory controls from playground.py.
   new                                   Start a fresh question while keeping memory edits.
@@ -66,7 +74,7 @@ HELP = """Wiretap commands:
   quit                                  Exit.
 
 Conversation rules:
-  1. CAM builds and displays a packet/delta.
+  1. CAM builds and displays a packet/delta plus deterministic control surface.
   2. You inspect it.
   3. 'send' is the only command that calls the LLM.
   4. The raw LLM response is parsed but NEVER executed automatically.
@@ -83,6 +91,9 @@ PROTOCOL_HELP = """LLM -> CAM protocol:
   ANSWER: <answer>
   EVIDENCE: <ids or none>
 
+Every concept shown in the CAM CONTROL SURFACE is already surfaced.
+ACTIVATE may only name a concept not shown there.
+Use only EXPAND commands explicitly listed by the current control surface.
 CAM does not interpret ordinary-language memory requests in wiretap mode.
 """
 
@@ -104,6 +115,12 @@ def provider_label() -> str:
     if provider == "ollama":
         return f"ollama / {os.environ.get('OLLAMA_MODEL', 'qwen2.5-coder:7b')}"
     return provider
+
+
+def print_protocol_view(packet: MemoryPacket, *, label: str) -> None:
+    print_packet(packet, label=label)
+    print_header("CAM CONTROL SURFACE")
+    print(render_control_surface(packet))
 
 
 def build_initial_state(memory) -> WiretapState | None:
@@ -134,7 +151,7 @@ def build_initial_state(memory) -> WiretapState | None:
             messages=[{"role": "system", "content": WIRETAP_SYSTEM_PROMPT}],
             pending_packet=packet,
         )
-        print_packet(packet, label="WIRETAP PACKET #1: INSPECT BEFORE SEND")
+        print_protocol_view(packet, label="WIRETAP PACKET #1: INSPECT BEFORE SEND")
         print("\nNothing has been sent to the LLM yet. Type 'send' when you want to transmit this packet.")
         return state
 
@@ -152,7 +169,7 @@ def queue_packet(state: WiretapState, packet: MemoryPacket, label: str) -> None:
     state.playground.last_packet = packet
     state.pending_packet = packet
     state.playground.total_estimated_tokens += packet.estimated_tokens
-    print_packet(packet, label=label)
+    print_protocol_view(packet, label=label)
     print("\nThis CAM delta is pending. Inspect it, then type 'send' when you choose.")
 
 
@@ -177,7 +194,7 @@ def send_pending(state: WiretapState) -> None:
         return
 
     packet = state.pending_packet
-    state.messages.append({"role": "user", "content": packet.render()})
+    state.messages.append({"role": "user", "content": render_protocol_packet(packet)})
 
     print_header("HUMAN GATE: SENDING PENDING CAM DELTA TO LLM")
     print(f"Provider: {provider_label()}")
@@ -303,7 +320,7 @@ def print_conversation(state: WiretapState) -> None:
         print(message["content"])
     if state.pending_packet is not None:
         print("\n--- PENDING CAM DELTA (NOT YET SENT) ---")
-        print(state.pending_packet.render())
+        print(render_protocol_packet(state.pending_packet))
 
 
 def print_last_response(state: WiretapState) -> None:
@@ -344,7 +361,7 @@ def run_wiretap(state: WiretapState) -> str:
         elif command == "packet":
             label = "PENDING CAM DELTA" if state.pending_packet is not None else "MOST RECENT CAM DELTA"
             packet = state.pending_packet or state.playground.last_packet
-            print_packet(packet, label=label)
+            print_protocol_view(packet, label=label)
         elif command == "map":
             print_map(state.playground.last_packet)
         elif command == "surfaced":

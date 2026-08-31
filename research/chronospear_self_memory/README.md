@@ -74,7 +74,7 @@ question
   -> human inspects packet
   -> send
   -> human inspects raw LLM response
-  -> human chooses whether to execute the requested CAM command
+  -> human chooses whether to execute the requested CAM command(s)
   -> CAM builds a new bounded delta
   -> human inspects delta
   -> send
@@ -90,6 +90,9 @@ ACTIVATE <exact concept name or alias>
 EXPAND <surfaced concept> DESCRIPTION
 EXPAND <surfaced concept> ASSOCIATIONS
 EXPAND <surfaced concept> HISTORY
+
+<command> AND <command> [AND <command> ...]
+
 ANSWER: <answer>
 EVIDENCE: <ids or none>
 ```
@@ -102,9 +105,23 @@ EVIDENCE: <ids or none>
 - `ASSOCIATIONS` returns the next bounded Association page only.
 - `HISTORY` returns the next bounded Historical Occurrence page only.
 
+`AND` joins up to four independent memory commands into one LLM turn. Example:
+
+```text
+EXPAND Identity Node DESCRIPTION AND EXPAND Relationship Type DESCRIPTION
+```
+
+Every command in an `AND` chain is validated against the same pre-command control surface before any operation executes. `AND` is parallel request glue, not a scripting language. Therefore this is intentionally invalid:
+
+```text
+ACTIVATE Stonebridge AND EXPAND Stonebridge HISTORY
+```
+
+The second command becomes valid only after the first command changes CAM state, so it requires another reasoning turn.
+
 A response such as `tell me more about Expansion` or the older `REQUEST_MORE: Expansion` is a protocol violation. The wiretap reports it and executes nothing.
 
-Useful wiretap commands mirror the same protocol so the human can manually perform what the LLM requested:
+Useful wiretap commands mirror the single-operation protocol so the human can inspect and manually reproduce what the LLM requested:
 
 ```text
 send                                  send only the pending CAM delta to the LLM
@@ -125,13 +142,15 @@ help
 quit
 ```
 
-The provider response is parsed only for visibility. A valid `EXPAND Expansion HISTORY` prints as `PARSED ONLY, NOT EXECUTED`; the human must decide whether to run the same command.
+The provider response is parsed only for visibility. A valid `AND` chain is displayed operation-by-operation but is never auto-executed in wiretap mode.
 
 This is intentionally a memory-management protocol, not a query language. It contains no `FIND_RELEVANT`, `FIND_LOCATION`, semantic filters, or inference commands.
 
 ## Autonomous CAM ↔ LLM handshake benchmark
 
-`auto_handshake.py` removes the human gate while keeping the same protocol and deterministic CAM operations. A valid `ACTIVATE` or `EXPAND` response is executed immediately, the resulting CAM delta is appended to the same reasoning conversation, and the loop continues until `ANSWER`, failure, or the round limit.
+`auto_handshake.py` removes the human gate while keeping the same protocol and deterministic CAM operations. A valid `ACTIVATE`, `EXPAND`, or bounded `AND` response is executed immediately, the resulting CAM delta is appended to the same reasoning conversation, and the loop continues until `ANSWER`, failure, or the round limit.
+
+`AND` batches are validated atomically against the current control surface. If one command is invalid, the whole batch fails before CAM performs any of its operations. Valid batch results are merged into one outgoing CAM delta.
 
 Run the seeded nine-question design suite:
 
@@ -147,6 +166,12 @@ Run one custom question:
 python auto_handshake.py --question "What semantic risk did Expansion expose?"
 ```
 
+For Groq rate-limit-aware runs:
+
+```bash
+python auto_handshake_resilient.py
+```
+
 Useful options:
 
 ```text
@@ -160,7 +185,7 @@ The benchmark records:
 - provider latency per LLM call;
 - CAM build/operation time separately from provider time;
 - number of LLM calls per question;
-- counts of ACTIVATE and channel-specific EXPAND operations;
+- counts of ACTIVATE, channel-specific EXPAND, and AND_BATCH operations;
 - CAM packet token estimates;
 - numeric provider usage totals returned by Groq/Ollama;
 - final evidence IDs and expected-support hits for the seeded quest.
@@ -177,6 +202,8 @@ Protocol violations and invalid CAM operations fail explicitly. The autonomous l
 - The manual, wiretap, and autonomous handshake modes use a synopsis-only Packet #1 so expansion behavior is visible.
 - Generic manual playground expansion still returns a tiny mixed bundle for the older human-only experiment.
 - Wiretap/autonomous expansion is channel-specific: Description, Associations, or History only.
+- `AND` may combine up to four independent current-surface memory operations in one LLM turn.
+- `AND` cannot express dependent multi-step navigation; commands are validated against one unchanged pre-batch surface.
 - Every later CAM packet is a delta: previously admitted synopses/descriptions/associations/history are removed from the new packet, not from CAM.
 - Manual memory mutation never silently cascades Concept deletion into Associations or Historical Occurrences.
 - The wiretap LLM can request CAM operations but cannot execute them; autonomous mode executes only valid protocol operations.
@@ -187,7 +214,7 @@ Protocol violations and invalid CAM operations fail explicitly. The autonomous l
 
 ```bash
 cd research/chronospear_self_memory
-python -m unittest -v test_memory.py test_playground.py test_memory_interface.py test_wiretap_playground.py test_auto_handshake.py
+python -m unittest -v test_memory.py test_playground.py test_memory_interface.py test_wiretap_playground.py test_auto_handshake.py test_auto_handshake_resilient.py
 ```
 
 ## Live quest with Groq
@@ -215,7 +242,7 @@ export OLLAMA_MODEL=qwen2.5-coder:7b
 python live_quest.py
 ```
 
-The same provider variables work with `wiretap_playground.py` and `auto_handshake.py`.
+The same provider variables work with `wiretap_playground.py`, `auto_handshake.py`, and `auto_handshake_resilient.py`.
 
 ## What to watch
 
@@ -225,8 +252,10 @@ The benchmark and playgrounds are deliberately small and human-checkable. Useful
 - hypotheses being presented as locked architecture;
 - correct prose supported by the wrong evidence;
 - excessive expansion rounds;
+- whether AND reduces LLM round trips without causing packet bloat;
 - requests for unsurfaced concepts;
 - requests for an unavailable or already exhausted channel;
+- dependent commands incorrectly attempted inside an AND batch;
 - protocol violations where the LLM invents its own CAM language;
 - whether the LLM can repair a missed/misspelled explicit object without CAM guessing;
 - token growth caused by repeated memory rather than genuinely new evidence;

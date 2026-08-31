@@ -17,6 +17,11 @@ def main() -> None:
     parser.add_argument("--max-length", type=int, default=1024)
     parser.add_argument("--lora-rank", type=int, default=16)
     parser.add_argument("--smoke", action="store_true", help="Run only 20 optimizer steps to verify the stack.")
+    parser.add_argument(
+        "--allow-cpu",
+        action="store_true",
+        help="Explicitly allow very slow CPU training. Without this flag, training refuses to start if CUDA is unavailable.",
+    )
     args = parser.parse_args()
 
     try:
@@ -35,18 +40,23 @@ def main() -> None:
     if not train_path.exists() or not eval_path.exists():
         raise SystemExit("Training/eval JSONL missing. Run cam_native_dataset.py first.")
 
+    cuda = torch.cuda.is_available()
+    if not cuda and not args.allow_cpu:
+        raise SystemExit(
+            "CUDA GPU not detected. Refusing to start LoRA training on CPU by default. "
+            "Use a CUDA environment for the real experiment, or pass --allow-cpu only if you intentionally want CPU training."
+        )
+
     dataset = load_dataset(
         "json",
         data_files={"train": str(train_path), "eval": str(eval_path)},
     )
 
-    cuda = torch.cuda.is_available()
     bf16 = bool(cuda and torch.cuda.is_bf16_supported())
     fp16 = bool(cuda and not bf16)
 
     if not cuda:
-        print("WARNING: no CUDA GPU detected. Qwen3-0.6B inference is feasible on CPU, but LoRA training may be very slow.")
-        print("For the first real training run, use a CUDA environment such as a local NVIDIA GPU or a hosted notebook.")
+        print("WARNING: CPU training explicitly enabled. Expect this to be much slower than CUDA training.")
 
     peft_config = LoraConfig(
         r=args.lora_rank,

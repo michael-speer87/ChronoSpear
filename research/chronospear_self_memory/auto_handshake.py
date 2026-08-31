@@ -9,7 +9,7 @@ from time import perf_counter
 from typing import Callable
 
 from benchmark import QUESTS, QuestCase
-from cam_protocol import ProtocolDecision, parse_protocol_response
+from cam_protocol import ProtocolDecision, parse_protocol_response, render_protocol_packet
 from live_quest import ProviderResult, call_provider
 from memory import DesignMemory, MemoryPacket, MemorySession
 from playground import INITIAL_BUDGET
@@ -172,7 +172,7 @@ def run_question(
         print_packet_summary(packet)
 
     for round_number in range(1, max_rounds + 1):
-        messages.append({"role": "user", "content": packet.render()})
+        messages.append({"role": "user", "content": render_protocol_packet(packet)})
 
         provider_start = perf_counter()
         try:

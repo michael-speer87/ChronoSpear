@@ -87,7 +87,7 @@ def exact_activate(memory: DesignMemory, concept: str, session: MemorySession) -
     )
 
 
-def execute_memory_action(
+def _execute_single_memory_action(
     memory: DesignMemory,
     session: MemorySession,
     decision: ProtocolDecision,
@@ -109,12 +109,112 @@ def execute_memory_action(
     raise ValueError(f"Decision kind is not a CAM memory action: {decision.kind}")
 
 
+def _channel_is_available(memory: DesignMemory, session: MemorySession, canonical: str, channel: str) -> bool:
+    entry = memory._map_entry(canonical, session)
+    if channel == "DESCRIPTION":
+        return entry.description_remaining
+    if channel == "ASSOCIATIONS":
+        return entry.associations_remaining > 0
+    if channel == "HISTORY":
+        return entry.history_remaining > 0
+    return False
+
+
+def _validate_and_batch(
+    memory: DesignMemory,
+    session: MemorySession,
+    operations: tuple[ProtocolDecision, ...],
+) -> None:
+    """Validate every AND operation against one unchanged pre-batch surface."""
+    surfaced_before = set(session.surfaced_concepts)
+    seen_operations: set[tuple[str, str, str | None]] = set()
+
+    for operation in operations:
+        if operation.kind == "activate":
+            assert operation.concept is not None
+            canonical = memory._resolve_name(operation.concept)
+            if canonical in surfaced_before:
+                raise ValueError(
+                    f"AND batch ACTIVATE is invalid on pre-batch surface; already surfaced: {canonical}"
+                )
+            key = ("activate", canonical, None)
+        elif operation.kind == "expand":
+            assert operation.concept is not None
+            assert operation.channel is not None
+            canonical = memory._resolve_name(operation.concept)
+            if canonical not in surfaced_before:
+                raise ValueError(
+                    f"AND batch EXPAND is invalid on pre-batch surface; concept was not surfaced: {canonical}"
+                )
+            if not _channel_is_available(memory, session, canonical, operation.channel):
+                raise ValueError(
+                    f"AND batch EXPAND is invalid on pre-batch surface; "
+                    f"{canonical} {operation.channel} is unavailable"
+                )
+            key = ("expand", canonical, operation.channel)
+        else:
+            raise ValueError("AND may join only ACTIVATE and EXPAND memory commands")
+
+        if key in seen_operations:
+            raise ValueError(f"duplicate operation in AND batch: {key}")
+        seen_operations.add(key)
+
+
+def _merge_packets(packets: list[MemoryPacket]) -> MemoryPacket:
+    if not packets:
+        raise ValueError("cannot merge an empty AND batch")
+
+    return MemoryPacket(
+        question="AND BATCH",
+        new_synopses=tuple(concept for packet in packets for concept in packet.new_synopses),
+        full_descriptions=tuple(concept for packet in packets for concept in packet.full_descriptions),
+        associations=tuple(association for packet in packets for association in packet.associations),
+        history=tuple(occurrence for packet in packets for occurrence in packet.history),
+        memory_map=packets[-1].memory_map,
+    )
+
+
+def execute_memory_action(
+    memory: DesignMemory,
+    session: MemorySession,
+    decision: ProtocolDecision,
+) -> MemoryPacket:
+    if decision.kind != "batch":
+        return _execute_single_memory_action(memory, session, decision)
+
+    if not decision.operations:
+        raise ValueError("AND batch contains no operations")
+
+    _validate_and_batch(memory, session, decision.operations)
+
+    # AND is a parallel request set, not a script. Execute all exact activations first
+    # so expansion side-effects cannot invalidate another independent activation.
+    ordered = [operation for operation in decision.operations if operation.kind == "activate"]
+    ordered.extend(operation for operation in decision.operations if operation.kind == "expand")
+    packets = [
+        _execute_single_memory_action(memory, session, operation)
+        for operation in ordered
+    ]
+    return _merge_packets(packets)
+
+
 def command_label(decision: ProtocolDecision) -> str:
     if decision.kind == "activate":
         return "ACTIVATE"
     if decision.kind == "expand":
         return f"EXPAND {decision.channel}"
+    if decision.kind == "batch":
+        return "AND_BATCH"
     return decision.kind.upper()
+
+
+def record_decision_commands(result: RunResult, decision: ProtocolDecision) -> None:
+    if decision.kind == "batch":
+        result.commands["AND_BATCH"] += 1
+        for operation in decision.operations:
+            result.commands[command_label(operation)] += 1
+        return
+    result.commands[command_label(decision)] += 1
 
 
 def print_packet_summary(packet: MemoryPacket) -> None:
@@ -222,7 +322,7 @@ def run_question(
             result.commands["ANSWER"] += 1
             break
 
-        result.commands[command_label(decision)] += 1
+        record_decision_commands(result, decision)
 
         cam_start = perf_counter()
         try:
@@ -370,7 +470,7 @@ def main() -> None:
 
     print("CHRONOSPEAR AUTONOMOUS CAM <-> LLM HANDSHAKE")
     print(f"Provider: {provider_label()}")
-    print("Protocol: ACTIVATE / EXPAND DESCRIPTION|ASSOCIATIONS|HISTORY / ANSWER")
+    print("Protocol: ACTIVATE / EXPAND DESCRIPTION|ASSOCIATIONS|HISTORY / AND / ANSWER")
     print(f"Max rounds per question: {args.max_rounds}")
 
     if args.question:

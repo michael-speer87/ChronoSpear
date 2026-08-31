@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import re
 
 from memory import MemoryPacket
 
 
 CHANNELS = ("DESCRIPTION", "ASSOCIATIONS", "HISTORY")
+MAX_AND_COMMANDS = 4
 
 
 @dataclass(frozen=True)
@@ -15,6 +17,36 @@ class ProtocolDecision:
     channel: str | None = None
     answer: str | None = None
     evidence_ids: tuple[str, ...] = ()
+    operations: tuple["ProtocolDecision", ...] = ()
+
+
+def _parse_memory_command(command: str) -> ProtocolDecision:
+    command = command.strip()
+    upper = command.upper()
+
+    if upper.startswith("ACTIVATE "):
+        concept = command[len("ACTIVATE ") :].strip()
+        if not concept:
+            raise ValueError("ACTIVATE requires an exact concept name or alias")
+        return ProtocolDecision("activate", concept=concept)
+
+    if upper.startswith("EXPAND "):
+        body = command[len("EXPAND ") :].strip()
+        parts = body.rsplit(maxsplit=1)
+        if len(parts) != 2:
+            raise ValueError("EXPAND requires: EXPAND <concept> DESCRIPTION|ASSOCIATIONS|HISTORY")
+        concept, channel = parts[0].strip(), parts[1].upper()
+        if not concept:
+            raise ValueError("EXPAND requires a concept name")
+        if channel not in CHANNELS:
+            allowed = "|".join(CHANNELS)
+            raise ValueError(f"unknown CAM channel {channel!r}; expected {allowed}")
+        return ProtocolDecision("expand", concept=concept, channel=channel)
+
+    raise ValueError(
+        "memory command is outside CAM protocol; expected ACTIVATE <concept> or "
+        "EXPAND <concept> DESCRIPTION|ASSOCIATIONS|HISTORY"
+    )
 
 
 def parse_protocol_response(text: str) -> ProtocolDecision:
@@ -37,33 +69,25 @@ def parse_protocol_response(text: str) -> ProtocolDecision:
         evidence_ids = tuple(value.strip() for value in raw_ids.split(",") if value.strip())
         return ProtocolDecision("answer", answer=answer, evidence_ids=evidence_ids)
 
-    if upper.startswith("ACTIVATE "):
-        if len(lines) != 1:
-            raise ValueError("ACTIVATE response must contain exactly one command line")
-        concept = first[len("ACTIVATE ") :].strip()
-        if not concept:
-            raise ValueError("ACTIVATE requires an exact concept name or alias")
-        return ProtocolDecision("activate", concept=concept)
+    if len(lines) != 1:
+        raise ValueError(
+            "memory requests must be one response line; join independent commands with AND"
+        )
 
-    if upper.startswith("EXPAND "):
-        if len(lines) != 1:
-            raise ValueError("EXPAND response must contain exactly one command line")
-        body = first[len("EXPAND ") :].strip()
-        parts = body.rsplit(maxsplit=1)
-        if len(parts) != 2:
-            raise ValueError("EXPAND requires: EXPAND <concept> DESCRIPTION|ASSOCIATIONS|HISTORY")
-        concept, channel = parts[0].strip(), parts[1].upper()
-        if not concept:
-            raise ValueError("EXPAND requires a concept name")
-        if channel not in CHANNELS:
-            allowed = "|".join(CHANNELS)
-            raise ValueError(f"unknown CAM channel {channel!r}; expected {allowed}")
-        return ProtocolDecision("expand", concept=concept, channel=channel)
-
-    raise ValueError(
-        "response is outside CAM protocol; expected ACTIVATE <concept>, "
-        "EXPAND <concept> DESCRIPTION|ASSOCIATIONS|HISTORY, or ANSWER: ..."
+    # AND is only a separator when followed by another CAM memory verb. This avoids
+    # breaking a future concept name that happens to contain the word 'and'.
+    commands = re.split(
+        r"\s+AND\s+(?=(?:ACTIVATE|EXPAND)\s)",
+        first,
+        flags=re.IGNORECASE,
     )
+    if len(commands) > MAX_AND_COMMANDS:
+        raise ValueError(f"AND chain exceeds maximum of {MAX_AND_COMMANDS} commands")
+
+    operations = tuple(_parse_memory_command(command) for command in commands)
+    if len(operations) == 1:
+        return operations[0]
+    return ProtocolDecision("batch", operations=operations)
 
 
 def render_control_surface(packet: MemoryPacket) -> str:
@@ -71,7 +95,10 @@ def render_control_surface(packet: MemoryPacket) -> str:
     lines = [
         "CAM CONTROL SURFACE",
         "Every concept listed below is ALREADY SURFACED. NEVER ACTIVATE a listed concept.",
-        "Use only an EXPAND command explicitly listed below, or ANSWER if memory is sufficient.",
+        "Use only EXPAND commands explicitly listed below, ACTIVATE an exact unsurfaced concept, or ANSWER.",
+        "You may join up to 4 INDEPENDENT memory commands on one line using AND.",
+        "Every command in an AND chain must already be valid against THIS control surface before any command executes.",
+        "Do not ACTIVATE a concept and EXPAND that newly activated concept in the same AND chain.",
         "",
         "Currently surfaced concepts:",
     ]
@@ -98,6 +125,9 @@ def render_control_surface(packet: MemoryPacket) -> str:
 
     lines.extend(
         [
+            "",
+            "AND example:",
+            "EXPAND Concept A DESCRIPTION AND EXPAND Concept B HISTORY",
             "",
             "ACTIVATE rule:",
             "ACTIVATE may name only an exact stored concept or alias that is NOT currently surfaced above.",

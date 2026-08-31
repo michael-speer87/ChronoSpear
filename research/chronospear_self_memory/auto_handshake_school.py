@@ -12,60 +12,112 @@ from auto_handshake_resilient import (
 
 CAM_SCHOOL_CURRICULUM = r"""
 
-CAM SCHOOL: SYNTHETIC MEMORY-NAVIGATION EXAMPLES
-These examples teach how to use CAM. They are fictional and do not contain ChronoSpear benchmark answers.
+CAM SCHOOL V2: SYNTHETIC EVIDENCE-SUFFICIENCY AND MEMORY-NAVIGATION EXAMPLES
+These examples teach how to reason with CAM. They are fictional and do not contain ChronoSpear benchmark answers.
 
-GENERAL LESSONS
-1. Topic-adjacent evidence is not the same as direct support. If the current evidence does not establish the claim and a useful channel still has memory, request more memory instead of filling the gap yourself.
-2. Preserve evidence-state labels. HYPOTHESIS is not a decision. UNRESOLVED is not settled. EXPERIMENTALLY_PROVEN proves only what the recorded experiment actually showed.
-3. Use AND for independent requests that are all valid on the current control surface. Do not use AND to create a dependent script.
-4. ANSWER only when admitted evidence directly supports the answer you give. If the answer would require strengthening, guessing, or silently adding a premise, keep navigating CAM.
-5. Prefer another bounded CAM request over an unsupported inference. CAM may contain a larger ecosystem than the current delta reveals.
+SILENT SUFFICIENCY CHECK
+Before every response, silently judge the admitted evidence against the question. Do NOT output these labels; output only the normal CAM protocol.
 
-EXAMPLE 1: RELATED EVIDENCE IS NOT ENOUGH
+INSUFFICIENT: The admitted evidence cannot support the material answer yet.
+PARTIAL: Some material claims are supported, but at least one important claim is still unsupported.
+SUFFICIENT: Every material claim you intend to make is supported at the strength you intend to state it.
+
+RETRIEVAL POLICY
+1. If evidence is SUFFICIENT, ANSWER immediately. Memory being available is NOT a reason to retrieve it.
+2. If evidence is INSUFFICIENT or PARTIAL, identify what material fact is missing, then request the smallest CAM channel likely to supply that fact.
+3. Topic-adjacent evidence is not direct support. Do not strengthen a relation, invent a premise, or fill a missing fact yourself.
+4. Stop retrieving as soon as the material uncertainty is resolved. Do not exhaust channels for completeness.
+5. Stay with the most directly relevant surfaced concept unless admitted evidence points to another concept needed to resolve the missing fact, or the relevant channel is exhausted.
+6. Preserve evidence-state labels exactly. HYPOTHESIS is not a decision. UNRESOLVED is not settled. EXPERIMENTALLY_PROVEN proves only what the experiment actually showed.
+7. Use AND only for independent memory needs that are all useful now. Do not add extra commands merely because they are available.
+8. CAM may contain a larger ecosystem than the current delta, but navigate that ecosystem selectively.
+
+EXAMPLE 1: RELATED EVIDENCE MEANS KEEP LOOKING
 Question: What failure mode did the Beacon widening experiment expose?
-Current admitted evidence:
-- h-beacon-1 [EXPERIMENTALLY_PROVEN]: The widening probe exposed the link Rowan MEMBER_OF Lantern Guild.
-Current control surface says Beacon HISTORY has more memory.
+Admitted evidence:
+- h-beacon-1 [EXPERIMENTALLY_PROVEN]: The widening probe exposed Rowan MEMBER_OF Lantern Guild.
+Control surface: Beacon HISTORY has more memory.
+Silent judgment: PARTIAL. The experiment is identified, but the failure mode is not established.
 Bad response:
 ANSWER: It exposed an employment-classification failure.
 EVIDENCE: h-beacon-1
-Why bad: MEMBER_OF does not establish employment, and h-beacon-1 does not record the failure mode.
 Good response:
 EXPAND Beacon HISTORY
 
-EXAMPLE 2: DIRECT EVIDENCE IS ENOUGH
+EXAMPLE 2: DIRECT EVIDENCE MEANS STOP, EVEN WHEN MORE MEMORY EXISTS
 Question: What failure mode did the Beacon widening experiment expose?
-Current admitted evidence:
+Admitted evidence:
 - h-beacon-1 [EXPERIMENTALLY_PROVEN]: The widening probe exposed Rowan MEMBER_OF Lantern Guild.
 - h-beacon-2 [EXPERIMENTALLY_PROVEN]: The reasoner strengthened MEMBER_OF into WORKS_FOR and answered an employment question without direct support.
+Control surface still shows more Beacon HISTORY, Beacon ASSOCIATIONS, and Lantern Guild HISTORY.
+Silent judgment: SUFFICIENT. h-beacon-2 directly establishes the requested failure mode.
+Bad response:
+EXPAND Beacon HISTORY AND EXPAND Lantern Guild HISTORY
+Why bad: available memory is not missing evidence.
 Good response:
 ANSWER: The experiment exposed semantic overreach: the reasoner strengthened MEMBER_OF into WORKS_FOR without direct support.
 EVIDENCE: h-beacon-2
 
-EXAMPLE 3: PRESERVE HYPOTHESIS STATE
-Question: How did the archive policy change today?
-Current admitted evidence:
+EXAMPLE 3: PARTIAL MULTI-CLAIM ANSWER
+Question: What changed in Project Cedar, and why?
+Admitted evidence:
+- h-cedar-1 [EXPERIMENTALLY_PROVEN]: Project Cedar switched from full snapshots to deltas.
+Control surface: Project Cedar HISTORY has more memory.
+Silent judgment: PARTIAL. The change is supported; the reason is missing.
+Good response:
+EXPAND Project Cedar HISTORY
+
+After expansion, admitted evidence also contains:
+- h-cedar-2 [EXPERIMENTALLY_PROVEN]: The switch was made because repeated full snapshots dominated transfer cost.
+Control surface still has more Project Cedar HISTORY.
+Silent judgment: SUFFICIENT. Both requested claims are supported.
+Good response:
+ANSWER: Project Cedar switched from full snapshots to deltas because repeated full snapshots dominated transfer cost.
+EVIDENCE: h-cedar-1, h-cedar-2
+
+EXAMPLE 4: PRESERVE HYPOTHESIS STATE WITHOUT SEARCHING FOR A STRONGER STORY
+Question: What is the current proposal for bounding archive retrieval?
+Admitted evidence:
 - h-archive-1 [EXPERIMENTALLY_PROVEN]: A broad retrieval probe caused unrelated records to enter the working set.
 - a-archive-1 [HYPOTHESIS]: Per-action availability maps may be a better way to bound later retrieval.
-No later decision evidence is admitted.
+Control surface has additional Archive HISTORY.
+Silent judgment: SUFFICIENT for the question as asked. The proposal is known and its status is known.
 Bad response:
 ANSWER: The archive policy changed to per-action availability maps.
 EVIDENCE: a-archive-1
-Why bad: the evidence is a hypothesis, not a locked change.
+Bad response:
+EXPAND Archive HISTORY
+Why bad: the question asks for the current proposal, not proof that the proposal became policy.
 Good response:
-ANSWER: The experiment exposed overly broad retrieval, and a per-action availability map is currently a hypothesis for addressing it; the supplied evidence does not establish that the policy was changed.
-EVIDENCE: h-archive-1, a-archive-1
+ANSWER: The current proposal is to use per-action availability maps to bound later retrieval; it remains a hypothesis rather than an established policy change.
+EVIDENCE: a-archive-1
 
-EXAMPLE 4: USE AND FOR INDEPENDENT MEMORY NEEDS
+EXAMPLE 5: SELECTIVE BRANCHING
+Question: Why was the North Gate closed?
+Admitted evidence:
+- h-gate-1 [EXPERIMENTALLY_PROVEN]: North Gate was closed by order of Harbor Council.
+- h-gate-2 [EXPERIMENTALLY_PROVEN]: The order cites structural damage reported by Bridge Office.
+Control surface has North Gate HISTORY, Harbor Council HISTORY, and Bridge Office HISTORY.
+Silent judgment: SUFFICIENT. The material reason is already stated.
+Bad response:
+EXPAND Harbor Council HISTORY AND EXPAND Bridge Office HISTORY
+Good response:
+ANSWER: North Gate was closed because the order cited structural damage reported by Bridge Office.
+EVIDENCE: h-gate-2
+
+If h-gate-2 had only said "see Bridge Office report for reason," then the reason would still be missing and expanding Bridge Office would be justified.
+
+EXAMPLE 6: USE AND ONLY FOR TWO REAL MISSING FACTS
 Question: Why is a Ledger Type different from a Ledger Identity?
-Current control surface:
+Admitted evidence does not define either term.
+Control surface:
 - EXPAND Ledger Type DESCRIPTION
 - EXPAND Ledger Identity DESCRIPTION
+Silent judgment: INSUFFICIENT. Both definitions are independently needed for the comparison.
 Good response:
 EXPAND Ledger Type DESCRIPTION AND EXPAND Ledger Identity DESCRIPTION
 
-EXAMPLE 5: DO NOT SCRIPT DEPENDENCIES WITH AND
+EXAMPLE 7: DO NOT SCRIPT DEPENDENCIES WITH AND
 Question: What happened at Glass Harbor?
 Glass Harbor is not currently surfaced.
 Bad response:
@@ -74,16 +126,11 @@ Why bad: the HISTORY request is not valid on the same pre-command surface.
 Good response:
 ACTIVATE Glass Harbor
 
-EXAMPLE 6: MORE MEMORY CAN BE BETTER THAN A PLAUSIBLE GUESS
-Question: Why was Project Cedar rejected?
-Current admitted evidence:
-- h-cedar-1 [EXPERIMENTALLY_PROVEN]: Project Cedar failed its first latency target.
-Current control surface says Project Cedar HISTORY has more memory.
-The first failure might be related, but it does not establish why the project was rejected.
-Good response:
-EXPAND Project Cedar HISTORY
+FINAL HABIT
+Ask one question before every CAM request: "What material claim can I not support yet?"
+If there is no such claim, ANSWER. If there is one, request only memory likely to resolve that gap.
 
-End CAM SCHOOL. Apply these navigation habits to the real question while using only the real CAM evidence supplied after this curriculum.
+End CAM SCHOOL V2. Apply these habits to the real question while using only the real CAM evidence supplied after this curriculum.
 """
 
 
@@ -103,7 +150,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description=(
             "Run the rate-limit-aware CAM handshake with a synthetic few-shot curriculum "
-            "that teaches evidence sufficiency and CAM navigation behavior."
+            "that teaches evidence sufficiency and selective CAM navigation behavior."
         )
     )
     parser.add_argument(
@@ -131,13 +178,13 @@ def main() -> None:
 
     install_school_prompt()
 
-    print("CHRONOSPEAR CAM SCHOOL: SYNTHETIC FEW-SHOT NAVIGATION")
+    print("CHRONOSPEAR CAM SCHOOL V2: EVIDENCE SUFFICIENCY + SELECTIVE NAVIGATION")
     print(f"Provider: {base.provider_label()}")
     print("CAM behavior: unchanged")
     print("Memory seed/budgets: unchanged")
-    print("Training intervention: synthetic navigation curriculum in the LLM system prompt")
+    print("Training intervention: synthetic sufficiency/navigation curriculum in the LLM system prompt")
     print("Protocol: ACTIVATE / EXPAND DESCRIPTION|ASSOCIATIONS|HISTORY / AND / ANSWER")
-    print("Curriculum targets: evidence sufficiency, state-label discipline, AND, bounded recall")
+    print("Curriculum targets: sufficient-vs-partial evidence, stopping, selective retrieval, state labels")
     print(f"Max rounds per question: {args.max_rounds}")
     print(f"429 retries per logical turn: {args.rate_limit_retries}")
 

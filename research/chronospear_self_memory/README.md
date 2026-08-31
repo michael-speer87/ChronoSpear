@@ -56,6 +56,53 @@ Memory edits are session-local to the running playground. They never rewrite `se
 
 The playground makes no LLM calls. It exists so the architecture can be explored directly before comparing human navigation with model navigation.
 
+## Human-intercepted CAM ↔ LLM wiretap
+
+`wiretap_playground.py` exposes the conversation between CAM and the LLM one hop at a time. It is intentionally human-gated: CAM never calls the provider automatically, and a model `REQUEST_MORE` response never executes a memory action automatically.
+
+```bash
+cd research/chronospear_self_memory
+export CS_DESIGN_PROVIDER=groq
+python wiretap_playground.py
+```
+
+The intended loop is:
+
+```text
+question
+  -> CAM builds Packet #1
+  -> human inspects packet
+  -> send
+  -> human inspects raw LLM response
+  -> human chooses expand/activate/ignore
+  -> CAM builds a new delta
+  -> human inspects delta
+  -> send
+  -> repeat
+```
+
+Useful wiretap commands:
+
+```text
+send                        send only the pending CAM delta to the LLM
+response                    reprint the latest raw LLM response
+conversation                show the full provider message transcript
+packet                      inspect the current/pending CAM delta
+map                         inspect the current memory availability map
+surfaced                    list currently surfaced concepts
+admitted                    show memory CAM has already admitted this session
+expand <concept>            manually execute bounded expansion
+activate <exact concept>    manually surface an exact stored concept/alias
+memory ...                  use the same mutable memory interface as playground.py
+new                         fresh question while keeping memory edits
+help
+quit
+```
+
+`activate` is deliberately strict. A stored exact name or alias can be surfaced; a misspelling such as `Historical Occurence` is not fuzzy-corrected. This lets the human observe whether the LLM repairs language errors from context and explicitly asks for the correct object.
+
+The provider response is parsed only for visibility. Even a valid `REQUEST_MORE: Expansion` prints as `PARSED ONLY, NOT EXECUTED`; the human must decide whether to run `expand Expansion`.
+
 ## Experimental rules
 
 - Current associative statements carry explicit confidence/state labels.
@@ -63,10 +110,11 @@ The playground makes no LLM calls. It exists so the architecture can be explored
 - Literal concept-name/alias recognition is the only language activation used by this harness.
 - Unknown or misspelled Concept names do not fuzzy-match; strict activation is intentional for the current experiment.
 - The automated live quest sends synopses, a tiny fixed evidence budget, and a memory-availability map in Packet #1.
-- The manual playground uses an even smaller synopsis-only Packet #1 so expansion behavior is visible.
+- The manual and wiretap playgrounds use an even smaller synopsis-only Packet #1 so expansion behavior is visible.
 - Expanding a surfaced concept sends its full Description at most once plus another tiny evidence page.
 - Every later CAM packet is a delta: previously admitted synopses/descriptions/associations/history are removed from the new packet, not from CAM.
 - Manual memory mutation never silently cascades Concept deletion into Associations or Historical Occurrences.
+- The wiretap LLM can request memory but cannot execute CAM actions.
 - The LLM must cite evidence IDs with its answer in the automated live quest.
 - A right-sounding answer with unsupported evidence counts as a failure worth investigating.
 
@@ -74,7 +122,7 @@ The playground makes no LLM calls. It exists so the architecture can be explored
 
 ```bash
 cd research/chronospear_self_memory
-python -m unittest -v test_memory.py test_playground.py test_memory_interface.py
+python -m unittest -v test_memory.py test_playground.py test_memory_interface.py test_wiretap_playground.py
 ```
 
 ## Live quest with Groq
@@ -102,14 +150,18 @@ export OLLAMA_MODEL=qwen2.5-coder:7b
 python live_quest.py
 ```
 
+The same provider variables work with `wiretap_playground.py`.
+
 ## What to watch
 
-The benchmark is deliberately small and human-checkable. Useful failure classes include:
+The benchmark and playgrounds are deliberately small and human-checkable. Useful failure classes include:
 
 - stale/historical ideas leaking into a current answer;
 - hypotheses being presented as locked architecture;
 - correct prose supported by the wrong evidence;
 - excessive expansion rounds;
 - requests for unsurfaced concepts;
+- whether the LLM can repair a missed/misspelled explicit object without CAM guessing;
 - token growth caused by repeated memory rather than genuinely new evidence;
-- dangling references or packet failures caused by destructive manual memory edits.
+- dangling references or packet failures caused by destructive manual memory edits;
+- differences between the memory path a human chooses and the path the LLM requests.

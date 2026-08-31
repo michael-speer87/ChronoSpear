@@ -14,22 +14,49 @@ The seed currently draws from:
 
 The seed is curated research data, not a replacement for the authoritative source documents.
 
+## Manual playground
+
+`playground.py` lets a human act as the reasoner instead of immediately handing control to an LLM.
+
+Packet #1 is intentionally synopsis-only. It exposes a memory-availability map but no Associations or Historical Occurrences. You decide which surfaced concept to expand, and each expansion returns only a bounded delta.
+
+```bash
+cd research/chronospear_self_memory
+python playground.py
+```
+
+Useful commands inside the playground:
+
+```text
+expand <concept>   reveal the next bounded delta for a surfaced concept
+map                show the current memory availability map
+surfaced           list concepts currently available for expansion
+admitted           inspect everything already admitted to this reasoning session
+packet             reprint the most recent CAM delta
+new                start a fresh question/session
+help               show commands
+quit               exit
+```
+
+The playground makes no LLM calls. It exists so the architecture can be explored directly before comparing human navigation with model navigation.
+
 ## Experimental rules
 
 - Current associative statements carry explicit confidence/state labels.
 - Immutable design occurrences preserve how the architecture changed.
 - Literal concept-name/alias recognition is the only language activation used by this harness.
-- Packet #1 sends synopses, a tiny fixed evidence budget, and a memory-availability map.
+- The automated live quest sends synopses, a tiny fixed evidence budget, and a memory-availability map in Packet #1.
+- The manual playground uses an even smaller synopsis-only Packet #1 so expansion behavior is visible.
 - Expanding a surfaced concept sends its full Description at most once plus another tiny evidence page.
 - Every later CAM packet is a delta: previously admitted synopses/descriptions/associations/history are removed from the new packet, not from CAM.
-- The LLM must cite evidence IDs with its answer.
+- The LLM must cite evidence IDs with its answer in the automated live quest.
 - A right-sounding answer with unsupported evidence counts as a failure worth investigating.
 
 ## Offline tests
 
 ```bash
 cd research/chronospear_self_memory
-python -m unittest -v test_memory.py
+python -m unittest -v test_memory.py test_playground.py
 ```
 
 ## Live quest with Groq

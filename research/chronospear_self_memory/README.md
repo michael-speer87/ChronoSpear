@@ -58,7 +58,7 @@ The playground makes no LLM calls. It exists so the architecture can be explored
 
 ## Human-intercepted CAM ↔ LLM wiretap
 
-`wiretap_playground.py` exposes the conversation between CAM and the LLM one hop at a time. It is intentionally human-gated: CAM never calls the provider automatically, and a model `REQUEST_MORE` response never executes a memory action automatically.
+`wiretap_playground.py` exposes the conversation between CAM and the LLM one hop at a time. It is intentionally human-gated: CAM never calls the provider automatically, and a model memory request never executes automatically.
 
 ```bash
 cd research/chronospear_self_memory
@@ -74,34 +74,60 @@ question
   -> human inspects packet
   -> send
   -> human inspects raw LLM response
-  -> human chooses expand/activate/ignore
-  -> CAM builds a new delta
+  -> human chooses whether to execute the requested CAM command
+  -> CAM builds a new bounded delta
   -> human inspects delta
   -> send
   -> repeat
 ```
 
-Useful wiretap commands:
+### Tiny LLM -> CAM protocol
+
+The LLM is not allowed to request memory in ordinary language. It has only these controls:
 
 ```text
-send                        send only the pending CAM delta to the LLM
-response                    reprint the latest raw LLM response
-conversation                show the full provider message transcript
-packet                      inspect the current/pending CAM delta
-map                         inspect the current memory availability map
-surfaced                    list currently surfaced concepts
-admitted                    show memory CAM has already admitted this session
-expand <concept>            manually execute bounded expansion
-activate <exact concept>    manually surface an exact stored concept/alias
-memory ...                  use the same mutable memory interface as playground.py
-new                         fresh question while keeping memory edits
+ACTIVATE <exact concept name or alias>
+EXPAND <surfaced concept> DESCRIPTION
+EXPAND <surfaced concept> ASSOCIATIONS
+EXPAND <surfaced concept> HISTORY
+ANSWER: <answer>
+EVIDENCE: <ids or none>
+```
+
+`ACTIVATE` performs strict identity activation. It does not fuzzy-match or guess.
+
+`EXPAND` is channel-specific. CAM does not infer why the channel was requested:
+
+- `DESCRIPTION` returns the full stable identity Description if it has not already been admitted.
+- `ASSOCIATIONS` returns the next bounded Association page only.
+- `HISTORY` returns the next bounded Historical Occurrence page only.
+
+A response such as `tell me more about Expansion` or the older `REQUEST_MORE: Expansion` is a protocol violation. The wiretap reports it and executes nothing.
+
+Useful wiretap commands mirror the same protocol so the human can manually perform what the LLM requested:
+
+```text
+send                                  send only the pending CAM delta to the LLM
+response                              reprint the latest raw LLM response
+conversation                          show the full provider message transcript
+packet                                inspect the current/pending CAM delta
+map                                   inspect the current memory availability map
+surfaced                              list currently surfaced concepts
+admitted                              show memory CAM has already admitted this session
+activate <exact concept>              manually execute exact activation
+expand <concept> DESCRIPTION          manually request Description only
+expand <concept> ASSOCIATIONS         manually request the next Association page
+expand <concept> HISTORY              manually request the next History page
+protocol                              reprint the allowed LLM -> CAM vocabulary
+memory ...                            use the same mutable memory interface as playground.py
+new                                   fresh question while keeping memory edits
 help
 quit
 ```
 
-`activate` is deliberately strict. A stored exact name or alias can be surfaced; a misspelling such as `Historical Occurence` is not fuzzy-corrected. This lets the human observe whether the LLM repairs language errors from context and explicitly asks for the correct object.
+The provider response is parsed only for visibility. A valid `EXPAND Expansion HISTORY` prints as `PARSED ONLY, NOT EXECUTED`; the human must decide whether to run the same command.
 
-The provider response is parsed only for visibility. Even a valid `REQUEST_MORE: Expansion` prints as `PARSED ONLY, NOT EXECUTED`; the human must decide whether to run `expand Expansion`.
+This is intentionally a memory-management protocol, not a query language. It contains no `FIND_RELEVANT`, `FIND_LOCATION`, semantic filters, or inference commands.
 
 ## Experimental rules
 
@@ -111,11 +137,12 @@ The provider response is parsed only for visibility. Even a valid `REQUEST_MORE:
 - Unknown or misspelled Concept names do not fuzzy-match; strict activation is intentional for the current experiment.
 - The automated live quest sends synopses, a tiny fixed evidence budget, and a memory-availability map in Packet #1.
 - The manual and wiretap playgrounds use an even smaller synopsis-only Packet #1 so expansion behavior is visible.
-- Expanding a surfaced concept sends its full Description at most once plus another tiny evidence page.
+- Generic manual playground expansion still returns a tiny mixed bundle for the older human-only experiment.
+- Wiretap expansion is channel-specific: Description, Associations, or History only.
 - Every later CAM packet is a delta: previously admitted synopses/descriptions/associations/history are removed from the new packet, not from CAM.
 - Manual memory mutation never silently cascades Concept deletion into Associations or Historical Occurrences.
-- The wiretap LLM can request memory but cannot execute CAM actions.
-- The LLM must cite evidence IDs with its answer in the automated live quest.
+- The wiretap LLM can request CAM operations but cannot execute them.
+- CAM protocol verbs describe memory operations, never semantic goals.
 - A right-sounding answer with unsupported evidence counts as a failure worth investigating.
 
 ## Offline tests
@@ -161,6 +188,8 @@ The benchmark and playgrounds are deliberately small and human-checkable. Useful
 - correct prose supported by the wrong evidence;
 - excessive expansion rounds;
 - requests for unsurfaced concepts;
+- requests for an unavailable or already exhausted channel;
+- protocol violations where the LLM invents its own CAM language;
 - whether the LLM can repair a missed/misspelled explicit object without CAM guessing;
 - token growth caused by repeated memory rather than genuinely new evidence;
 - dangling references or packet failures caused by destructive manual memory edits;

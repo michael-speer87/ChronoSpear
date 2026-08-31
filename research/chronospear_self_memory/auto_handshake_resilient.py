@@ -147,7 +147,8 @@ def main() -> None:
 
     print("CHRONOSPEAR AUTONOMOUS CAM <-> LLM HANDSHAKE: RATE-LIMIT-AWARE")
     print(f"Provider: {base.provider_label()}")
-    print("Protocol: ACTIVATE / EXPAND DESCRIPTION|ASSOCIATIONS|HISTORY / ANSWER")
+    print("Protocol: ACTIVATE / EXPAND DESCRIPTION|ASSOCIATIONS|HISTORY / AND / ANSWER")
+    print("AND: up to four independent current-surface memory commands per LLM turn")
     print("Transport: CAM commands must be plain text, never tool/function calls")
     print(f"Max rounds per question: {args.max_rounds}")
     print(f"429 retries per logical turn: {args.rate_limit_retries}")

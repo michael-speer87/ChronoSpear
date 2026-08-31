@@ -129,6 +129,44 @@ The provider response is parsed only for visibility. A valid `EXPAND Expansion H
 
 This is intentionally a memory-management protocol, not a query language. It contains no `FIND_RELEVANT`, `FIND_LOCATION`, semantic filters, or inference commands.
 
+## Autonomous CAM ↔ LLM handshake benchmark
+
+`auto_handshake.py` removes the human gate while keeping the same protocol and deterministic CAM operations. A valid `ACTIVATE` or `EXPAND` response is executed immediately, the resulting CAM delta is appended to the same reasoning conversation, and the loop continues until `ANSWER`, failure, or the round limit.
+
+Run the seeded nine-question design suite:
+
+```bash
+cd research/chronospear_self_memory
+export CS_DESIGN_PROVIDER=groq
+python auto_handshake.py
+```
+
+Run one custom question:
+
+```bash
+python auto_handshake.py --question "What semantic risk did Expansion expose?"
+```
+
+Useful options:
+
+```text
+--max-rounds N   maximum LLM calls per question; default 10
+--quiet          suppress per-round trace and print only aggregate results
+```
+
+The benchmark records:
+
+- end-to-end wall time per question;
+- provider latency per LLM call;
+- CAM build/operation time separately from provider time;
+- number of LLM calls per question;
+- counts of ACTIVATE and channel-specific EXPAND operations;
+- CAM packet token estimates;
+- numeric provider usage totals returned by Groq/Ollama;
+- final evidence IDs and expected-support hits for the seeded quest.
+
+Protocol violations and invalid CAM operations fail explicitly. The autonomous loop does not interpret or repair an invented command.
+
 ## Experimental rules
 
 - Current associative statements carry explicit confidence/state labels.
@@ -136,12 +174,12 @@ This is intentionally a memory-management protocol, not a query language. It con
 - Literal concept-name/alias recognition is the only language activation used by this harness.
 - Unknown or misspelled Concept names do not fuzzy-match; strict activation is intentional for the current experiment.
 - The automated live quest sends synopses, a tiny fixed evidence budget, and a memory-availability map in Packet #1.
-- The manual and wiretap playgrounds use an even smaller synopsis-only Packet #1 so expansion behavior is visible.
+- The manual, wiretap, and autonomous handshake modes use a synopsis-only Packet #1 so expansion behavior is visible.
 - Generic manual playground expansion still returns a tiny mixed bundle for the older human-only experiment.
-- Wiretap expansion is channel-specific: Description, Associations, or History only.
+- Wiretap/autonomous expansion is channel-specific: Description, Associations, or History only.
 - Every later CAM packet is a delta: previously admitted synopses/descriptions/associations/history are removed from the new packet, not from CAM.
 - Manual memory mutation never silently cascades Concept deletion into Associations or Historical Occurrences.
-- The wiretap LLM can request CAM operations but cannot execute them.
+- The wiretap LLM can request CAM operations but cannot execute them; autonomous mode executes only valid protocol operations.
 - CAM protocol verbs describe memory operations, never semantic goals.
 - A right-sounding answer with unsupported evidence counts as a failure worth investigating.
 
@@ -149,7 +187,7 @@ This is intentionally a memory-management protocol, not a query language. It con
 
 ```bash
 cd research/chronospear_self_memory
-python -m unittest -v test_memory.py test_playground.py test_memory_interface.py test_wiretap_playground.py
+python -m unittest -v test_memory.py test_playground.py test_memory_interface.py test_wiretap_playground.py test_auto_handshake.py
 ```
 
 ## Live quest with Groq
@@ -177,7 +215,7 @@ export OLLAMA_MODEL=qwen2.5-coder:7b
 python live_quest.py
 ```
 
-The same provider variables work with `wiretap_playground.py`.
+The same provider variables work with `wiretap_playground.py` and `auto_handshake.py`.
 
 ## What to watch
 
@@ -192,5 +230,6 @@ The benchmark and playgrounds are deliberately small and human-checkable. Useful
 - protocol violations where the LLM invents its own CAM language;
 - whether the LLM can repair a missed/misspelled explicit object without CAM guessing;
 - token growth caused by repeated memory rather than genuinely new evidence;
+- how much latency belongs to CAM versus the provider/model;
 - dangling references or packet failures caused by destructive manual memory edits;
 - differences between the memory path a human chooses and the path the LLM requests.

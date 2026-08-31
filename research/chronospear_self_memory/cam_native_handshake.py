@@ -11,30 +11,50 @@ from cam_native_provider import LocalCamNativeProvider
 _ORIGINAL_EXECUTE_MEMORY_ACTION = base.execute_memory_action
 
 
+def _rejection_packet(memory, session, reason: str):
+    """Return deterministic CAM state feedback without ending the reasoning session."""
+    return base.MemoryPacket(
+        question=(
+            f"CAM REQUEST REJECTED: {reason}. "
+            "No new memory was supplied. Choose only a command currently listed on the control surface, or ANSWER."
+        ),
+        new_synopses=(),
+        full_descriptions=(),
+        associations=(),
+        history=(),
+        memory_map=base._current_memory_map(memory, session),
+    )
+
+
 def _strict_execute_memory_action(memory, session, decision):
     """Enforce the rendered control surface for standalone EXPAND commands too.
 
-    auto_handshake already validates EXPAND availability inside AND batches. The
-    standalone path previously skipped that check, which allowed a model to keep
-    requesting an exhausted DESCRIPTION/HISTORY/ASSOCIATIONS channel and receive
-    empty deltas indefinitely.
+    A stale standalone request is not a fatal CAM error. CAM reports the
+    deterministic channel state back to the reasoner and leaves the session alive.
     """
     if decision.kind == "expand":
         assert decision.concept is not None
         assert decision.channel is not None
         canonical = memory._resolve_name(decision.concept)
         if canonical not in session.surfaced_concepts:
-            raise ValueError(f"Cannot expand unsurfaced concept: {canonical}")
+            return _rejection_packet(
+                memory,
+                session,
+                f"{canonical} is not currently surfaced",
+            )
 
         state = base._expand_request_state(memory, session, canonical, decision.channel)
         if state == "already_supplied":
-            raise ValueError(
-                f"EXPAND {canonical} {decision.channel} is no longer valid; "
-                "that channel has already been fully supplied"
+            return _rejection_packet(
+                memory,
+                session,
+                f"EXPAND {canonical} {decision.channel} has already been fully supplied",
             )
         if state == "invalid":
-            raise ValueError(
-                f"EXPAND {canonical} {decision.channel} is unavailable on the current control surface"
+            return _rejection_packet(
+                memory,
+                session,
+                f"EXPAND {canonical} {decision.channel} is unavailable on the current control surface",
             )
 
     return _ORIGINAL_EXECUTE_MEMORY_ACTION(memory, session, decision)
@@ -53,9 +73,9 @@ def main() -> None:
     # Deliberately remove CAM School. The trained model receives only the compact native contract.
     base.WIRETAP_SYSTEM_PROMPT = CAM_NATIVE_SYSTEM_PROMPT
 
-    # The generic handshake historically validated stale channels only inside AND.
-    # The CAM-native experiment must enforce the same memory-management rule for
-    # standalone EXPAND commands so an exhausted channel cannot loop on empty deltas.
+    # The CAM-native experiment enforces standalone channel state while keeping
+    # stale requests recoverable. CAM reports deterministic state; the LLM still
+    # chooses what memory to request next.
     base.execute_memory_action = _strict_execute_memory_action
 
     provider = LocalCamNativeProvider(
@@ -67,7 +87,7 @@ def main() -> None:
     print(f"model={args.model}")
     print(f"adapter={'none/base-only' if args.base_only else args.adapter}")
     print(f"system_prompt_characters={len(CAM_NATIVE_SYSTEM_PROMPT)}")
-    print("CAM behavior=strict standalone channel validation")
+    print("CAM behavior=state-aware stale-request feedback")
     print("CAM School=disabled")
     print(f"max_rounds={args.max_rounds}")
 

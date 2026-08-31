@@ -77,7 +77,8 @@ def main() -> None:
         gradient_accumulation_steps=args.gradient_accumulation,
         learning_rate=args.learning_rate,
         lr_scheduler_type="cosine",
-        warmup_ratio=0.05,
+        # Current TRL/Transformers interprets a float < 1 as a ratio of total steps.
+        warmup_steps=0.05,
         logging_steps=5,
         save_strategy="epoch" if not args.smoke else "no",
         eval_strategy="no",

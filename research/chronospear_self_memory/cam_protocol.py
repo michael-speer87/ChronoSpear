@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from memory import MemoryPacket
+
 
 CHANNELS = ("DESCRIPTION", "ASSOCIATIONS", "HISTORY")
 
@@ -62,3 +64,49 @@ def parse_protocol_response(text: str) -> ProtocolDecision:
         "response is outside CAM protocol; expected ACTIVATE <concept>, "
         "EXPAND <concept> DESCRIPTION|ASSOCIATIONS|HISTORY, or ANSWER: ..."
     )
+
+
+def render_control_surface(packet: MemoryPacket) -> str:
+    """Render valid state-aware CAM operations without inferring semantic relevance."""
+    lines = [
+        "CAM CONTROL SURFACE",
+        "Every concept listed below is ALREADY SURFACED. NEVER ACTIVATE a listed concept.",
+        "Use only an EXPAND command explicitly listed below, or ANSWER if memory is sufficient.",
+        "",
+        "Currently surfaced concepts:",
+    ]
+
+    if packet.memory_map:
+        lines.extend(f"- {entry.concept}" for entry in packet.memory_map)
+    else:
+        lines.append("- none")
+
+    commands: list[str] = []
+    for entry in packet.memory_map:
+        if entry.description_remaining:
+            commands.append(f"EXPAND {entry.concept} DESCRIPTION")
+        if entry.associations_remaining > 0:
+            commands.append(f"EXPAND {entry.concept} ASSOCIATIONS")
+        if entry.history_remaining > 0:
+            commands.append(f"EXPAND {entry.concept} HISTORY")
+
+    lines.extend(["", "Valid EXPAND commands right now:"])
+    if commands:
+        lines.extend(f"- {command}" for command in commands)
+    else:
+        lines.append("- none")
+
+    lines.extend(
+        [
+            "",
+            "ACTIVATE rule:",
+            "ACTIVATE may name only an exact stored concept or alias that is NOT currently surfaced above.",
+            "Do not use ACTIVATE to refresh, reopen, or request more memory for an already surfaced concept.",
+        ]
+    )
+    return "\n".join(lines)
+
+
+def render_protocol_packet(packet: MemoryPacket) -> str:
+    """Wrap a CAM memory delta with its deterministic current control surface."""
+    return f"{packet.render()}\n\n{render_control_surface(packet)}"

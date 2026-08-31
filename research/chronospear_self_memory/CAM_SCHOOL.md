@@ -71,6 +71,24 @@ V2 retrieval policy:
 
 The curriculum intentionally uses fictional entities and synthetic evidence IDs. It contains no ChronoSpear benchmark evidence IDs or benchmark answers.
 
+## CAM School v2 protocol-leak observation
+
+The first V2 live probes failed before CAM retrieval because the model exposed the private sufficiency checklist in its visible response:
+
+```text
+What material claim can I not support yet?
+EXPAND Expansion HISTORY
+```
+
+The selected CAM operation was plausible, but the extra self-question violated the deliberately strict external protocol. This is classified as a protocol-leak failure, not evidence-selection failure.
+
+V2.1 therefore keeps the same sufficiency policy but adds a highest-priority output contract:
+
+- sufficiency classification and missing-fact identification are private reasoning only;
+- never emit `INSUFFICIENT`, `PARTIAL`, `SUFFICIENT`, a self-question, rationale, or commentary;
+- the entire visible response must be exactly one valid CAM command/batch or the two-line `ANSWER` / `EVIDENCE` form;
+- the protocol parser remains strict so future leakage stays observable rather than being silently repaired by the harness.
+
 ## Targeted probes
 
 Run:
@@ -84,14 +102,16 @@ For the semantic-risk question, desired behavior is:
 
 - reject merely adjacent widening evidence as insufficient;
 - retrieve until the semantic-overreach evidence appears;
-- stop immediately once that evidence directly supports the answer.
+- stop immediately once that evidence directly supports the answer;
+- expose no private sufficiency reasoning in protocol output.
 
 For the 8/31-changing question, desired behavior is:
 
 - retrieve enough evidence to distinguish observed widening/overreach behavior from later hypotheses;
 - preserve hypothesis language rather than upgrading it into a locked change;
 - avoid broad repeated History sweeps across every surfaced concept;
-- stop once the requested current state of thinking can be stated at the correct evidence strength.
+- stop once the requested current state of thinking can be stated at the correct evidence strength;
+- expose no private sufficiency reasoning in protocol output.
 
 ## Full A/B metrics
 
@@ -109,20 +129,22 @@ Compare at minimum:
 - active provider time;
 - throttle wait separately;
 - redundant retrievals after sufficient evidence was already admitted;
-- unnecessary branching into adjacent surfaced concepts.
+- unnecessary branching into adjacent surfaced concepts;
+- protocol leakage of private sufficiency reasoning.
 
 The school runner prints `curriculum_characters` and notes that provider prompt-token totals include the school prompt while CAM packet estimates do not.
 
 ## Interpretation
 
-A positive V2 result would not prove that model fine-tuning is required. It would support the narrower hypothesis that learned evidence-sufficiency and selective-navigation behavior improves bounded-memory reasoning.
+A positive V2.1 result would not prove that model fine-tuning is required. It would support the narrower hypothesis that learned evidence-sufficiency and selective-navigation behavior improves bounded-memory reasoning while remaining compatible with a tiny deterministic external protocol.
 
-The strongest signal would be a middle path between the two observed extremes:
+The strongest signal would be a middle path between the observed extremes:
 
 ```text
 unschooled: related evidence -> answer too early
 v1 school: more memory exists -> retrieve too much
-v2 target: unsupported material claim -> retrieve narrowly -> direct support -> stop
+v2: private reasoning leaked into protocol output
+v2.1 target: unsupported material claim -> retrieve narrowly -> direct support -> stop -> emit only protocol
 ```
 
 If a synthetic curriculum consistently moves the model toward that middle path, a CAM interaction dataset and later fine-tuning become much more justified experiments.

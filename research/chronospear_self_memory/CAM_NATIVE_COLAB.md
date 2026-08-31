@@ -59,6 +59,18 @@ Install the experiment dependencies:
 !python -m pip install -q -r requirements-cam-native.txt
 ```
 
+### Remove Colab's stale optional torchao package
+
+As of August 2026, Colab may preinstall `torchao==0.10.0`. Current PEFT rejects an installed torchao older than 0.16.0 during LoRA adapter injection, even when this experiment is not using torchao quantization.
+
+ChronoSpear's CAM-native LoRA experiment does not use torchao. Remove the stale optional package before the smoke test:
+
+```bash
+!python -m pip uninstall -y torchao
+```
+
+The next `!python ...` command starts a fresh Python process, so a runtime restart is not normally required just for this uninstall.
+
 Restart the runtime only if Colab explicitly says a restart is required after dependency installation. If restarted, return to the unpacked training directory before continuing.
 
 ## Smoke training

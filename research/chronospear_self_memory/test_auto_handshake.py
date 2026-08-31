@@ -92,6 +92,51 @@ class AutoHandshakeTests(unittest.TestCase):
         self.assertEqual(result.commands["ANSWER"], 1)
         self.assertEqual(len(result.rounds[0].decision.operations), 2)  # type: ignore[union-attr]
 
+    def test_and_batch_repeated_description_is_noop_while_history_continues(self) -> None:
+        provider = FakeProvider(
+            [
+                "EXPAND Expansion HISTORY AND EXPAND Expansion DESCRIPTION",
+                "EXPAND Expansion HISTORY AND EXPAND Expansion DESCRIPTION",
+                "ANSWER: The experiment exposed semantic overreach.\nEVIDENCE: o-0831-overreach",
+            ]
+        )
+
+        result = run_question(
+            "What semantic risk did the Expansion experiment expose?",
+            expected_support_any=frozenset({"o-0831-overreach"}),
+            provider_fn=provider,
+            verbose=False,
+        )
+
+        self.assertEqual(result.status, "answered")
+        self.assertEqual(provider.calls, 3)
+        self.assertEqual(result.commands["AND_BATCH"], 2)
+        self.assertEqual(result.commands["EXPAND HISTORY"], 2)
+        self.assertEqual(result.commands["EXPAND DESCRIPTION"], 2)
+        self.assertTrue(result.support_hit)
+
+    def test_and_batch_all_already_supplied_requests_return_empty_delta(self) -> None:
+        provider = FakeProvider(
+            [
+                "EXPAND Identity Node DESCRIPTION AND EXPAND Relationship Type DESCRIPTION",
+                "EXPAND Identity Node DESCRIPTION AND EXPAND Relationship Type DESCRIPTION",
+                "ANSWER: Relationship Type is vocabulary while Identity Node is an enduring identity.\nEVIDENCE: none",
+            ]
+        )
+
+        result = run_question(
+            "Why is Relationship Type not an Identity Node?",
+            provider_fn=provider,
+            verbose=False,
+        )
+
+        self.assertEqual(result.status, "answered")
+        self.assertEqual(provider.calls, 3)
+        self.assertEqual(result.commands["AND_BATCH"], 2)
+        second_delta = provider.messages_seen[2][-1]["content"]
+        self.assertIn("New full identity descriptions:\n- none", second_delta)
+        self.assertIn("CAM CONTROL SURFACE", second_delta)
+
     def test_and_batch_rejects_dependent_activate_then_expand(self) -> None:
         provider = FakeProvider(
             [

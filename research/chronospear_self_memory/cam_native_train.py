@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+from importlib.metadata import version
 from pathlib import Path
 
 
@@ -69,7 +70,6 @@ def main() -> None:
 
     training_args = SFTConfig(
         output_dir=args.output_dir,
-        overwrite_output_dir=True,
         num_train_epochs=args.epochs,
         max_steps=20 if args.smoke else -1,
         per_device_train_batch_size=args.batch_size,
@@ -98,6 +98,7 @@ def main() -> None:
     print(f"train_examples={len(dataset['train'])}")
     print(f"eval_examples={len(dataset['eval'])}")
     print(f"cuda={cuda} bf16={bf16} fp16={fp16}")
+    print(f"torch={version('torch')} transformers={version('transformers')} trl={version('trl')} peft={version('peft')}")
     print(f"lora_rank={args.lora_rank} target_modules=all-linear")
     print(f"output_dir={Path(args.output_dir).resolve()}")
     if args.smoke:

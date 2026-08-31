@@ -109,25 +109,55 @@ def _execute_single_memory_action(
     raise ValueError(f"Decision kind is not a CAM memory action: {decision.kind}")
 
 
-def _channel_is_available(memory: DesignMemory, session: MemorySession, canonical: str, channel: str) -> bool:
-    entry = memory._map_entry(canonical, session)
+def _expand_request_state(
+    memory: DesignMemory,
+    session: MemorySession,
+    canonical: str,
+    channel: str,
+) -> str:
+    """Classify a channel request using delivery bookkeeping only."""
     if channel == "DESCRIPTION":
-        return entry.description_remaining
+        concept = memory.concepts[canonical]
+        if canonical in session.seen_descriptions:
+            return "already_supplied"
+        return "valid" if concept.description else "invalid"
+
     if channel == "ASSOCIATIONS":
-        return entry.associations_remaining > 0
+        ids = {
+            association.id
+            for association in memory.associations
+            if association.source == canonical or association.target == canonical
+        }
+        if not ids:
+            return "invalid"
+        if ids.issubset(session.seen_associations):
+            return "already_supplied"
+        return "valid"
+
     if channel == "HISTORY":
-        return entry.history_remaining > 0
-    return False
+        ids = {
+            occurrence.id
+            for occurrence in memory.occurrences
+            if canonical in occurrence.participants
+        }
+        if not ids:
+            return "invalid"
+        if ids.issubset(session.seen_history):
+            return "already_supplied"
+        return "valid"
+
+    return "invalid"
 
 
 def _validate_and_batch(
     memory: DesignMemory,
     session: MemorySession,
     operations: tuple[ProtocolDecision, ...],
-) -> None:
-    """Validate every AND operation against one unchanged pre-batch surface."""
+) -> tuple[ProtocolDecision, ...]:
+    """Validate against one pre-batch surface and drop only already-delivered requests."""
     surfaced_before = set(session.surfaced_concepts)
     seen_operations: set[tuple[str, str, str | None]] = set()
+    executable: list[ProtocolDecision] = []
 
     for operation in operations:
         if operation.kind == "activate":
@@ -138,6 +168,7 @@ def _validate_and_batch(
                     f"AND batch ACTIVATE is invalid on pre-batch surface; already surfaced: {canonical}"
                 )
             key = ("activate", canonical, None)
+            state = "valid"
         elif operation.kind == "expand":
             assert operation.concept is not None
             assert operation.channel is not None
@@ -146,12 +177,13 @@ def _validate_and_batch(
                 raise ValueError(
                     f"AND batch EXPAND is invalid on pre-batch surface; concept was not surfaced: {canonical}"
                 )
-            if not _channel_is_available(memory, session, canonical, operation.channel):
+            key = ("expand", canonical, operation.channel)
+            state = _expand_request_state(memory, session, canonical, operation.channel)
+            if state == "invalid":
                 raise ValueError(
                     f"AND batch EXPAND is invalid on pre-batch surface; "
                     f"{canonical} {operation.channel} is unavailable"
                 )
-            key = ("expand", canonical, operation.channel)
         else:
             raise ValueError("AND may join only ACTIVATE and EXPAND memory commands")
 
@@ -159,10 +191,34 @@ def _validate_and_batch(
             raise ValueError(f"duplicate operation in AND batch: {key}")
         seen_operations.add(key)
 
+        if state == "valid":
+            executable.append(operation)
+        # already_supplied is intentionally an idempotent no-op inside AND.
 
-def _merge_packets(packets: list[MemoryPacket]) -> MemoryPacket:
+    return tuple(executable)
+
+
+def _current_memory_map(memory: DesignMemory, session: MemorySession):
+    return tuple(
+        memory._map_entry(name, session)
+        for name in sorted(session.surfaced_concepts)
+    )
+
+
+def _merge_packets(
+    packets: list[MemoryPacket],
+    memory: DesignMemory,
+    session: MemorySession,
+) -> MemoryPacket:
     if not packets:
-        raise ValueError("cannot merge an empty AND batch")
+        return MemoryPacket(
+            question="AND BATCH",
+            new_synopses=(),
+            full_descriptions=(),
+            associations=(),
+            history=(),
+            memory_map=_current_memory_map(memory, session),
+        )
 
     return MemoryPacket(
         question="AND BATCH",
@@ -185,17 +241,17 @@ def execute_memory_action(
     if not decision.operations:
         raise ValueError("AND batch contains no operations")
 
-    _validate_and_batch(memory, session, decision.operations)
+    executable = _validate_and_batch(memory, session, decision.operations)
 
-    # AND is a parallel request set, not a script. Execute all exact activations first
-    # so expansion side-effects cannot invalidate another independent activation.
-    ordered = [operation for operation in decision.operations if operation.kind == "activate"]
-    ordered.extend(operation for operation in decision.operations if operation.kind == "expand")
+    # AND is a parallel request set, not a script. Every operation was validated
+    # against the same pre-batch surface. Already-supplied EXPAND requests are no-ops.
+    ordered = [operation for operation in executable if operation.kind == "activate"]
+    ordered.extend(operation for operation in executable if operation.kind == "expand")
     packets = [
         _execute_single_memory_action(memory, session, operation)
         for operation in ordered
     ]
-    return _merge_packets(packets)
+    return _merge_packets(packets, memory, session)
 
 
 def command_label(decision: ProtocolDecision) -> str:
@@ -348,7 +404,7 @@ def run_question(
         result.cam_packet_estimated_tokens += packet.estimated_tokens
 
         if verbose:
-            payload_note = "payload" if packet_has_payload(packet) else "empty channel result"
+            payload_note = "payload" if packet_has_payload(packet) else "empty/idempotent result"
             print(f"CAM -> {payload_note} in {cam_ms:.3f} ms")
             print_packet_summary(packet)
     else:
@@ -464,7 +520,7 @@ def main() -> None:
     parser.add_argument(
         "--quiet",
         action="store_true",
-        help="Suppress per-round traces and print only the suite summary.",
+        help="Suppress per-round trace and print only aggregate results.",
     )
     args = parser.parse_args()
 

@@ -122,7 +122,7 @@ class MemoryPacket:
                 "Treat LOCKED as current architecture, EXPERIMENTALLY_PROVEN as test evidence, "
                 "HYPOTHESIS as not yet locked, PARKED as deferred, REJECTED as historical only, "
                 "and UNRESOLVED as still open. Do not promote a hypothesis into a locked decision. "
-                "If evidence is insufficient, request more memory about a surfaced concept by name.",
+                "Use the active reasoning-session protocol to request additional memory.",
             ]
         )
         return "\n".join(lines)
@@ -192,6 +192,49 @@ class DesignMemory:
         if canonical not in session.surfaced_concepts:
             raise ValueError(f"Cannot expand unsurfaced concept: {canonical}")
         return self._packet("EXPANSION", (canonical,), session, budget, include_description=True)
+
+    def expand_channel(
+        self,
+        concept_name: str,
+        channel: str,
+        session: MemorySession,
+        *,
+        page_size: int = 1,
+    ) -> MemoryPacket:
+        """Reveal one deterministic memory channel without interpreting why it was requested."""
+        if page_size < 1:
+            raise ValueError("page_size must be at least 1")
+
+        canonical = self._resolve_name(concept_name)
+        if canonical not in session.surfaced_concepts:
+            raise ValueError(f"Cannot expand unsurfaced concept: {canonical}")
+
+        normalized = channel.casefold().strip()
+        if normalized == "description":
+            return self._packet(
+                "EXPAND DESCRIPTION",
+                (canonical,),
+                session,
+                PacketBudget(0, 0),
+                include_description=True,
+            )
+        if normalized == "associations":
+            return self._packet(
+                "EXPAND ASSOCIATIONS",
+                (canonical,),
+                session,
+                PacketBudget(page_size, 0),
+                include_description=False,
+            )
+        if normalized == "history":
+            return self._packet(
+                "EXPAND HISTORY",
+                (canonical,),
+                session,
+                PacketBudget(0, page_size),
+                include_description=False,
+            )
+        raise ValueError("channel must be DESCRIPTION, ASSOCIATIONS, or HISTORY")
 
     def resolve_surfaced_request(self, request: str, session: MemorySession) -> str | None:
         lowered = request.casefold()

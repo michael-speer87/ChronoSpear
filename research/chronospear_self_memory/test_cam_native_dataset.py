@@ -34,12 +34,16 @@ class CamNativeDatasetTests(unittest.TestCase):
             self.assertNotIn(forbidden, text)
 
     def test_eval_uses_distinct_name_vocabulary(self) -> None:
-        train = json.dumps([example.to_json() for example in build_examples("train", 2, 417)])
-        eval_text = json.dumps([example.to_json() for example in build_examples("eval", 2, 418)])
-        self.assertIn("Amber", train + " Copper")
-        self.assertNotIn("Quartz", train)
-        self.assertIn("Quartz", eval_text + " Quartz")
-        self.assertNotIn("Amber Beacon", eval_text)
+        train = json.dumps([example.to_json() for example in build_examples("train", 4, 417)])
+        eval_text = json.dumps([example.to_json() for example in build_examples("eval", 4, 418)])
+
+        eval_only_words = ("Quartz", "Juniper", "Obsidian", "Saffron", "Violet", "Marble", "Cobalt", "Birch")
+        train_only_words = ("Amber", "Copper", "Ivory", "Moss", "Silver", "Cinder", "Willow", "Echo")
+
+        for word in eval_only_words:
+            self.assertNotIn(word, train)
+        for word in train_only_words:
+            self.assertNotIn(word, eval_text)
 
     def test_native_prompt_is_compact_and_forbids_visible_reasoning(self) -> None:
         self.assertLess(len(CAM_NATIVE_SYSTEM_PROMPT), 1400)

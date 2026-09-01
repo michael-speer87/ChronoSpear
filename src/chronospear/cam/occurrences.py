@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from chronospear.cam.catalog import IdentityCatalog
-from chronospear.cam.identifiers import NodeId, OccurrenceId
+from chronospear.cam.identifiers import IdentityId, OccurrenceId
 from chronospear.cam.identity import IdentityKind
 from chronospear.cam.time import ChronoStamp
 
@@ -21,16 +21,16 @@ class HistoricalOccurrence:
     stamp: ChronoStamp
     synopsis: str
     story: str
-    participants: tuple[NodeId, ...] = ()
-    place: NodeId | None = None
+    participants: tuple[IdentityId, ...] = ()
+    place: IdentityId | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.stamp, ChronoStamp):
             raise TypeError("Historical Occurrence stamp must be a ChronoStamp.")
-        if any(not isinstance(participant, NodeId) for participant in self.participants):
-            raise TypeError("Historical Occurrence participants must be NodeId values.")
-        if self.place is not None and not isinstance(self.place, NodeId):
-            raise TypeError("Historical Occurrence place must be a NodeId or None.")
+        if any(not isinstance(participant, IdentityId) for participant in self.participants):
+            raise TypeError("Historical Occurrence participants must be IdentityId values.")
+        if self.place is not None and not isinstance(self.place, IdentityId):
+            raise TypeError("Historical Occurrence place must be an IdentityId or None.")
         if not self.participants and self.place is None:
             raise ValueError(
                 "Historical Occurrence requires at least one participant or place."

@@ -55,6 +55,24 @@ CAM is authoritative for the next action
 - A player's statement may be stored in the Interaction Log without becoming world truth.
 - Future LLM sessions may receive a bounded recent Interaction Log window ordered by SystemTime.
 
+## Boundary: campaign save format vs runtime CAM
+
+ChronoSpear campaigns are intended to have a human-editable JSON representation.
+
+The JSON campaign file is the portable save/interchange representation of a world, not the runtime CAM object model itself.
+
+Rules for the eventual storage layer:
+
+- Save/load must preserve stable Identity, Association, Occurrence, and temporal identifiers rather than regenerating them.
+- Loading JSON must validate the same CAM invariants enforced by the runtime catalogs; editable does not mean blindly trusted.
+- Broken references, invalid Relationship Types, invalid Historical Occurrence participants, or invalid Places must fail with useful validation errors rather than silently damaging the graph.
+- A future CAM world editor/controller should read and write the same campaign representation so DMs do not need to understand CAM internals to author worlds.
+- Advanced users may intentionally edit campaign JSON directly or generate it with external tooling.
+- Campaign-preparation tooling may rewrite seeded world history before play. Runtime ChronoSpear should still treat admitted Historical Occurrences as immutable during normal play unless a future explicit correction mechanism such as VARA applies.
+- The public campaign format should remain clearer and more stable than whatever internal indexes CAM eventually uses for efficient runtime retrieval.
+
+No JSON persistence implementation is part of Slice 1 or Slice 2.
+
 ## Boundary: time
 
 There are two coordinates:

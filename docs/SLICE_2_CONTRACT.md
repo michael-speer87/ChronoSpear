@@ -14,15 +14,15 @@ An occurrence is graph-addressable, but it is **not** an `IdentityNode`, is **no
 
 Canonical Slice 2 shape:
 
-`OccurrenceId + ChronoStamp + participant NodeIds + optional Place NodeId + synopsis + story`
+`OccurrenceId + ChronoStamp + participant IdentityIds + optional Place IdentityId + synopsis + story`
 
 ## Must do
 
 - Add stable type-specific `OccurrenceId` values.
 - Represent `HistoricalOccurrence` as immutable.
 - Capture one immutable `ChronoStamp` containing both WorldTime and SystemTime.
-- Store zero or more participant `NodeId` values.
-- Optionally store one explicit place `NodeId`.
+- Store zero or more participant `IdentityId` values.
+- Optionally store one explicit place `IdentityId`.
 - Require at least one graph anchor: one participant or one place.
 - Require non-empty synopsis and story text.
 - Preserve participant order supplied by the caller.
@@ -84,7 +84,7 @@ Slice 2 stores both but does not generate, summarize, rank, or interpret either 
 
 ### Place
 
-`place` is an explicit optional graph anchor and must reference an existing `IdentityKind.PLACE` node.
+`place` is an explicit optional graph anchor and must reference an existing `IdentityKind.PLACE` identity through its `IdentityId`.
 
 Location meaning is not embedded into Entity records.
 
@@ -101,10 +101,10 @@ ChronoStamp remains a captured coordinate pair, not a clock owner.
 
 1. HistoricalOccurrence != IdentityNode.
 2. HistoricalOccurrence != Association.
-3. OccurrenceId != NodeId != AssociationId.
+3. OccurrenceId != IdentityId != AssociationId.
 4. Historical Occurrence records are immutable after construction.
 5. An occurrence must have at least one participant or place anchor.
-6. All referenced Identity Node IDs must exist when admitted to the catalog.
+6. All referenced Identity IDs must exist when admitted to the catalog.
 7. Explicit place must refer to a Place Identity.
 8. Synopsis and story cannot be blank.
 9. Duplicate participants in one occurrence are rejected.

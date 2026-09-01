@@ -15,6 +15,9 @@ from chronospear.cam import (
     WorldTime,
 )
 
+_DEFAULT_PARTICIPANTS = (NodeId("alric"), NodeId("royal_guard"))
+_DEFAULT_PLACE = NodeId("stonebridge")
+
 
 def _nodes() -> IdentityCatalog:
     nodes = IdentityCatalog()
@@ -34,8 +37,8 @@ def _occurrence(
     stamp: ChronoStamp | None = None,
     synopsis: str = "Alric joined the Royal Guard.",
     story: str = "Alric formally joined the Royal Guard at Stonebridge.",
-    participants: tuple[NodeId, ...] = (NodeId("alric"), NodeId("royal_guard")),
-    place: NodeId | None = NodeId("stonebridge"),
+    participants: tuple[NodeId, ...] = _DEFAULT_PARTICIPANTS,
+    place: NodeId | None = _DEFAULT_PLACE,
 ) -> HistoricalOccurrence:
     return HistoricalOccurrence(
         occurrence_id=OccurrenceId(occurrence_id),
@@ -58,7 +61,7 @@ def test_historical_occurrence_is_immutable() -> None:
     occurrence = _occurrence()
 
     with pytest.raises(FrozenInstanceError):
-        setattr(occurrence, "synopsis", "Changed")
+        occurrence.synopsis = "Changed"  # type: ignore[misc]
 
 
 def test_historical_occurrence_normalizes_synopsis_and_story() -> None:

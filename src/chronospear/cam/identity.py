@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import StrEnum
 
-from chronospear.cam.identifiers import NodeId
+from chronospear.cam.identifiers import IdentityId
 
 
 class IdentityKind(StrEnum):
@@ -29,7 +29,7 @@ class IdentityNode:
     Python validator.
     """
 
-    node_id: NodeId
+    identity_id: IdentityId
     name: str
     kind: IdentityKind
     description: str = ""

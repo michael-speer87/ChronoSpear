@@ -8,9 +8,9 @@ from chronospear.cam import (
     AssociationCatalog,
     AssociationId,
     IdentityCatalog,
+    IdentityId,
     IdentityKind,
     IdentityNode,
-    NodeId,
     RelationshipType,
     RelationshipVocabulary,
 )
@@ -37,12 +37,12 @@ class ScriptedProvider:
 
 def _cam_fixture() -> tuple[EvidenceBundle, WhitelistExpansionResolver]:
     nodes = IdentityCatalog()
-    alric = nodes.add(IdentityNode(NodeId("alric"), "Alric", IdentityKind.ENTITY))
+    alric = nodes.add(IdentityNode(IdentityId("alric"), "Alric", IdentityKind.ENTITY))
     guard = nodes.add(
-        IdentityNode(NodeId("royal_guard"), "Royal Guard", IdentityKind.ENTITY)
+        IdentityNode(IdentityId("royal_guard"), "Royal Guard", IdentityKind.ENTITY)
     )
     bridge = nodes.add(
-        IdentityNode(NodeId("stonebridge"), "Stonebridge", IdentityKind.PLACE)
+        IdentityNode(IdentityId("stonebridge"), "Stonebridge", IdentityKind.PLACE)
     )
 
     vocabulary = RelationshipVocabulary()
@@ -50,17 +50,33 @@ def _cam_fixture() -> tuple[EvidenceBundle, WhitelistExpansionResolver]:
     based_in = vocabulary.register(RelationshipType("BASED_IN"))
     associations = AssociationCatalog(nodes=nodes, vocabulary=vocabulary)
     membership = associations.add(
-        Association(AssociationId("A1"), alric.node_id, member_of, guard.node_id)
+        Association(
+            AssociationId("A1"),
+            alric.identity_id,
+            member_of,
+            guard.identity_id,
+        )
     )
     headquarters = associations.add(
-        Association(AssociationId("A2"), guard.node_id, based_in, bridge.node_id)
+        Association(
+            AssociationId("A2"),
+            guard.identity_id,
+            based_in,
+            bridge.identity_id,
+        )
     )
 
     initial = EvidenceBundle(
         "initial",
         (
-            f"NODE {alric.node_id} | {alric.kind} | {alric.name} | {alric.description}",
-            f"NODE {guard.node_id} | {guard.kind} | {guard.name} | {guard.description}",
+            (
+                f"NODE {alric.identity_id} | {alric.kind} | "
+                f"{alric.name} | {alric.description}"
+            ),
+            (
+                f"NODE {guard.identity_id} | {guard.kind} | "
+                f"{guard.name} | {guard.description}"
+            ),
             (
                 f"ASSOC {membership.association_id} | {membership.source} "
                 f"--{membership.relationship}--> {membership.target}"
@@ -72,7 +88,7 @@ def _cam_fixture() -> tuple[EvidenceBundle, WhitelistExpansionResolver]:
             "node:stonebridge": EvidenceBundle(
                 "node:stonebridge",
                 (
-                    f"NODE {bridge.node_id} | {bridge.kind} | "
+                    f"NODE {bridge.identity_id} | {bridge.kind} | "
                     f"{bridge.name} | {bridge.description}",
                 ),
             ),

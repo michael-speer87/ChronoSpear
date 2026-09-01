@@ -6,6 +6,7 @@ import auto_handshake as base
 from benchmark import QUESTS
 from cam_native_dataset import CAM_NATIVE_SYSTEM_PROMPT
 from cam_native_provider import LocalCamNativeProvider
+from llama_cpp_provider import LlamaCppCamNativeProvider
 from memory import PacketBudget
 
 
@@ -116,10 +117,28 @@ def _rich_build_initial_packet(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Run the real ChronoSpear CAM handshake with a local base or CAM-native LoRA model.")
+    parser = argparse.ArgumentParser(
+        description="Run the real ChronoSpear CAM handshake with a local Transformers or llama.cpp provider."
+    )
+    parser.add_argument(
+        "--provider",
+        choices=("transformers", "llama-cpp"),
+        default="transformers",
+        help="Inference backend. Defaults to the existing local Transformers provider.",
+    )
     parser.add_argument("--model", default="Qwen/Qwen3-0.6B")
     parser.add_argument("--adapter", default="cam_native_adapter_qwen3_0_6b")
-    parser.add_argument("--base-only", action="store_true", help="Use the untrained base model as a control.")
+    parser.add_argument("--base-only", action="store_true", help="Use the untrained Transformers base model as a control.")
+    parser.add_argument(
+        "--llama-url",
+        default="http://127.0.0.1:8080/v1",
+        help="OpenAI-compatible llama.cpp server base URL.",
+    )
+    parser.add_argument(
+        "--llama-model",
+        default="cam-native-v1",
+        help="Model alias sent to llama.cpp chat completions.",
+    )
     parser.add_argument("--question")
     parser.add_argument("--max-rounds", type=int, default=10)
     parser.add_argument("--quiet", action="store_true")
@@ -134,6 +153,9 @@ def main() -> None:
         help="Append compact CAM memory semantics to the handshake system prompt.",
     )
     args = parser.parse_args()
+
+    if args.provider == "llama-cpp" and args.base_only:
+        parser.error("--base-only applies only to the Transformers provider; choose the model loaded by llama-server instead")
 
     # Deliberately remove CAM School. The trained model receives only the compact native contract.
     effective_system_prompt = CAM_NATIVE_SYSTEM_PROMPT
@@ -150,14 +172,34 @@ def main() -> None:
         base.INITIAL_BUDGET = RICH_INITIAL_BUDGET
         base.DesignMemory.build_initial_packet = _rich_build_initial_packet
 
-    provider = LocalCamNativeProvider(
-        model_name=args.model,
-        adapter_path=None if args.base_only else args.adapter,
-    )
+    if args.provider == "llama-cpp":
+        provider = LlamaCppCamNativeProvider(
+            base_url=args.llama_url,
+            model=args.llama_model,
+        )
+        provider_label_text = f"llama.cpp / {args.llama_model} @ {args.llama_url}"
+    else:
+        provider = LocalCamNativeProvider(
+            model_name=args.model,
+            adapter_path=None if args.base_only else args.adapter,
+        )
+        adapter_label = "none/base-only" if args.base_only else args.adapter
+        provider_label_text = f"transformers / {args.model} / {adapter_label}"
+
+    # auto_handshake historically inherited the Groq label from wiretap_playground.
+    # Override only its reporting hook so experiment summaries identify the backend
+    # that actually ran without changing handshake behavior.
+    base.provider_label = lambda: provider_label_text
 
     print("CHRONOSPEAR CAM-NATIVE LOCAL HANDSHAKE")
-    print(f"model={args.model}")
-    print(f"adapter={'none/base-only' if args.base_only else args.adapter}")
+    print(f"provider_backend={args.provider}")
+    if args.provider == "llama-cpp":
+        print(f"llama_server={args.llama_url}")
+        print(f"llama_model_alias={args.llama_model}")
+        print("adapter=preloaded by llama-server")
+    else:
+        print(f"model={args.model}")
+        print(f"adapter={'none/base-only' if args.base_only else args.adapter}")
     print(f"CAM literacy={'enabled' if args.cam_literacy else 'disabled'}")
     print(f"system_prompt_characters={len(effective_system_prompt)}")
     print("CAM behavior=state-aware stale-request feedback")

@@ -9,6 +9,38 @@ from cam_native_handshake import _strict_execute_memory_action
 from cam_native_provider import LocalCamNativeProvider
 
 
+RICH_INITIAL_BUDGET = base.PacketBudget(
+    associations_per_concept=3,
+    history_per_concept=5,
+)
+
+
+def _rich_build_initial_packet(
+    self,
+    question: str,
+    session: base.MemorySession,
+    budget: base.PacketBudget = RICH_INITIAL_BUDGET,
+) -> base.MemoryPacket:
+    """Build a richer opening workspace without adding semantic retrieval.
+
+    Only concepts explicitly activated by the question receive their full Description
+    and opening Association/History budget. Evidence surfaced by those records may
+    introduce additional concept synopses, but their descriptions are not recursively
+    included.
+    """
+    activated = self.activate(question)
+    if not activated:
+        raise ValueError("No explicit ChronoSpear concept was activated by the question")
+    session.surfaced_concepts.update(activated)
+    return self._packet(
+        question,
+        activated,
+        session,
+        budget,
+        include_description=True,
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run the real ChronoSpear CAM handshake with the CAM-native V2 adapter.")
     parser.add_argument("--model", default="Qwen/Qwen3-0.6B")
@@ -22,6 +54,11 @@ def main() -> None:
     base.WIRETAP_SYSTEM_PROMPT = CAM_NATIVE_SYSTEM_PROMPT_V2
     base.execute_memory_action = _strict_execute_memory_action
 
+    # Rich-opening experiment: keep the trained V2 model and all later CAM expansion
+    # behavior unchanged. Only Packet #1 changes.
+    base.INITIAL_BUDGET = RICH_INITIAL_BUDGET
+    base.DesignMemory.build_initial_packet = _rich_build_initial_packet
+
     provider = LocalCamNativeProvider(
         model_name=args.model,
         adapter_path=None if args.base_only else args.adapter,
@@ -32,6 +69,8 @@ def main() -> None:
     print(f"adapter={'none/base-only' if args.base_only else args.adapter}")
     print(f"system_prompt_characters={len(CAM_NATIVE_SYSTEM_PROMPT_V2)}")
     print("CAM behavior=state-aware stale-request feedback")
+    print("initial packet=full starting descriptions + up to 3 associations + up to 5 history each")
+    print("later expansion behavior=unchanged")
     print("training behavior=multi-round V2")
     print("CAM School=disabled")
     print(f"max_rounds={args.max_rounds}")

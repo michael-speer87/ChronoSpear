@@ -14,6 +14,9 @@ Slice 1 is the floor, not the brain. It establishes immutable/controlled domain 
 - Identity kinds in this slice are exactly Entity, Place, and Describer.
 - Keep Identity independent from mutable relationships. An Entity does not own location/faction/etc.
 - Represent Relationship Types as intentional controlled vocabulary.
+- Define the locked core Relationship Types: `IS_A`, `MEMBER_OF`, `PART_OF`, `LOCATED_IN`, `BASED_IN`, `OWNS`, and `OPPOSES`.
+- Provide `RelationshipVocabulary.core()` as a fresh vocabulary containing exactly the locked core. A plain `RelationshipVocabulary()` remains empty so custom vocabularies can still be built intentionally.
+- Do not include perspective or domain-specific semantics such as `KNOWS`, `FRIEND_OF`, `PARENT_OF`, or `ATTACKS` in the core.
 - Represent Associations as addressable directed `(source, relationship, target)` assertions.
 - Permit multiple distinct Relationship Types between the same endpoint Nodes.
 - Reject unknown Association endpoints in the invariant catalog.
@@ -48,13 +51,14 @@ Slice 1 is the floor, not the brain. It establishes immutable/controlled domain 
 1. Identity != occurrence.
 2. Association != identity.
 3. Relationship Type != identity/node.
-4. Language Surface != truth (reserved for later).
-5. Calendar concept != WorldTime (reserved for later).
-6. Audit != world History (reserved for later).
-7. WT != ST even when their numeric values happen to match.
-8. ChronoStamp captures coordinates; it does not own or advance the authoritative clocks.
-9. Identity Node descriptions must not be used to smuggle mutable/secret/perspective facts. This is partly a semantic/code-review invariant, not something a validator can fully prove.
-10. Legacy `Entity.place` is explicitly rejected as a CAM foundation assumption.
+4. Core Relationship vocabulary stays small, stable, and perspective-neutral.
+5. Language Surface != truth (reserved for later).
+6. Calendar concept != WorldTime (reserved for later).
+7. Audit != world History (reserved for later).
+8. WT != ST even when their numeric values happen to match.
+9. ChronoStamp captures coordinates; it does not own or advance the authoritative clocks.
+10. Identity Node descriptions must not be used to smuggle mutable/secret/perspective facts. This is partly a semantic/code-review invariant, not something a validator can fully prove.
+11. Legacy `Entity.place` is explicitly rejected as a CAM foundation assumption.
 
 ## Acceptance behavior
 
@@ -65,6 +69,9 @@ The test suite must prove:
 - Identity Node records are immutable in Slice 1.
 - Identity ID conflicts are rejected.
 - Relationship Types require canonical `UPPER_SNAKE_CASE` names.
+- The core vocabulary contains exactly the seven locked Relationship Types.
+- Plain vocabularies still require intentional registration.
+- Core vocabulary instances are independent and can be extended without mutating another instance.
 - Unknown Relationship Types are not accepted by the vocabulary.
 - Conflicting redefinitions of an existing Relationship Type are rejected.
 - Associations preserve directionality.

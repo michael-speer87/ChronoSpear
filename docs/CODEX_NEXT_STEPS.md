@@ -1,10 +1,13 @@
-# Codex Handoff After Slice 1
+# Codex Handoff After Slice 2
 
 ## What you are receiving
 
-A deliberately small greenfield ChronoSpear repository containing Production Slice 1: CAM Core Primitives.
+A deliberately small ChronoSpear production CAM containing:
 
-The repository already includes the architecture constitution and known future graph/memory object taxonomy. Treat those documents as constraints, not suggestions.
+- Slice 1: CAM Core Primitives
+- Slice 2: Immutable Historical Occurrences
+
+The repository includes the architecture constitution, graph/memory taxonomy, and explicit slice contracts. Treat those documents as constraints, not suggestions.
 
 ## Your immediate job when this repository is handed to you
 
@@ -14,8 +17,9 @@ The repository already includes the architecture constitution and known future g
    - `pytest`
    - `ruff check .`
    - `mypy`
-4. Report any mismatch between implementation and the Slice 1 contract before changing architecture.
-5. Do **not** begin Slice 2 until a new explicit Slice 2 handoff is supplied.
+4. Report any mismatch between implementation and the active Slice 2 contract before changing architecture.
+5. Confirm Slice 1 behavior still passes unchanged.
+6. Do **not** begin another production slice until a new explicit contract/handoff is supplied.
 
 ## What not to "improve" yet
 
@@ -31,11 +35,15 @@ Do not add:
 - DI/service containers;
 - Calendar models;
 - Language Surface implementation;
-- HistoricalOccurrence classes;
+- Amend/Void/VARA;
+- Association lifecycle resolution;
+- Association-to-History provenance/support;
+- Perspective/KNOWS;
+- recall or packet construction;
 - speculative factories/managers for future systems.
 
 The smallness is intentional.
 
-## Known next direction, not authorization
+## Next direction
 
-The likely next slice will involve immutable historical occurrence representation and its relationship to Identity/ChronoStamp, but that architecture must be discussed/refined first. This sentence is context only, not permission to implement it.
+Not yet authorized. Discuss and refine the next CAM production slice before implementation.

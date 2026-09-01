@@ -20,15 +20,25 @@ Shape:
 
 ### Relationship Type
 
-Controlled semantic vocabulary such as `IS_A`, `MEMBER_OF`, `PART_OF`, `BASED_IN`, `OWNS`, `OPPOSES`.
+Controlled semantic vocabulary. ChronoSpear's locked core is:
 
-It is **not a Node**. Vocabulary grows intentionally.
+- `IS_A`
+- `MEMBER_OF`
+- `PART_OF`
+- `LOCATED_IN`
+- `BASED_IN`
+- `OWNS`
+- `OPPOSES`
+
+`RelationshipVocabulary.core()` returns a fresh vocabulary containing exactly this core. Additional relationship semantics remain explicit extensions rather than silently inferred durable vocabulary.
+
+Relationship Type is **not a Node**.
 
 ### Association
 
 Addressable directed semantic assertion:
 
-`AssociationId: SourceNode --RELATIONSHIP_TYPE--> TargetNode`
+`AssociationId: SourceIdentity --RELATIONSHIP_TYPE--> TargetIdentity`
 
 It is not an anonymous edge and not an Identity Node.
 
@@ -58,9 +68,9 @@ Immutable graph-addressable record representing something that happened.
 
 Shape:
 
-`OccurrenceId + ChronoStamp + participant IdentityIds + optional Place IdentityId + synopsis + story`
+`OccurrenceId + ChronoStamp + one-or-more Entity participant IdentityIds + required Place IdentityId + synopsis + story`
 
-Historical Occurrences preserve world History. They are not Identity Nodes and not Associations. Slice 2 validates referenced Identity Nodes and explicit Place identity, but deliberately adds no recall, Association provenance, lifecycle, correction, persistence, or semantic event deduplication.
+Historical Occurrences preserve world History. Every participant must resolve to an Entity Identity; Place and Describer identities are rejected as participants. The required `place` must resolve to a Place Identity. Historical Occurrences are not Identity Nodes and not Associations. Slice 2 deliberately adds no recall, Association provenance, lifecycle, correction, persistence, or semantic event deduplication.
 
 ---
 

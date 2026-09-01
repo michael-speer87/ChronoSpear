@@ -8,9 +8,9 @@ from chronospear.cam import (
     AssociationCatalog,
     AssociationId,
     IdentityCatalog,
+    IdentityId,
     IdentityKind,
     IdentityNode,
-    NodeId,
     RelationshipType,
     RelationshipVocabulary,
 )
@@ -45,7 +45,7 @@ class NaturalControlScenario:
 
 
 def _node_record(node: IdentityNode) -> str:
-    return f"NODE {node.node_id} | {node.kind} | {node.name} | {node.description}"
+    return f"NODE {node.identity_id} | {node.kind} | {node.name} | {node.description}"
 
 
 def _association_record(association: Association) -> str:
@@ -60,11 +60,11 @@ def build_control_scenario() -> ControlScenario:
 
     nodes = IdentityCatalog()
     nera = nodes.add(
-        IdentityNode(NodeId("nera"), "Nera", IdentityKind.ENTITY, "A trusted courier.")
+        IdentityNode(IdentityId("nera"), "Nera", IdentityKind.ENTITY, "A trusted courier.")
     )
     sol = nodes.add(
         IdentityNode(
-            NodeId("archivist_sol"),
+            IdentityId("archivist_sol"),
             "Archivist Sol",
             IdentityKind.ENTITY,
             "A keeper of civic records.",
@@ -72,7 +72,7 @@ def build_control_scenario() -> ControlScenario:
     )
     lumenport = nodes.add(
         IdentityNode(
-            NodeId("lumenport"),
+            IdentityId("lumenport"),
             "Lumenport",
             IdentityKind.PLACE,
             "A harbor city known for its beacon towers.",
@@ -80,7 +80,7 @@ def build_control_scenario() -> ControlScenario:
     )
     stonebridge = nodes.add(
         IdentityNode(
-            NodeId("stonebridge"),
+            IdentityId("stonebridge"),
             "Stonebridge",
             IdentityKind.PLACE,
             "A mountain town built around an old crossing.",
@@ -88,7 +88,7 @@ def build_control_scenario() -> ControlScenario:
     )
     compass = nodes.add(
         IdentityNode(
-            NodeId("brass_compass"),
+            IdentityId("brass_compass"),
             "Brass Compass",
             IdentityKind.ENTITY,
             "A well-made navigation instrument.",
@@ -100,10 +100,10 @@ def build_control_scenario() -> ControlScenario:
     owns = vocabulary.register(RelationshipType("OWNS"))
     associations = AssociationCatalog(nodes=nodes, vocabulary=vocabulary)
     sol_base = associations.add(
-        Association(AssociationId("A1"), sol.node_id, based_in, lumenport.node_id)
+        Association(AssociationId("A1"), sol.identity_id, based_in, lumenport.identity_id)
     )
     nera_compass = associations.add(
-        Association(AssociationId("A2"), nera.node_id, owns, compass.node_id)
+        Association(AssociationId("A2"), nera.identity_id, owns, compass.identity_id)
     )
 
     initial = EvidenceBundle(

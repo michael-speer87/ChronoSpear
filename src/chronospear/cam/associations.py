@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from chronospear.cam.catalog import IdentityCatalog
-from chronospear.cam.identifiers import AssociationId, NodeId
+from chronospear.cam.identifiers import AssociationId, IdentityId
 from chronospear.cam.relationships import RelationshipType, RelationshipVocabulary
 
 
@@ -17,12 +17,12 @@ class Association:
     """
 
     association_id: AssociationId
-    source: NodeId
+    source: IdentityId
     relationship: RelationshipType
-    target: NodeId
+    target: IdentityId
 
     @property
-    def semantic_key(self) -> tuple[NodeId, str, NodeId]:
+    def semantic_key(self) -> tuple[IdentityId, str, IdentityId]:
         return (self.source, self.relationship.name, self.target)
 
 
@@ -44,13 +44,13 @@ class AssociationCatalog:
         self._nodes = nodes
         self._vocabulary = vocabulary
         self._by_id: dict[AssociationId, Association] = {}
-        self._by_semantic_key: dict[tuple[NodeId, str, NodeId], AssociationId] = {}
+        self._by_semantic_key: dict[tuple[IdentityId, str, IdentityId], AssociationId] = {}
 
     def add(self, association: Association) -> Association:
         if not self._nodes.contains(association.source):
-            raise KeyError(f"Unknown source Node: {association.source}.")
+            raise KeyError(f"Unknown source Identity: {association.source}.")
         if not self._nodes.contains(association.target):
-            raise KeyError(f"Unknown target Node: {association.target}.")
+            raise KeyError(f"Unknown target Identity: {association.target}.")
         if not self._vocabulary.contains(association.relationship):
             raise ValueError(
                 f"Relationship Type {association.relationship.name!r} is not approved."

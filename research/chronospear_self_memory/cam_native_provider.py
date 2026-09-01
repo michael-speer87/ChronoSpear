@@ -4,7 +4,11 @@ from dataclasses import dataclass
 from pathlib import Path
 from time import perf_counter
 
-from live_quest import ProviderResult
+
+@dataclass(frozen=True)
+class ProviderResult:
+    text: str
+    usage: dict[str, object]
 
 
 @dataclass

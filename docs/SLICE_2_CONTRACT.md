@@ -14,21 +14,21 @@ An occurrence is graph-addressable, but it is **not** an `IdentityNode`, is **no
 
 Canonical Slice 2 shape:
 
-`OccurrenceId + ChronoStamp + participant IdentityIds + optional Place IdentityId + synopsis + story`
+`OccurrenceId + ChronoStamp + one-or-more Entity participant IdentityIds + required Place IdentityId + synopsis + story`
 
 ## Must do
 
 - Add stable type-specific `OccurrenceId` values.
 - Represent `HistoricalOccurrence` as immutable.
 - Capture one immutable `ChronoStamp` containing both WorldTime and SystemTime.
-- Store zero or more participant `IdentityId` values.
-- Optionally store one explicit place `IdentityId`.
-- Require at least one graph anchor: one participant or one place.
+- Require one or more participant `IdentityId` values.
+- Require one explicit place `IdentityId`.
+- Require every participant to resolve to an existing `IdentityKind.ENTITY` identity.
+- Forbid Place and Describer identities from the participant list.
+- Require the place to resolve to an existing `IdentityKind.PLACE` identity.
 - Require non-empty synopsis and story text.
 - Preserve participant order supplied by the caller.
 - Reject duplicate participant IDs inside one occurrence rather than silently normalizing them.
-- Validate every participant against the existing `IdentityCatalog`.
-- Validate the optional place against the existing `IdentityCatalog` and require that identity to be `IdentityKind.PLACE`.
 - Provide a minimal in-memory `OccurrenceCatalog` supporting `add`, `get`, and `all`.
 - Make exact re-addition of the same occurrence ID and same occurrence idempotent.
 - Reject reuse of one `OccurrenceId` for conflicting occurrence data.
@@ -55,7 +55,6 @@ Canonical Slice 2 shape:
 - No LLM/provider integration.
 - No generic graph-object superclass.
 - No semantic duplicate detection for Historical Occurrences.
-- No participant-kind policy beyond existence validation. Slice 2 does not decide whether future domain rules restrict participants to particular Identity kinds.
 
 ## Historical Occurrence semantics
 
@@ -69,9 +68,15 @@ Example:
 
 - Identity: `Alric` is an Entity.
 - Association: `Alric --MEMBER_OF--> Royal Guard` is plastic semantic knowledge.
-- Historical Occurrence: `At WT 300, Alric joined the Royal Guard.` is immutable world History.
+- Historical Occurrence: `At WT 300, Alric joined the Royal Guard at Stonebridge.` is immutable world History.
 
 A later Association may be derived from or supported by that History, but Slice 2 does not create that support relationship.
+
+### Participants
+
+`participants` answers **which enduring Entities were involved in the occurrence**.
+
+Every participant must reference an existing `IdentityKind.ENTITY`. Places have their own required field, and Describers are classification concepts rather than event participants.
 
 ### Synopsis versus story
 
@@ -84,7 +89,7 @@ Slice 2 stores both but does not generate, summarize, rank, or interpret either 
 
 ### Place
 
-`place` is an explicit optional graph anchor and must reference an existing `IdentityKind.PLACE` identity through its `IdentityId`.
+`place` is a required graph anchor and must reference an existing `IdentityKind.PLACE` identity through its `IdentityId`.
 
 Location meaning is not embedded into Entity records.
 
@@ -103,16 +108,18 @@ ChronoStamp remains a captured coordinate pair, not a clock owner.
 2. HistoricalOccurrence != Association.
 3. OccurrenceId != IdentityId != AssociationId.
 4. Historical Occurrence records are immutable after construction.
-5. An occurrence must have at least one participant or place anchor.
-6. All referenced Identity IDs must exist when admitted to the catalog.
-7. Explicit place must refer to a Place Identity.
-8. Synopsis and story cannot be blank.
-9. Duplicate participants in one occurrence are rejected.
-10. One OccurrenceId cannot identify two different occurrence records.
-11. Different OccurrenceIds are not semantically deduplicated merely because their payloads match.
-12. Equal ChronoStamp coordinate values across separate occurrences are allowed.
-13. Slice 2 creates no relationship from History to Associations.
-14. Slice 2 provides no path for mutating or deleting admitted History.
+5. An occurrence must contain at least one Entity participant.
+6. Every participant must resolve to `IdentityKind.ENTITY`.
+7. Describer and Place identities cannot be event participants.
+8. Every occurrence must contain one required Place identity.
+9. The place must resolve to `IdentityKind.PLACE`.
+10. Synopsis and story cannot be blank.
+11. Duplicate participants in one occurrence are rejected.
+12. One OccurrenceId cannot identify two different occurrence records.
+13. Different OccurrenceIds are not semantically deduplicated merely because their payloads match.
+14. Equal ChronoStamp coordinate values across separate occurrences are allowed.
+15. Slice 2 creates no relationship from History to Associations.
+16. Slice 2 provides no path for mutating or deleting admitted History.
 
 ## Acceptance behavior
 
@@ -121,13 +128,15 @@ The test suite must prove:
 - Occurrence IDs reject blanks and generated IDs are unique.
 - Historical Occurrence records are immutable.
 - Synopsis/story whitespace is normalized and blank values are rejected.
+- At least one participant is required.
 - Duplicate participant IDs are rejected.
-- An occurrence with neither participants nor place is rejected.
-- Known participant IDs are accepted.
+- Known Entity participant IDs are accepted.
 - Unknown participant IDs are rejected by `OccurrenceCatalog`.
-- A known Place identity is accepted as `place`.
+- Place identities cannot be used as participants.
+- Describer identities cannot be used as participants.
+- A known Place identity is accepted as the required `place`.
 - An unknown place ID is rejected.
-- A non-Place identity cannot be used as explicit `place`.
+- A non-Place identity cannot be used as `place`.
 - Re-adding the exact same occurrence is idempotent.
 - Reusing an OccurrenceId for different data is rejected.
 - Two otherwise identical events with different OccurrenceIds can coexist.

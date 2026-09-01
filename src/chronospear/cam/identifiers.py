@@ -15,8 +15,8 @@ def _validated_identifier(value: str, label: str) -> str:
 class NodeId:
     """Stable identifier for an Identity Node.
 
-    Other graph-addressable families will receive their own identifier types when
-    those families are implemented. Do not reuse NodeId as a universal graph ID.
+    Other graph-addressable families receive their own identifier types. Do not
+    reuse NodeId as a universal graph ID.
     """
 
     value: str
@@ -48,6 +48,27 @@ class AssociationId:
     @classmethod
     def new(cls) -> AssociationId:
         return cls(f"assoc_{uuid4().hex}")
+
+    def __str__(self) -> str:
+        return self.value
+
+
+@dataclass(frozen=True, slots=True, order=True)
+class OccurrenceId:
+    """Stable identifier for an immutable Historical Occurrence."""
+
+    value: str
+
+    def __post_init__(self) -> None:
+        object.__setattr__(
+            self,
+            "value",
+            _validated_identifier(self.value, "Occurrence ID"),
+        )
+
+    @classmethod
+    def new(cls) -> OccurrenceId:
+        return cls(f"occ_{uuid4().hex}")
 
     def __str__(self) -> str:
         return self.value

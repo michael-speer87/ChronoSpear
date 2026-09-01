@@ -7,7 +7,7 @@ This repository seed contains **Production Slice 1: CAM Core Primitives**. It is
 ## Slice 1 implements
 
 - `IdentityNode` with locked Identity families: Entity, Place, Describer;
-- strongly typed `NodeId` and `AssociationId`;
+- strongly typed `IdentityId` and `AssociationId`;
 - controlled `RelationshipType` vocabulary;
 - addressable directed `Association` assertions;
 - minimal invariant-only catalogs used to validate IDs/endpoints/vocabulary;

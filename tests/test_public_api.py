@@ -1,8 +1,8 @@
 from chronospear.cam import (
+    CORE_RELATIONSHIP_TYPES,
     Association,
     AssociationCatalog,
     AssociationId,
-    CORE_RELATIONSHIP_TYPES,
     ChronoStamp,
     HistoricalOccurrence,
     IdentityCatalog,

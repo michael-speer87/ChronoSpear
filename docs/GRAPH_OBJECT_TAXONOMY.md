@@ -50,13 +50,21 @@ A stamp is not a clock owner. It prevents ambiguous duplicated raw integer time 
 
 ---
 
-## Known families deliberately NOT implemented in Slice 1
+## Implemented in Slice 2
 
-### 🔵 Historical Occurrence Node
+### 🔵 Historical Occurrence
 
-Immutable event hub representing something that happened. Binds participants/places/story and temporal coordinates. History is graph-shaped; chronology is a projection.
+Immutable graph-addressable record representing something that happened.
 
-**Must remain conceptually distinct from IdentityNode.**
+Shape:
+
+`OccurrenceId + ChronoStamp + participant NodeIds + optional Place NodeId + synopsis + story`
+
+Historical Occurrences preserve world History. They are not Identity Nodes and not Associations. Slice 2 validates referenced Identity Nodes and explicit Place identity, but deliberately adds no recall, Association provenance, lifecycle, correction, persistence, or semantic event deduplication.
+
+---
+
+## Known families deliberately NOT implemented yet
 
 ### 🟡 Amend Node
 
@@ -103,6 +111,7 @@ Persistent raw conversation/action record. Answers **what was said**, not **what
 ```text
 Identity Node       != Historical Occurrence
 Identity Node       != Association
+Historical Occurrence != Association
 Relationship Type   != Node
 Language Surface    != world truth
 WorldTime           != Calendar meaning

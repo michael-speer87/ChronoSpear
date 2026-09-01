@@ -14,6 +14,30 @@ RICH_INITIAL_BUDGET = PacketBudget(
     associations_per_concept=3,
     history_per_concept=5,
 )
+CAM_LITERACY_APPENDIX = """CAM MEMORY SEMANTICS
+
+SYNOPSIS
+A compact orientation to an identity. It helps establish what is nearby in memory,
+but may summarize or point toward more direct memory.
+
+DESCRIPTION
+Stable clarification of what an identity is.
+It directly supports definitional and identity-meaning claims.
+It does not establish that an event happened.
+Descriptions currently have no evidence ID, so description-only answers may use EVIDENCE: none.
+
+ASSOCIATION
+An addressable semantic assertion connecting identities.
+It can directly support claims about the relationship it asserts.
+
+HISTORICAL OCCURRENCE
+An addressable immutable record of what happened.
+It directly supports claims about events, changes, discoveries, experiments, and outcomes.
+
+EVIDENCE SELECTION
+Cite the supplied memory object that most directly supports the material claim.
+Do not prefer a nearby or related memory merely because it led to the direct evidence.
+When several memories support a claim, prefer the strongest direct support."""
 
 
 def _rejection_packet(memory, session, reason: str):
@@ -104,10 +128,18 @@ def main() -> None:
         action="store_true",
         help="Give starting concepts their full Description plus up to 3 Associations and 5 History occurrences in Packet #1.",
     )
+    parser.add_argument(
+        "--cam-literacy",
+        action="store_true",
+        help="Append compact CAM memory semantics to the handshake system prompt.",
+    )
     args = parser.parse_args()
 
     # Deliberately remove CAM School. The trained model receives only the compact native contract.
-    base.WIRETAP_SYSTEM_PROMPT = CAM_NATIVE_SYSTEM_PROMPT
+    effective_system_prompt = CAM_NATIVE_SYSTEM_PROMPT
+    if args.cam_literacy:
+        effective_system_prompt += "\n\n" + CAM_LITERACY_APPENDIX
+    base.WIRETAP_SYSTEM_PROMPT = effective_system_prompt
 
     # The CAM-native experiment enforces standalone channel state while keeping
     # stale requests recoverable. CAM reports deterministic state; the LLM still
@@ -126,7 +158,8 @@ def main() -> None:
     print("CHRONOSPEAR CAM-NATIVE LOCAL HANDSHAKE")
     print(f"model={args.model}")
     print(f"adapter={'none/base-only' if args.base_only else args.adapter}")
-    print(f"system_prompt_characters={len(CAM_NATIVE_SYSTEM_PROMPT)}")
+    print(f"CAM literacy={'enabled' if args.cam_literacy else 'disabled'}")
+    print(f"system_prompt_characters={len(effective_system_prompt)}")
     print("CAM behavior=state-aware stale-request feedback")
     if args.rich_initial:
         print("initial packet=full starting descriptions + up to 3 associations + up to 5 history each")

@@ -6,9 +6,14 @@ import auto_handshake as base
 from benchmark import QUESTS
 from cam_native_dataset import CAM_NATIVE_SYSTEM_PROMPT
 from cam_native_provider import LocalCamNativeProvider
+from memory import PacketBudget
 
 
 _ORIGINAL_EXECUTE_MEMORY_ACTION = base.execute_memory_action
+RICH_INITIAL_BUDGET = PacketBudget(
+    associations_per_concept=3,
+    history_per_concept=5,
+)
 
 
 def _rejection_packet(memory, session, reason: str):
@@ -60,6 +65,32 @@ def _strict_execute_memory_action(memory, session, decision):
     return _ORIGINAL_EXECUTE_MEMORY_ACTION(memory, session, decision)
 
 
+def _rich_build_initial_packet(
+    self,
+    question: str,
+    session: base.MemorySession,
+    budget: PacketBudget = RICH_INITIAL_BUDGET,
+) -> base.MemoryPacket:
+    """Give explicitly activated starting concepts a richer opening workspace.
+
+    Each explicitly activated starting concept gets its full Description plus up to
+    three Associations and five History occurrences. Concepts surfaced by that
+    evidence receive their normal synopsis only, so the opening packet does not
+    recursively fan out.
+    """
+    activated = self.activate(question)
+    if not activated:
+        raise ValueError("No explicit ChronoSpear concept was activated by the question")
+    session.surfaced_concepts.update(activated)
+    return self._packet(
+        question,
+        activated,
+        session,
+        budget,
+        include_description=True,
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run the real ChronoSpear CAM handshake with a local base or CAM-native LoRA model.")
     parser.add_argument("--model", default="Qwen/Qwen3-0.6B")
@@ -68,6 +99,11 @@ def main() -> None:
     parser.add_argument("--question")
     parser.add_argument("--max-rounds", type=int, default=10)
     parser.add_argument("--quiet", action="store_true")
+    parser.add_argument(
+        "--rich-initial",
+        action="store_true",
+        help="Give starting concepts their full Description plus up to 3 Associations and 5 History occurrences in Packet #1.",
+    )
     args = parser.parse_args()
 
     # Deliberately remove CAM School. The trained model receives only the compact native contract.
@@ -77,6 +113,10 @@ def main() -> None:
     # stale requests recoverable. CAM reports deterministic state; the LLM still
     # chooses what memory to request next.
     base.execute_memory_action = _strict_execute_memory_action
+
+    if args.rich_initial:
+        base.INITIAL_BUDGET = RICH_INITIAL_BUDGET
+        base.DesignMemory.build_initial_packet = _rich_build_initial_packet
 
     provider = LocalCamNativeProvider(
         model_name=args.model,
@@ -88,6 +128,11 @@ def main() -> None:
     print(f"adapter={'none/base-only' if args.base_only else args.adapter}")
     print(f"system_prompt_characters={len(CAM_NATIVE_SYSTEM_PROMPT)}")
     print("CAM behavior=state-aware stale-request feedback")
+    if args.rich_initial:
+        print("initial packet=full starting descriptions + up to 3 associations + up to 5 history each")
+        print("later expansion behavior=unchanged")
+    else:
+        print("initial packet=sparse V1 baseline")
     print("CAM School=disabled")
     print(f"max_rounds={args.max_rounds}")
 

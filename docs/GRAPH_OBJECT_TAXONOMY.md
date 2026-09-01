@@ -16,7 +16,7 @@ Current Identity families:
 
 Shape:
 
-`NodeId + Name + IdentityKind + Description`
+`IdentityId + Name + IdentityKind + Description`
 
 ### Relationship Type
 
@@ -58,7 +58,7 @@ Immutable graph-addressable record representing something that happened.
 
 Shape:
 
-`OccurrenceId + ChronoStamp + participant NodeIds + optional Place NodeId + synopsis + story`
+`OccurrenceId + ChronoStamp + participant IdentityIds + optional Place IdentityId + synopsis + story`
 
 Historical Occurrences preserve world History. They are not Identity Nodes and not Associations. Slice 2 validates referenced Identity Nodes and explicit Place identity, but deliberately adds no recall, Association provenance, lifecycle, correction, persistence, or semantic event deduplication.
 

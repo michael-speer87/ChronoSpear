@@ -21,19 +21,19 @@ class HistoricalOccurrence:
     stamp: ChronoStamp
     synopsis: str
     story: str
-    participants: tuple[IdentityId, ...] = ()
-    place: IdentityId | None = None
+    participants: tuple[IdentityId, ...]
+    place: IdentityId
 
     def __post_init__(self) -> None:
         if not isinstance(self.stamp, ChronoStamp):
             raise TypeError("Historical Occurrence stamp must be a ChronoStamp.")
         if any(not isinstance(participant, IdentityId) for participant in self.participants):
             raise TypeError("Historical Occurrence participants must be IdentityId values.")
-        if self.place is not None and not isinstance(self.place, IdentityId):
-            raise TypeError("Historical Occurrence place must be an IdentityId or None.")
-        if not self.participants and self.place is None:
+        if not isinstance(self.place, IdentityId):
+            raise TypeError("Historical Occurrence place must be an IdentityId.")
+        if not self.participants:
             raise ValueError(
-                "Historical Occurrence requires at least one participant or place."
+                "Historical Occurrence requires at least one Entity participant."
             )
         if len(set(self.participants)) != len(self.participants):
             raise ValueError("Historical Occurrence participants cannot contain duplicates.")
@@ -64,15 +64,20 @@ class OccurrenceCatalog:
         for participant in occurrence.participants:
             if not self._nodes.contains(participant):
                 raise KeyError(f"Unknown Historical Occurrence participant: {participant}.")
-
-        if occurrence.place is not None:
-            if not self._nodes.contains(occurrence.place):
-                raise KeyError(f"Unknown Historical Occurrence place: {occurrence.place}.")
-            place_node = self._nodes.get(occurrence.place)
-            if place_node.kind is not IdentityKind.PLACE:
+            participant_node = self._nodes.get(participant)
+            if participant_node.kind is not IdentityKind.ENTITY:
                 raise ValueError(
-                    "Historical Occurrence place must reference an IdentityKind.PLACE node."
+                    "Historical Occurrence participants must reference "
+                    "IdentityKind.ENTITY identities."
                 )
+
+        if not self._nodes.contains(occurrence.place):
+            raise KeyError(f"Unknown Historical Occurrence place: {occurrence.place}.")
+        place_node = self._nodes.get(occurrence.place)
+        if place_node.kind is not IdentityKind.PLACE:
+            raise ValueError(
+                "Historical Occurrence place must reference an IdentityKind.PLACE identity."
+            )
 
         existing = self._by_id.get(occurrence.occurrence_id)
         if existing is not None:

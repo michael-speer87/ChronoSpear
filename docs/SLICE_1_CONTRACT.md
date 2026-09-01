@@ -10,7 +10,7 @@ Slice 1 is the floor, not the brain. It establishes immutable/controlled domain 
 
 ## Must do
 
-- Represent Identity Nodes with `NodeId`, name, Identity kind, and description.
+- Represent Identity Nodes with `IdentityId`, name, Identity kind, and description.
 - Identity kinds in this slice are exactly Entity, Place, and Describer.
 - Keep Identity independent from mutable relationships. An Entity does not own location/faction/etc.
 - Represent Relationship Types as intentional controlled vocabulary.
@@ -53,23 +53,23 @@ Slice 1 is the floor, not the brain. It establishes immutable/controlled domain 
 6. Audit != world History (reserved for later).
 7. WT != ST even when their numeric values happen to match.
 8. ChronoStamp captures coordinates; it does not own or advance the authoritative clocks.
-9. Node descriptions must not be used to smuggle mutable/secret/perspective facts. This is partly a semantic/code-review invariant, not something a validator can fully prove.
+9. Identity Node descriptions must not be used to smuggle mutable/secret/perspective facts. This is partly a semantic/code-review invariant, not something a validator can fully prove.
 10. Legacy `Entity.place` is explicitly rejected as a CAM foundation assumption.
 
 ## Acceptance behavior
 
 The test suite must prove:
 
-- Node/Association IDs reject blanks and generated IDs are unique.
+- Identity/Association IDs reject blanks and generated IDs are unique.
 - Identity Nodes validate names and preserve the three locked Identity families.
 - Identity Node records are immutable in Slice 1.
-- Node ID conflicts are rejected.
+- Identity ID conflicts are rejected.
 - Relationship Types require canonical `UPPER_SNAKE_CASE` names.
 - Unknown Relationship Types are not accepted by the vocabulary.
 - Conflicting redefinitions of an existing Relationship Type are rejected.
 - Associations preserve directionality.
 - Two different relationship semantics can connect the same Nodes.
-- Unknown source/target Nodes are rejected by the Association catalog.
+- Unknown source/target Identity Nodes are rejected by the Association catalog.
 - Unapproved relationship semantics are rejected by the Association catalog.
 - A duplicate semantic assertion is not duplicated in memory merely because a new Association ID was proposed.
 - One Association ID cannot identify two conflicting assertions.

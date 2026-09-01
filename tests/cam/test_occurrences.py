@@ -6,24 +6,26 @@ from chronospear.cam import (
     ChronoStamp,
     HistoricalOccurrence,
     IdentityCatalog,
+    IdentityId,
     IdentityKind,
     IdentityNode,
-    NodeId,
     OccurrenceCatalog,
     OccurrenceId,
     SystemTime,
     WorldTime,
 )
 
-_DEFAULT_PARTICIPANTS = (NodeId("alric"), NodeId("royal_guard"))
-_DEFAULT_PLACE = NodeId("stonebridge")
+_DEFAULT_PARTICIPANTS = (IdentityId("alric"), IdentityId("royal_guard"))
+_DEFAULT_PLACE = IdentityId("stonebridge")
 
 
 def _nodes() -> IdentityCatalog:
     nodes = IdentityCatalog()
-    nodes.add(IdentityNode(NodeId("alric"), "Alric", IdentityKind.ENTITY))
-    nodes.add(IdentityNode(NodeId("royal_guard"), "Royal Guard", IdentityKind.ENTITY))
-    nodes.add(IdentityNode(NodeId("stonebridge"), "Stonebridge", IdentityKind.PLACE))
+    nodes.add(IdentityNode(IdentityId("alric"), "Alric", IdentityKind.ENTITY))
+    nodes.add(
+        IdentityNode(IdentityId("royal_guard"), "Royal Guard", IdentityKind.ENTITY)
+    )
+    nodes.add(IdentityNode(IdentityId("stonebridge"), "Stonebridge", IdentityKind.PLACE))
     return nodes
 
 
@@ -37,8 +39,8 @@ def _occurrence(
     stamp: ChronoStamp | None = None,
     synopsis: str = "Alric joined the Royal Guard.",
     story: str = "Alric formally joined the Royal Guard at Stonebridge.",
-    participants: tuple[NodeId, ...] = _DEFAULT_PARTICIPANTS,
-    place: NodeId | None = _DEFAULT_PLACE,
+    participants: tuple[IdentityId, ...] = _DEFAULT_PARTICIPANTS,
+    place: IdentityId | None = _DEFAULT_PLACE,
 ) -> HistoricalOccurrence:
     return HistoricalOccurrence(
         occurrence_id=OccurrenceId(occurrence_id),
@@ -87,7 +89,7 @@ def test_historical_occurrence_rejects_blank_story() -> None:
 def test_historical_occurrence_rejects_duplicate_participants() -> None:
     with pytest.raises(ValueError, match="participants cannot contain duplicates"):
         _occurrence(
-            participants=(NodeId("alric"), NodeId("alric")),
+            participants=(IdentityId("alric"), IdentityId("alric")),
             place=None,
         )
 
@@ -108,7 +110,7 @@ def test_occurrence_catalog_accepts_known_participants_and_place() -> None:
 def test_occurrence_catalog_rejects_unknown_participant() -> None:
     catalog = OccurrenceCatalog(nodes=_nodes())
     occurrence = _occurrence(
-        participants=(NodeId("unknown"),),
+        participants=(IdentityId("unknown"),),
         place=None,
     )
 
@@ -118,7 +120,7 @@ def test_occurrence_catalog_rejects_unknown_participant() -> None:
 
 def test_occurrence_catalog_rejects_unknown_place() -> None:
     catalog = OccurrenceCatalog(nodes=_nodes())
-    occurrence = _occurrence(place=NodeId("unknown_place"))
+    occurrence = _occurrence(place=IdentityId("unknown_place"))
 
     with pytest.raises(KeyError, match="Unknown Historical Occurrence place"):
         catalog.add(occurrence)
@@ -126,7 +128,7 @@ def test_occurrence_catalog_rejects_unknown_place() -> None:
 
 def test_occurrence_catalog_rejects_non_place_identity_as_place() -> None:
     catalog = OccurrenceCatalog(nodes=_nodes())
-    occurrence = _occurrence(place=NodeId("royal_guard"))
+    occurrence = _occurrence(place=IdentityId("royal_guard"))
 
     with pytest.raises(ValueError, match="IdentityKind.PLACE"):
         catalog.add(occurrence)

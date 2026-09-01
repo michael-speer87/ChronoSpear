@@ -29,16 +29,37 @@ class RelationshipType:
         return self.name
 
 
+CORE_RELATIONSHIP_TYPES: tuple[RelationshipType, ...] = (
+    RelationshipType("IS_A", "Classifies an Identity using a Describer."),
+    RelationshipType("MEMBER_OF", "Connects an Entity to an organization or group."),
+    RelationshipType("PART_OF", "Connects an Identity to a larger containing Identity."),
+    RelationshipType("LOCATED_IN", "Connects an Entity to a contextually relevant Place."),
+    RelationshipType("BASED_IN", "Connects an Entity to its base or headquarters Place."),
+    RelationshipType("OWNS", "Connects an Entity to another Entity it owns."),
+    RelationshipType("OPPOSES", "Connects an Entity to another Entity it actively opposes."),
+)
+
+
 class RelationshipVocabulary:
     """Small explicit registry of approved Relationship Types.
 
     Associations must use a RelationshipType definition approved by this vocabulary.
-    New durable relationship semantics are registered intentionally by application
-    code, never silently invented from arbitrary LLM text.
+    ChronoSpear defines a small stable core, while additional durable relationship
+    semantics are still registered intentionally by application code and are never
+    silently invented from arbitrary LLM text.
     """
 
     def __init__(self) -> None:
         self._types: dict[str, RelationshipType] = {}
+
+    @classmethod
+    def core(cls) -> RelationshipVocabulary:
+        """Return a fresh vocabulary containing only ChronoSpear's locked core."""
+
+        vocabulary = cls()
+        for relationship in CORE_RELATIONSHIP_TYPES:
+            vocabulary.register(relationship)
+        return vocabulary
 
     def register(self, relationship: RelationshipType) -> RelationshipType:
         existing = self._types.get(relationship.name)

@@ -12,21 +12,25 @@ def _validated_identifier(value: str, label: str) -> str:
 
 
 @dataclass(frozen=True, slots=True, order=True)
-class NodeId:
+class IdentityId:
     """Stable identifier for an Identity Node.
 
     Other graph-addressable families receive their own identifier types. Do not
-    reuse NodeId as a universal graph ID.
+    reuse IdentityId as a universal graph ID.
     """
 
     value: str
 
     def __post_init__(self) -> None:
-        object.__setattr__(self, "value", _validated_identifier(self.value, "Node ID"))
+        object.__setattr__(
+            self,
+            "value",
+            _validated_identifier(self.value, "Identity ID"),
+        )
 
     @classmethod
-    def new(cls) -> NodeId:
-        return cls(f"node_{uuid4().hex}")
+    def new(cls) -> IdentityId:
+        return cls(f"identity_{uuid4().hex}")
 
     def __str__(self) -> str:
         return self.value

@@ -318,10 +318,12 @@ def main() -> None:
     write_jsonl(output / "train.jsonl", train)
     write_jsonl(output / "eval.jsonl", eval_set)
 
+    foundation_skills = {e.skill for e in train if not e.skill.startswith("trajectory_")}
+    trajectory_skills = {e.skill for e in train if e.skill.startswith("trajectory_")}
     print(f"train_examples={len(train)}")
     print(f"eval_examples={len(eval_set)}")
-    print(f"foundation_skills={len({e.skill for e in train if e.skill not in {b(None, 'train', 0).skill if False else '' for b in ()}})}")
-    print(f"trajectory_skills={len(TRAJECTORY_BUILDERS)}")
+    print(f"foundation_skills={len(foundation_skills)}")
+    print(f"trajectory_skills={len(trajectory_skills)}")
     print(f"system_prompt_characters={len(CAM_NATIVE_SYSTEM_PROMPT_V2)}")
     print(f"output_dir={output.resolve()}")
 

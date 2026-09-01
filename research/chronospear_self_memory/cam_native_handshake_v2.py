@@ -7,9 +7,10 @@ from benchmark import QUESTS
 from cam_native_dataset_v2 import CAM_NATIVE_SYSTEM_PROMPT_V2
 from cam_native_handshake import _strict_execute_memory_action
 from cam_native_provider import LocalCamNativeProvider
+from memory import PacketBudget
 
 
-RICH_INITIAL_BUDGET = base.PacketBudget(
+RICH_INITIAL_BUDGET = PacketBudget(
     associations_per_concept=3,
     history_per_concept=5,
 )
@@ -19,7 +20,7 @@ def _rich_build_initial_packet(
     self,
     question: str,
     session: base.MemorySession,
-    budget: base.PacketBudget = RICH_INITIAL_BUDGET,
+    budget: PacketBudget = RICH_INITIAL_BUDGET,
 ) -> base.MemoryPacket:
     """Build a richer opening workspace without adding semantic retrieval.
 

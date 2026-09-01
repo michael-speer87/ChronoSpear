@@ -8,9 +8,9 @@ from chronospear.cam import (
     AssociationCatalog,
     AssociationId,
     IdentityCatalog,
+    IdentityId,
     IdentityKind,
     IdentityNode,
-    NodeId,
     RelationshipType,
     RelationshipVocabulary,
 )
@@ -132,8 +132,13 @@ def build_relevance_world() -> RelevanceWorld:
 
     nodes = IdentityCatalog()
 
-    def add_node(node_id: str, name: str, kind: IdentityKind, description: str) -> IdentityNode:
-        return nodes.add(IdentityNode(NodeId(node_id), name, kind, description))
+    def add_node(
+        identity_id: str,
+        name: str,
+        kind: IdentityKind,
+        description: str,
+    ) -> IdentityNode:
+        return nodes.add(IdentityNode(IdentityId(identity_id), name, kind, description))
 
     nera = add_node("nera", "Nera", IdentityKind.ENTITY, "A trusted courier.")
     sol = add_node(
@@ -220,9 +225,9 @@ def build_relevance_world() -> RelevanceWorld:
         association = catalog.add(
             Association(
                 AssociationId(association_id),
-                source.node_id,
+                source.identity_id,
                 relationships[relationship],
-                target.node_id,
+                target.identity_id,
             )
         )
         world_associations.append(WorldAssociation(association, source.name, target.name))

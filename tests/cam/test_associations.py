@@ -5,9 +5,9 @@ from chronospear.cam import (
     AssociationCatalog,
     AssociationId,
     IdentityCatalog,
+    IdentityId,
     IdentityKind,
     IdentityNode,
-    NodeId,
     RelationshipType,
     RelationshipVocabulary,
 )
@@ -15,8 +15,10 @@ from chronospear.cam import (
 
 def _fixture() -> tuple[IdentityCatalog, RelationshipVocabulary, RelationshipType]:
     nodes = IdentityCatalog()
-    nodes.add(IdentityNode(NodeId("alric"), "Alric", IdentityKind.ENTITY))
-    nodes.add(IdentityNode(NodeId("royal_guard"), "Royal Guard", IdentityKind.ENTITY))
+    nodes.add(IdentityNode(IdentityId("alric"), "Alric", IdentityKind.ENTITY))
+    nodes.add(
+        IdentityNode(IdentityId("royal_guard"), "Royal Guard", IdentityKind.ENTITY)
+    )
     relationships = RelationshipVocabulary()
     member_of = relationships.register(RelationshipType("MEMBER_OF"))
     return nodes, relationships, member_of
@@ -26,13 +28,13 @@ def test_association_preserves_directionality() -> None:
     _, _, member_of = _fixture()
     association = Association(
         AssociationId("A1"),
-        NodeId("alric"),
+        IdentityId("alric"),
         member_of,
-        NodeId("royal_guard"),
+        IdentityId("royal_guard"),
     )
 
-    assert association.source == NodeId("alric")
-    assert association.target == NodeId("royal_guard")
+    assert association.source == IdentityId("alric")
+    assert association.target == IdentityId("royal_guard")
 
 
 def test_different_relationships_can_connect_same_nodes() -> None:
@@ -41,10 +43,20 @@ def test_different_relationships_can_connect_same_nodes() -> None:
     catalog = AssociationCatalog(nodes=nodes, vocabulary=vocabulary)
 
     first = catalog.add(
-        Association(AssociationId("A1"), NodeId("alric"), member_of, NodeId("royal_guard"))
+        Association(
+            AssociationId("A1"),
+            IdentityId("alric"),
+            member_of,
+            IdentityId("royal_guard"),
+        )
     )
     second = catalog.add(
-        Association(AssociationId("A2"), NodeId("alric"), opposes, NodeId("royal_guard"))
+        Association(
+            AssociationId("A2"),
+            IdentityId("alric"),
+            opposes,
+            IdentityId("royal_guard"),
+        )
     )
 
     assert first.semantic_key != second.semantic_key
@@ -55,13 +67,13 @@ def test_association_catalog_rejects_unknown_source() -> None:
     nodes, vocabulary, member_of = _fixture()
     catalog = AssociationCatalog(nodes=nodes, vocabulary=vocabulary)
 
-    with pytest.raises(KeyError, match="Unknown source Node"):
+    with pytest.raises(KeyError, match="Unknown source Identity"):
         catalog.add(
             Association(
                 AssociationId("A1"),
-                NodeId("unknown"),
+                IdentityId("unknown"),
                 member_of,
-                NodeId("royal_guard"),
+                IdentityId("royal_guard"),
             )
         )
 
@@ -70,13 +82,13 @@ def test_association_catalog_rejects_unknown_target() -> None:
     nodes, vocabulary, member_of = _fixture()
     catalog = AssociationCatalog(nodes=nodes, vocabulary=vocabulary)
 
-    with pytest.raises(KeyError, match="Unknown target Node"):
+    with pytest.raises(KeyError, match="Unknown target Identity"):
         catalog.add(
             Association(
                 AssociationId("A1"),
-                NodeId("alric"),
+                IdentityId("alric"),
                 member_of,
-                NodeId("unknown"),
+                IdentityId("unknown"),
             )
         )
 
@@ -89,9 +101,9 @@ def test_association_catalog_rejects_unapproved_relationship() -> None:
         catalog.add(
             Association(
                 AssociationId("A1"),
-                NodeId("alric"),
+                IdentityId("alric"),
                 RelationshipType("INVENTED_BY_MODEL"),
-                NodeId("royal_guard"),
+                IdentityId("royal_guard"),
             )
         )
 
@@ -100,11 +112,21 @@ def test_semantic_duplicate_returns_existing_association() -> None:
     nodes, vocabulary, member_of = _fixture()
     catalog = AssociationCatalog(nodes=nodes, vocabulary=vocabulary)
     first = catalog.add(
-        Association(AssociationId("A1"), NodeId("alric"), member_of, NodeId("royal_guard"))
+        Association(
+            AssociationId("A1"),
+            IdentityId("alric"),
+            member_of,
+            IdentityId("royal_guard"),
+        )
     )
 
     duplicate = catalog.add(
-        Association(AssociationId("A2"), NodeId("alric"), member_of, NodeId("royal_guard"))
+        Association(
+            AssociationId("A2"),
+            IdentityId("alric"),
+            member_of,
+            IdentityId("royal_guard"),
+        )
     )
 
     assert duplicate is first
@@ -116,10 +138,20 @@ def test_association_id_cannot_point_to_conflicting_assertions() -> None:
     opposes = vocabulary.register(RelationshipType("OPPOSES"))
     catalog = AssociationCatalog(nodes=nodes, vocabulary=vocabulary)
     catalog.add(
-        Association(AssociationId("A1"), NodeId("alric"), member_of, NodeId("royal_guard"))
+        Association(
+            AssociationId("A1"),
+            IdentityId("alric"),
+            member_of,
+            IdentityId("royal_guard"),
+        )
     )
 
     with pytest.raises(ValueError, match="already in use"):
         catalog.add(
-            Association(AssociationId("A1"), NodeId("alric"), opposes, NodeId("royal_guard"))
+            Association(
+                AssociationId("A1"),
+                IdentityId("alric"),
+                opposes,
+                IdentityId("royal_guard"),
+            )
         )

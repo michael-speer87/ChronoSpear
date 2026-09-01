@@ -58,7 +58,7 @@ def test_historical_occurrence_is_immutable() -> None:
     occurrence = _occurrence()
 
     with pytest.raises(FrozenInstanceError):
-        occurrence.synopsis = "Changed"  # type: ignore[misc]
+        setattr(occurrence, "synopsis", "Changed")
 
 
 def test_historical_occurrence_normalizes_synopsis_and_story() -> None:
@@ -71,12 +71,14 @@ def test_historical_occurrence_normalizes_synopsis_and_story() -> None:
     assert occurrence.story == "Alric formally joined the Royal Guard."
 
 
-@pytest.mark.parametrize("field", ["synopsis", "story"])
-def test_historical_occurrence_rejects_blank_text(field: str) -> None:
-    kwargs = {field: "   "}
+def test_historical_occurrence_rejects_blank_synopsis() -> None:
+    with pytest.raises(ValueError, match="Historical Occurrence synopsis cannot be empty"):
+        _occurrence(synopsis="   ")
 
-    with pytest.raises(ValueError, match=rf"Historical Occurrence {field} cannot be empty"):
-        _occurrence(**kwargs)  # type: ignore[arg-type]
+
+def test_historical_occurrence_rejects_blank_story() -> None:
+    with pytest.raises(ValueError, match="Historical Occurrence story cannot be empty"):
+        _occurrence(story="   ")
 
 
 def test_historical_occurrence_rejects_duplicate_participants() -> None:

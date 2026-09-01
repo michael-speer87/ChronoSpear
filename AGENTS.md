@@ -36,6 +36,6 @@ Workflow:
 
 ## Current active slice
 
-**Production Slice 1: CAM Core Primitives**
+**Production Slice 2: Immutable Historical Occurrences**
 
-See `docs/SLICE_1_CONTRACT.md`. Anything listed as out of scope there must not be implemented without a newer explicit handoff.
+See `docs/SLICE_2_CONTRACT.md`. Slice 1 remains foundational and must continue to pass unchanged. Anything listed as out of scope in the active Slice 2 contract must not be implemented without a newer explicit handoff.

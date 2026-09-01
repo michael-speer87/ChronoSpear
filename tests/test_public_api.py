@@ -3,10 +3,13 @@ from chronospear.cam import (
     AssociationCatalog,
     AssociationId,
     ChronoStamp,
+    HistoricalOccurrence,
     IdentityCatalog,
     IdentityKind,
     IdentityNode,
     NodeId,
+    OccurrenceCatalog,
+    OccurrenceId,
     RelationshipType,
     RelationshipVocabulary,
     SystemTime,
@@ -14,7 +17,7 @@ from chronospear.cam import (
 )
 
 
-def test_slice_one_public_api_is_importable() -> None:
+def test_public_cam_api_is_importable() -> None:
     assert all(
         item is not None
         for item in (
@@ -22,10 +25,13 @@ def test_slice_one_public_api_is_importable() -> None:
             AssociationCatalog,
             AssociationId,
             ChronoStamp,
+            HistoricalOccurrence,
             IdentityCatalog,
             IdentityKind,
             IdentityNode,
             NodeId,
+            OccurrenceCatalog,
+            OccurrenceId,
             RelationshipType,
             RelationshipVocabulary,
             SystemTime,

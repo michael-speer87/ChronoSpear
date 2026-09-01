@@ -2,7 +2,7 @@
 
 from chronospear.cam.associations import Association, AssociationCatalog
 from chronospear.cam.catalog import IdentityCatalog
-from chronospear.cam.identifiers import AssociationId, NodeId, OccurrenceId
+from chronospear.cam.identifiers import AssociationId, IdentityId, OccurrenceId
 from chronospear.cam.identity import IdentityKind, IdentityNode
 from chronospear.cam.occurrences import HistoricalOccurrence, OccurrenceCatalog
 from chronospear.cam.relationships import RelationshipType, RelationshipVocabulary
@@ -15,9 +15,9 @@ __all__ = [
     "ChronoStamp",
     "HistoricalOccurrence",
     "IdentityCatalog",
+    "IdentityId",
     "IdentityKind",
     "IdentityNode",
-    "NodeId",
     "OccurrenceCatalog",
     "OccurrenceId",
     "RelationshipType",

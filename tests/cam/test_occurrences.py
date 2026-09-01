@@ -26,6 +26,7 @@ def _nodes() -> IdentityCatalog:
         IdentityNode(IdentityId("royal_guard"), "Royal Guard", IdentityKind.ENTITY)
     )
     nodes.add(IdentityNode(IdentityId("stonebridge"), "Stonebridge", IdentityKind.PLACE))
+    nodes.add(IdentityNode(IdentityId("fighter"), "Fighter", IdentityKind.DESCRIBER))
     return nodes
 
 
@@ -40,7 +41,7 @@ def _occurrence(
     synopsis: str = "Alric joined the Royal Guard.",
     story: str = "Alric formally joined the Royal Guard at Stonebridge.",
     participants: tuple[IdentityId, ...] = _DEFAULT_PARTICIPANTS,
-    place: IdentityId | None = _DEFAULT_PLACE,
+    place: IdentityId = _DEFAULT_PLACE,
 ) -> HistoricalOccurrence:
     return HistoricalOccurrence(
         occurrence_id=OccurrenceId(occurrence_id),
@@ -86,20 +87,17 @@ def test_historical_occurrence_rejects_blank_story() -> None:
         _occurrence(story="   ")
 
 
+def test_historical_occurrence_requires_entity_participant() -> None:
+    with pytest.raises(ValueError, match="at least one Entity participant"):
+        _occurrence(participants=())
+
+
 def test_historical_occurrence_rejects_duplicate_participants() -> None:
     with pytest.raises(ValueError, match="participants cannot contain duplicates"):
-        _occurrence(
-            participants=(IdentityId("alric"), IdentityId("alric")),
-            place=None,
-        )
+        _occurrence(participants=(IdentityId("alric"), IdentityId("alric")))
 
 
-def test_historical_occurrence_requires_graph_anchor() -> None:
-    with pytest.raises(ValueError, match="at least one participant or place"):
-        _occurrence(participants=(), place=None)
-
-
-def test_occurrence_catalog_accepts_known_participants_and_place() -> None:
+def test_occurrence_catalog_accepts_known_entity_participants_and_place() -> None:
     catalog = OccurrenceCatalog(nodes=_nodes())
     occurrence = _occurrence()
 
@@ -109,12 +107,25 @@ def test_occurrence_catalog_accepts_known_participants_and_place() -> None:
 
 def test_occurrence_catalog_rejects_unknown_participant() -> None:
     catalog = OccurrenceCatalog(nodes=_nodes())
-    occurrence = _occurrence(
-        participants=(IdentityId("unknown"),),
-        place=None,
-    )
+    occurrence = _occurrence(participants=(IdentityId("unknown"),))
 
     with pytest.raises(KeyError, match="Unknown Historical Occurrence participant"):
+        catalog.add(occurrence)
+
+
+def test_occurrence_catalog_rejects_place_identity_as_participant() -> None:
+    catalog = OccurrenceCatalog(nodes=_nodes())
+    occurrence = _occurrence(participants=(IdentityId("stonebridge"),))
+
+    with pytest.raises(ValueError, match="IdentityKind.ENTITY"):
+        catalog.add(occurrence)
+
+
+def test_occurrence_catalog_rejects_describer_identity_as_participant() -> None:
+    catalog = OccurrenceCatalog(nodes=_nodes())
+    occurrence = _occurrence(participants=(IdentityId("fighter"),))
+
+    with pytest.raises(ValueError, match="IdentityKind.ENTITY"):
         catalog.add(occurrence)
 
 

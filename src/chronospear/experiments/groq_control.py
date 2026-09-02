@@ -60,11 +60,16 @@ def build_control_scenario() -> ControlScenario:
 
     nodes = IdentityCatalog()
     nera = nodes.add(
-        IdentityNode(IdentityId("nera"), "Nera", IdentityKind.ENTITY, "A trusted courier.")
+        IdentityNode(
+            IdentityId("E-00000000-0000-4000-8000-000000000001"),
+            "Nera",
+            IdentityKind.ENTITY,
+            "A trusted courier.",
+        )
     )
     sol = nodes.add(
         IdentityNode(
-            IdentityId("archivist_sol"),
+            IdentityId("E-00000000-0000-4000-8000-000000000002"),
             "Archivist Sol",
             IdentityKind.ENTITY,
             "A keeper of civic records.",
@@ -72,7 +77,7 @@ def build_control_scenario() -> ControlScenario:
     )
     lumenport = nodes.add(
         IdentityNode(
-            IdentityId("lumenport"),
+            IdentityId("P-00000000-0000-4000-8000-000000000001"),
             "Lumenport",
             IdentityKind.PLACE,
             "A harbor city known for its beacon towers.",
@@ -80,7 +85,7 @@ def build_control_scenario() -> ControlScenario:
     )
     stonebridge = nodes.add(
         IdentityNode(
-            IdentityId("stonebridge"),
+            IdentityId("P-00000000-0000-4000-8000-000000000002"),
             "Stonebridge",
             IdentityKind.PLACE,
             "A mountain town built around an old crossing.",
@@ -88,7 +93,7 @@ def build_control_scenario() -> ControlScenario:
     )
     compass = nodes.add(
         IdentityNode(
-            IdentityId("brass_compass"),
+            IdentityId("E-00000000-0000-4000-8000-000000000003"),
             "Brass Compass",
             IdentityKind.ENTITY,
             "A well-made navigation instrument.",
@@ -100,10 +105,20 @@ def build_control_scenario() -> ControlScenario:
     owns = vocabulary.register(RelationshipType("OWNS"))
     associations = AssociationCatalog(nodes=nodes, vocabulary=vocabulary)
     sol_base = associations.add(
-        Association(AssociationId("A1"), sol.identity_id, based_in, lumenport.identity_id)
+        Association(
+            AssociationId("A-00000000-0000-4000-8000-000000000001"),
+            sol.identity_id,
+            based_in,
+            lumenport.identity_id,
+        )
     )
     nera_compass = associations.add(
-        Association(AssociationId("A2"), nera.identity_id, owns, compass.identity_id)
+        Association(
+            AssociationId("A-00000000-0000-4000-8000-000000000002"),
+            nera.identity_id,
+            owns,
+            compass.identity_id,
+        )
     )
 
     initial = EvidenceBundle(

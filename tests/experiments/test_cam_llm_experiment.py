@@ -37,12 +37,26 @@ class ScriptedProvider:
 
 def _cam_fixture() -> tuple[EvidenceBundle, WhitelistExpansionResolver]:
     nodes = IdentityCatalog()
-    alric = nodes.add(IdentityNode(IdentityId("alric"), "Alric", IdentityKind.ENTITY))
+    alric = nodes.add(
+        IdentityNode(
+            IdentityId("E-00000000-0000-4000-8000-000000000001"),
+            "Alric",
+            IdentityKind.ENTITY,
+        )
+    )
     guard = nodes.add(
-        IdentityNode(IdentityId("royal_guard"), "Royal Guard", IdentityKind.ENTITY)
+        IdentityNode(
+            IdentityId("E-00000000-0000-4000-8000-000000000002"),
+            "Royal Guard",
+            IdentityKind.ENTITY,
+        )
     )
     bridge = nodes.add(
-        IdentityNode(IdentityId("stonebridge"), "Stonebridge", IdentityKind.PLACE)
+        IdentityNode(
+            IdentityId("P-00000000-0000-4000-8000-000000000001"),
+            "Stonebridge",
+            IdentityKind.PLACE,
+        )
     )
 
     vocabulary = RelationshipVocabulary()
@@ -51,7 +65,7 @@ def _cam_fixture() -> tuple[EvidenceBundle, WhitelistExpansionResolver]:
     associations = AssociationCatalog(nodes=nodes, vocabulary=vocabulary)
     membership = associations.add(
         Association(
-            AssociationId("A1"),
+            AssociationId("A-00000000-0000-4000-8000-000000000001"),
             alric.identity_id,
             member_of,
             guard.identity_id,
@@ -59,7 +73,7 @@ def _cam_fixture() -> tuple[EvidenceBundle, WhitelistExpansionResolver]:
     )
     headquarters = associations.add(
         Association(
-            AssociationId("A2"),
+            AssociationId("A-00000000-0000-4000-8000-000000000002"),
             guard.identity_id,
             based_in,
             bridge.identity_id,
@@ -159,7 +173,9 @@ def test_valid_expansion_adds_only_whitelisted_evidence_and_records_metrics() ->
     assert expansion.added_context.record_count == 1
     assert provider.requests[0].evidence == initial.records
     assert provider.requests[1].evidence == initial.records + (
-        "ASSOC A2 | royal_guard --BASED_IN--> stonebridge",
+        "ASSOC A-00000000-0000-4000-8000-000000000002 | "
+        "E-00000000-0000-4000-8000-000000000002 --BASED_IN--> "
+        "P-00000000-0000-4000-8000-000000000001",
     )
     assert report.calls[0].context == report.initial_context
     assert report.calls[1].context.record_count == 4

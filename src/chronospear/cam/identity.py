@@ -35,8 +35,14 @@ class IdentityNode:
     description: str = ""
 
     def __post_init__(self) -> None:
-        name = self.name.strip()
-        if not name:
-            raise ValueError("Identity Node name cannot be empty.")
-        object.__setattr__(self, "name", name)
+        expected_prefix = {
+            IdentityKind.ENTITY: "E-",
+            IdentityKind.PLACE: "P-",
+            IdentityKind.DESCRIBER: "D-",
+        }[self.kind]
+        if not self.identity_id.value.startswith(expected_prefix):
+            raise ValueError(
+                f"Identity ID prefix must agree with IdentityKind.{self.kind.name}."
+            )
+        object.__setattr__(self, "name", self.name.strip())
         object.__setattr__(self, "description", self.description.strip())

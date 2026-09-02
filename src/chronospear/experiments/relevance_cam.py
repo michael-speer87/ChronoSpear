@@ -131,6 +131,7 @@ def build_relevance_world() -> RelevanceWorld:
     """Construct the validated synthetic CAM world used only by Experiment 3."""
 
     nodes = IdentityCatalog()
+    next_node_id = 0
 
     def add_node(
         identity_id: str,
@@ -138,7 +139,18 @@ def build_relevance_world() -> RelevanceWorld:
         kind: IdentityKind,
         description: str,
     ) -> IdentityNode:
-        return nodes.add(IdentityNode(IdentityId(identity_id), name, kind, description))
+        nonlocal next_node_id
+        del identity_id
+        next_node_id += 1
+        prefix = {
+            IdentityKind.ENTITY: "E",
+            IdentityKind.PLACE: "P",
+            IdentityKind.DESCRIBER: "D",
+        }[kind]
+        typed_id = IdentityId(
+            f"{prefix}-00000000-0000-4000-8000-{next_node_id:012d}"
+        )
+        return nodes.add(IdentityNode(typed_id, name, kind, description))
 
     nera = add_node("nera", "Nera", IdentityKind.ENTITY, "A trusted courier.")
     sol = add_node(
@@ -215,6 +227,7 @@ def build_relevance_world() -> RelevanceWorld:
     }
     catalog = AssociationCatalog(nodes=nodes, vocabulary=vocabulary)
     world_associations: list[WorldAssociation] = []
+    next_association_id = 0
 
     def add_association(
         association_id: str,
@@ -222,9 +235,14 @@ def build_relevance_world() -> RelevanceWorld:
         relationship: str,
         target: IdentityNode,
     ) -> None:
+        nonlocal next_association_id
+        del association_id
+        next_association_id += 1
         association = catalog.add(
             Association(
-                AssociationId(association_id),
+                AssociationId(
+                    f"A-00000000-0000-4000-8000-{next_association_id:012d}"
+                ),
                 source.identity_id,
                 relationships[relationship],
                 target.identity_id,

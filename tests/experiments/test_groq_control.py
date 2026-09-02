@@ -15,7 +15,9 @@ def test_control_scenario_has_sufficient_initial_and_irrelevant_expansions() -> 
     scenario = build_control_scenario()
     rendered = "\n".join(scenario.initial_evidence.records)
 
-    assert "archivist_sol --BASED_IN--> lumenport" in rendered
+    assert "--BASED_IN-->" in rendered
+    assert "Archivist Sol" in rendered
+    assert "Lumenport" in rendered
     assert scenario.expansion_selectors == ("node:stonebridge", "association:A2")
     assert "stonebridge" not in rendered
     assert "brass_compass" not in rendered
@@ -95,10 +97,12 @@ def test_experiment_two_a_remains_the_original_three_record_fixture() -> None:
     scenario = build_expansion_control_scenario()
 
     assert scenario.initial_evidence == (
-        "NODE nera | ENTITY | Nera | A trusted courier.",
-        "NODE archivist_sol | ENTITY | Archivist Sol | A keeper of civic records.",
+        "NODE E-00000000-0000-4000-8000-000000000001 | "
+        "ENTITY | Nera | A trusted courier.",
+        "NODE E-00000000-0000-4000-8000-000000000002 | "
+        "ENTITY | Archivist Sol | A keeper of civic records.",
         (
-            "NODE lumenport | PLACE | Lumenport | "
+            "NODE P-00000000-0000-4000-8000-000000000001 | PLACE | Lumenport | "
             "A harbor city known for its beacon towers."
         ),
     )

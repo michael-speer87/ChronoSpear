@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+from typing import Literal
+
 from chronospear.cam.identifiers import IdentityId
-from chronospear.cam.identity import IdentityNode
+from chronospear.cam.identity import IdentityKind, IdentityNode
 
 
 class IdentityCatalog:
@@ -12,6 +14,30 @@ class IdentityCatalog:
 
     def __init__(self) -> None:
         self._nodes: dict[IdentityId, IdentityNode] = {}
+
+    def create(
+        self,
+        *,
+        kind: IdentityKind,
+        name: str = "",
+        description: str = "",
+    ) -> IdentityNode:
+        """Create and store an Identity with a CAM-owned typed UUID4."""
+
+        prefixes: dict[IdentityKind, Literal["E", "P", "D"]] = {
+            IdentityKind.ENTITY: "E",
+            IdentityKind.PLACE: "P",
+            IdentityKind.DESCRIBER: "D",
+        }
+        prefix = prefixes[kind]
+        return self.add(
+            IdentityNode(
+                identity_id=IdentityId.new(prefix),
+                name=name,
+                kind=kind,
+                description=description,
+            )
+        )
 
     def add(self, node: IdentityNode) -> IdentityNode:
         existing = self._nodes.get(node.identity_id)

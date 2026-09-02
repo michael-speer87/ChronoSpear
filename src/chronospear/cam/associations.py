@@ -46,6 +46,24 @@ class AssociationCatalog:
         self._by_id: dict[AssociationId, Association] = {}
         self._by_semantic_key: dict[tuple[IdentityId, str, IdentityId], AssociationId] = {}
 
+    def create(
+        self,
+        *,
+        source: IdentityId,
+        relationship: RelationshipType,
+        target: IdentityId,
+    ) -> Association:
+        """Create and store an Association with a CAM-owned typed UUID4."""
+
+        return self.add(
+            Association(
+                association_id=AssociationId.new(),
+                source=source,
+                relationship=relationship,
+                target=target,
+            )
+        )
+
     def add(self, association: Association) -> Association:
         if not self._nodes.contains(association.source):
             raise KeyError(f"Unknown source Identity: {association.source}.")

@@ -83,7 +83,8 @@ typeSelect.addEventListener('change',()=>populate()); objectSelect.addEventListe
 detail.addEventListener('click',event=>{ const button=event.target.closest('button[data-type]'); if(!button)return;
   typeSelect.value=button.dataset.type; populate(button.dataset.id); });
 fetch('/api/world').then(response=>{if(!response.ok)throw Error('Could not load demo world');return response.json()})
-  .then(data=>{world=data;populate('alric')}).catch(error=>{detail.textContent=error.message});
+  .then(data=>{world=data;populate(world.objects.identity[0].id)})
+  .catch(error=>{detail.textContent=error.message});
 </script></body></html>"""
 
 

@@ -3,6 +3,15 @@ from __future__ import annotations
 import pytest
 
 from chronospear.playground import PlaygroundAdapter, build_demo_world
+from chronospear.playground.model import (
+    ALRIC_ID,
+    IS_A_ID,
+    JOINED_ID,
+    LEFT_ID,
+    MEMBER_OF_ID,
+    ROYAL_GUARD_ID,
+    STONEBRIDGE_ID,
+)
 
 
 def refs(detail: object, group_name: str) -> set[str]:
@@ -32,52 +41,52 @@ def test_demo_world_uses_production_cam_catalogs() -> None:
 def test_identity_view_resolves_associations_and_occurrences() -> None:
     adapter = PlaygroundAdapter(build_demo_world())
 
-    alric = adapter.identity("alric")
-    guard = adapter.identity("royal_guard")
-    stonebridge = adapter.identity("stonebridge")
+    alric = adapter.identity(str(ALRIC_ID))
+    guard = adapter.identity(str(ROYAL_GUARD_ID))
+    stonebridge = adapter.identity(str(STONEBRIDGE_ID))
 
     assert refs(alric, "Outgoing Associations") == {
-        "alric_member_of_royal_guard",
-        "alric_is_a_fighter",
+        str(MEMBER_OF_ID),
+        str(IS_A_ID),
     }
-    assert refs(guard, "Incoming Associations") == {"alric_member_of_royal_guard"}
+    assert refs(guard, "Incoming Associations") == {str(MEMBER_OF_ID)}
     assert refs(alric, "Participant in History") == {
-        "alric_joins_guard",
-        "alric_leaves_guard",
+        str(JOINED_ID),
+        str(LEFT_ID),
     }
     assert refs(stonebridge, "Place of History") == {
-        "alric_joins_guard",
-        "alric_leaves_guard",
+        str(JOINED_ID),
+        str(LEFT_ID),
     }
 
 
 def test_association_view_resolves_source_and_target() -> None:
     detail = PlaygroundAdapter(build_demo_world()).association(
-        "alric_member_of_royal_guard"
+        str(MEMBER_OF_ID)
     )
 
-    assert refs(detail, "Source Identity") == {"alric"}
-    assert refs(detail, "Target Identity") == {"royal_guard"}
+    assert refs(detail, "Source Identity") == {str(ALRIC_ID)}
+    assert refs(detail, "Target Identity") == {str(ROYAL_GUARD_ID)}
 
 
 def test_occurrence_view_resolves_participants_place_and_lifecycle() -> None:
     adapter = PlaygroundAdapter(build_demo_world())
-    started = adapter.occurrence("alric_joins_guard")
-    ended = adapter.occurrence("alric_leaves_guard")
+    started = adapter.occurrence(str(JOINED_ID))
+    ended = adapter.occurrence(str(LEFT_ID))
 
-    assert refs(ended, "Participants") == {"alric"}
-    assert refs(ended, "Place") == {"stonebridge"}
-    assert refs(started, "Started Associations") == {"alric_member_of_royal_guard"}
-    assert refs(ended, "Ended Associations") == {"alric_member_of_royal_guard"}
+    assert refs(ended, "Participants") == {str(ALRIC_ID)}
+    assert refs(ended, "Place") == {str(STONEBRIDGE_ID)}
+    assert refs(started, "Started Associations") == {str(MEMBER_OF_ID)}
+    assert refs(ended, "Ended Associations") == {str(MEMBER_OF_ID)}
 
 
 def test_association_view_resolves_reverse_lifecycle_occurrences() -> None:
     detail = PlaygroundAdapter(build_demo_world()).association(
-        "alric_member_of_royal_guard"
+        str(MEMBER_OF_ID)
     )
 
-    assert refs(detail, "Started By") == {"alric_joins_guard"}
-    assert refs(detail, "Ended By") == {"alric_leaves_guard"}
+    assert refs(detail, "Started By") == {str(JOINED_ID)}
+    assert refs(detail, "Ended By") == {str(LEFT_ID)}
 
 
 @pytest.mark.parametrize("object_type", ["identity", "association", "occurrence"])
@@ -103,9 +112,9 @@ def test_inspection_does_not_mutate_cam() -> None:
 
     adapter = PlaygroundAdapter(world)
     adapter.snapshot()
-    adapter.identity("alric")
-    adapter.association("alric_member_of_royal_guard")
-    adapter.occurrence("alric_joins_guard")
+    adapter.identity(str(ALRIC_ID))
+    adapter.association(str(MEMBER_OF_ID))
+    adapter.occurrence(str(JOINED_ID))
 
     assert before == (
         world.identities.all(),

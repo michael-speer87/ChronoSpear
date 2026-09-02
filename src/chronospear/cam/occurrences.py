@@ -101,6 +101,32 @@ class OccurrenceCatalog:
         self._associations = associations
         self._by_id: dict[OccurrenceId, HistoricalOccurrence] = {}
 
+    def create(
+        self,
+        *,
+        stamp: ChronoStamp,
+        synopsis: str,
+        story: str,
+        participants: tuple[IdentityId, ...],
+        place: IdentityId,
+        started_associations: tuple[AssociationId, ...] = (),
+        ended_associations: tuple[AssociationId, ...] = (),
+    ) -> HistoricalOccurrence:
+        """Create and store an occurrence with a CAM-owned typed UUID4."""
+
+        return self.add(
+            HistoricalOccurrence(
+                occurrence_id=OccurrenceId.new(),
+                stamp=stamp,
+                synopsis=synopsis,
+                story=story,
+                participants=participants,
+                place=place,
+                started_associations=started_associations,
+                ended_associations=ended_associations,
+            )
+        )
+
     def add(self, occurrence: HistoricalOccurrence) -> HistoricalOccurrence:
         for participant in occurrence.participants:
             if not self._nodes.contains(participant):

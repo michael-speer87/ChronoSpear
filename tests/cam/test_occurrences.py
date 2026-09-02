@@ -3,6 +3,9 @@ from dataclasses import FrozenInstanceError
 import pytest
 
 from chronospear.cam import (
+    Association,
+    AssociationCatalog,
+    AssociationId,
     ChronoStamp,
     HistoricalOccurrence,
     IdentityCatalog,
@@ -11,6 +14,7 @@ from chronospear.cam import (
     IdentityNode,
     OccurrenceCatalog,
     OccurrenceId,
+    RelationshipVocabulary,
     SystemTime,
     WorldTime,
 )
@@ -34,6 +38,29 @@ def _stamp() -> ChronoStamp:
     return ChronoStamp(WorldTime(300), SystemTime(20))
 
 
+def _catalog() -> OccurrenceCatalog:
+    nodes = _nodes()
+    vocabulary = RelationshipVocabulary.core()
+    associations = AssociationCatalog(nodes=nodes, vocabulary=vocabulary)
+    associations.add(
+        Association(
+            AssociationId("A1"),
+            IdentityId("alric"),
+            vocabulary.require("MEMBER_OF"),
+            IdentityId("royal_guard"),
+        )
+    )
+    associations.add(
+        Association(
+            AssociationId("A2"),
+            IdentityId("royal_guard"),
+            vocabulary.require("BASED_IN"),
+            IdentityId("stonebridge"),
+        )
+    )
+    return OccurrenceCatalog(nodes=nodes, associations=associations)
+
+
 def _occurrence(
     occurrence_id: str = "O1",
     *,
@@ -42,6 +69,8 @@ def _occurrence(
     story: str = "Alric formally joined the Royal Guard at Stonebridge.",
     participants: tuple[IdentityId, ...] = _DEFAULT_PARTICIPANTS,
     place: IdentityId = _DEFAULT_PLACE,
+    started_associations: tuple[AssociationId, ...] = (),
+    ended_associations: tuple[AssociationId, ...] = (),
 ) -> HistoricalOccurrence:
     return HistoricalOccurrence(
         occurrence_id=OccurrenceId(occurrence_id),
@@ -50,6 +79,8 @@ def _occurrence(
         story=story,
         participants=participants,
         place=place,
+        started_associations=started_associations,
+        ended_associations=ended_associations,
     )
 
 
@@ -65,6 +96,9 @@ def test_historical_occurrence_is_immutable() -> None:
 
     with pytest.raises(FrozenInstanceError):
         occurrence.synopsis = "Changed"  # type: ignore[misc]
+
+    with pytest.raises(FrozenInstanceError):
+        occurrence.started_associations = (AssociationId("A1"),)  # type: ignore[misc]
 
 
 def test_historical_occurrence_normalizes_synopsis_and_story() -> None:
@@ -97,8 +131,45 @@ def test_historical_occurrence_rejects_duplicate_participants() -> None:
         _occurrence(participants=(IdentityId("alric"), IdentityId("alric")))
 
 
+def test_historical_occurrence_supports_multiple_started_and_ended_associations() -> None:
+    started = _occurrence(started_associations=(AssociationId("A1"), AssociationId("A2")))
+    ended = _occurrence("O2", ended_associations=(AssociationId("A1"), AssociationId("A2")))
+
+    catalog = _catalog()
+    assert catalog.add(started) is started
+    assert catalog.add(ended) is ended
+
+
+def test_historical_occurrence_rejects_duplicate_started_associations() -> None:
+    with pytest.raises(ValueError, match="started Associations cannot contain duplicates"):
+        _occurrence(started_associations=(AssociationId("A1"), AssociationId("A1")))
+
+
+def test_historical_occurrence_rejects_duplicate_ended_associations() -> None:
+    with pytest.raises(ValueError, match="ended Associations cannot contain duplicates"):
+        _occurrence(ended_associations=(AssociationId("A1"), AssociationId("A1")))
+
+
+def test_historical_occurrence_cannot_start_and_end_same_association() -> None:
+    with pytest.raises(ValueError, match="cannot both start and end"):
+        _occurrence(
+            started_associations=(AssociationId("A1"),),
+            ended_associations=(AssociationId("A1"),),
+        )
+
+
+def test_occurrence_catalog_rejects_unknown_started_association() -> None:
+    with pytest.raises(KeyError, match="Unknown Historical Occurrence started Association"):
+        _catalog().add(_occurrence(started_associations=(AssociationId("unknown"),)))
+
+
+def test_occurrence_catalog_rejects_unknown_ended_association() -> None:
+    with pytest.raises(KeyError, match="Unknown Historical Occurrence ended Association"):
+        _catalog().add(_occurrence(ended_associations=(AssociationId("unknown"),)))
+
+
 def test_occurrence_catalog_accepts_known_entity_participants_and_place() -> None:
-    catalog = OccurrenceCatalog(nodes=_nodes())
+    catalog = _catalog()
     occurrence = _occurrence()
 
     assert catalog.add(occurrence) is occurrence
@@ -106,7 +177,7 @@ def test_occurrence_catalog_accepts_known_entity_participants_and_place() -> Non
 
 
 def test_occurrence_catalog_rejects_unknown_participant() -> None:
-    catalog = OccurrenceCatalog(nodes=_nodes())
+    catalog = _catalog()
     occurrence = _occurrence(participants=(IdentityId("unknown"),))
 
     with pytest.raises(KeyError, match="Unknown Historical Occurrence participant"):
@@ -114,7 +185,7 @@ def test_occurrence_catalog_rejects_unknown_participant() -> None:
 
 
 def test_occurrence_catalog_rejects_place_identity_as_participant() -> None:
-    catalog = OccurrenceCatalog(nodes=_nodes())
+    catalog = _catalog()
     occurrence = _occurrence(participants=(IdentityId("stonebridge"),))
 
     with pytest.raises(ValueError, match="IdentityKind.ENTITY"):
@@ -122,7 +193,7 @@ def test_occurrence_catalog_rejects_place_identity_as_participant() -> None:
 
 
 def test_occurrence_catalog_rejects_describer_identity_as_participant() -> None:
-    catalog = OccurrenceCatalog(nodes=_nodes())
+    catalog = _catalog()
     occurrence = _occurrence(participants=(IdentityId("fighter"),))
 
     with pytest.raises(ValueError, match="IdentityKind.ENTITY"):
@@ -130,7 +201,7 @@ def test_occurrence_catalog_rejects_describer_identity_as_participant() -> None:
 
 
 def test_occurrence_catalog_rejects_unknown_place() -> None:
-    catalog = OccurrenceCatalog(nodes=_nodes())
+    catalog = _catalog()
     occurrence = _occurrence(place=IdentityId("unknown_place"))
 
     with pytest.raises(KeyError, match="Unknown Historical Occurrence place"):
@@ -138,7 +209,7 @@ def test_occurrence_catalog_rejects_unknown_place() -> None:
 
 
 def test_occurrence_catalog_rejects_non_place_identity_as_place() -> None:
-    catalog = OccurrenceCatalog(nodes=_nodes())
+    catalog = _catalog()
     occurrence = _occurrence(place=IdentityId("royal_guard"))
 
     with pytest.raises(ValueError, match="IdentityKind.PLACE"):
@@ -146,7 +217,7 @@ def test_occurrence_catalog_rejects_non_place_identity_as_place() -> None:
 
 
 def test_exact_readdition_is_idempotent() -> None:
-    catalog = OccurrenceCatalog(nodes=_nodes())
+    catalog = _catalog()
     occurrence = _occurrence()
 
     first = catalog.add(occurrence)
@@ -157,7 +228,7 @@ def test_exact_readdition_is_idempotent() -> None:
 
 
 def test_occurrence_id_cannot_point_to_conflicting_history() -> None:
-    catalog = OccurrenceCatalog(nodes=_nodes())
+    catalog = _catalog()
     catalog.add(_occurrence())
 
     with pytest.raises(ValueError, match="Occurrence ID O1 is already in use"):
@@ -165,7 +236,7 @@ def test_occurrence_id_cannot_point_to_conflicting_history() -> None:
 
 
 def test_identical_payloads_with_different_ids_can_coexist() -> None:
-    catalog = OccurrenceCatalog(nodes=_nodes())
+    catalog = _catalog()
     first = catalog.add(_occurrence("O1"))
     second = catalog.add(_occurrence("O2"))
 
@@ -174,7 +245,7 @@ def test_identical_payloads_with_different_ids_can_coexist() -> None:
 
 
 def test_distinct_occurrences_may_share_same_chronostamp() -> None:
-    catalog = OccurrenceCatalog(nodes=_nodes())
+    catalog = _catalog()
     shared_stamp = _stamp()
 
     first = catalog.add(_occurrence("O1", stamp=shared_stamp))

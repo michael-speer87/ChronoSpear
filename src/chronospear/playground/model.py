@@ -84,7 +84,7 @@ def build_demo_world() -> DemoWorld:
     ):
         associations.add(association)
 
-    occurrences = OccurrenceCatalog(nodes=identities)
+    occurrences = OccurrenceCatalog(nodes=identities, associations=associations)
     occurrences.add(
         HistoricalOccurrence(
             OccurrenceId("alric_joins_guard"),
@@ -93,6 +93,7 @@ def build_demo_world() -> DemoWorld:
             "Alric swore his oath and joined the Royal Guard at Stonebridge.",
             (IdentityId("alric"),),
             IdentityId("stonebridge"),
+            started_associations=(AssociationId("alric_member_of_royal_guard"),),
         )
     )
     occurrences.add(
@@ -103,6 +104,7 @@ def build_demo_world() -> DemoWorld:
             "Alric ended his service with the Royal Guard at Stonebridge.",
             (IdentityId("alric"),),
             IdentityId("stonebridge"),
+            ended_associations=(AssociationId("alric_member_of_royal_guard"),),
         )
     )
     return DemoWorld(identities, associations, occurrences)

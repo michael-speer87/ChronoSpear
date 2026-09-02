@@ -79,6 +79,16 @@ class PlaygroundAdapter:
         association = self._association(object_id)
         source = self._world.identities.get(association.source)
         target = self._world.identities.get(association.target)
+        started_by = [
+            self._occurrence_ref(item)
+            for item in self._world.occurrences.all()
+            if association.association_id in item.started_associations
+        ]
+        ended_by = [
+            self._occurrence_ref(item)
+            for item in self._world.occurrences.all()
+            if association.association_id in item.ended_associations
+        ]
         return {
             "type": "association",
             "id": str(association.association_id),
@@ -90,6 +100,8 @@ class PlaygroundAdapter:
             "groups": [
                 ("Source Identity", [self._identity_ref(source)]),
                 ("Target Identity", [self._identity_ref(target)]),
+                ("Started By", started_by),
+                ("Ended By", ended_by),
             ],
         }
 
@@ -100,6 +112,14 @@ class PlaygroundAdapter:
             for identity_id in occurrence.participants
         ]
         place = self._identity_ref(self._world.identities.get(occurrence.place))
+        started_associations = [
+            self._association_ref(self._world.associations.get(association_id))
+            for association_id in occurrence.started_associations
+        ]
+        ended_associations = [
+            self._association_ref(self._world.associations.get(association_id))
+            for association_id in occurrence.ended_associations
+        ]
         return {
             "type": "occurrence",
             "id": str(occurrence.occurrence_id),
@@ -114,6 +134,8 @@ class PlaygroundAdapter:
             "groups": [
                 ("Participants", participants),
                 ("Place", [place]),
+                ("Started Associations", started_associations),
+                ("Ended Associations", ended_associations),
             ],
         }
 

@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from chronospear.cam.associations import AssociationCatalog
 from chronospear.cam.catalog import IdentityCatalog
-from chronospear.cam.identifiers import IdentityId, OccurrenceId
+from chronospear.cam.identifiers import AssociationId, IdentityId, OccurrenceId
 from chronospear.cam.identity import IdentityKind
 from chronospear.cam.time import ChronoStamp
 
@@ -23,6 +24,8 @@ class HistoricalOccurrence:
     story: str
     participants: tuple[IdentityId, ...]
     place: IdentityId
+    started_associations: tuple[AssociationId, ...] = ()
+    ended_associations: tuple[AssociationId, ...] = ()
 
     def __post_init__(self) -> None:
         if not isinstance(self.stamp, ChronoStamp):
@@ -31,12 +34,44 @@ class HistoricalOccurrence:
             raise TypeError("Historical Occurrence participants must be IdentityId values.")
         if not isinstance(self.place, IdentityId):
             raise TypeError("Historical Occurrence place must be an IdentityId.")
+        if not isinstance(self.started_associations, tuple):
+            raise TypeError(
+                "Historical Occurrence started Associations must be a tuple."
+            )
+        if not isinstance(self.ended_associations, tuple):
+            raise TypeError("Historical Occurrence ended Associations must be a tuple.")
+        if any(
+            not isinstance(association_id, AssociationId)
+            for association_id in self.started_associations
+        ):
+            raise TypeError(
+                "Historical Occurrence started Associations must be AssociationId values."
+            )
+        if any(
+            not isinstance(association_id, AssociationId)
+            for association_id in self.ended_associations
+        ):
+            raise TypeError(
+                "Historical Occurrence ended Associations must be AssociationId values."
+            )
         if not self.participants:
             raise ValueError(
                 "Historical Occurrence requires at least one Entity participant."
             )
         if len(set(self.participants)) != len(self.participants):
             raise ValueError("Historical Occurrence participants cannot contain duplicates.")
+        if len(set(self.started_associations)) != len(self.started_associations):
+            raise ValueError(
+                "Historical Occurrence started Associations cannot contain duplicates."
+            )
+        if len(set(self.ended_associations)) != len(self.ended_associations):
+            raise ValueError(
+                "Historical Occurrence ended Associations cannot contain duplicates."
+            )
+        if set(self.started_associations) & set(self.ended_associations):
+            raise ValueError(
+                "A Historical Occurrence cannot both start and end the same Association."
+            )
 
         synopsis = self.synopsis.strip()
         story = self.story.strip()
@@ -51,13 +86,19 @@ class HistoricalOccurrence:
 class OccurrenceCatalog:
     """Minimal append-only invariant keeper for Historical Occurrences.
 
-    The catalog validates graph anchors and stable occurrence identity only. It is
-    intentionally not a recall index, persistence layer, correction system, or
-    semantic event deduplicator.
+    The catalog validates Identity and Association anchors plus stable occurrence
+    identity. It is intentionally not a recall index, lifecycle resolver,
+    persistence layer, correction system, or semantic event deduplicator.
     """
 
-    def __init__(self, *, nodes: IdentityCatalog) -> None:
+    def __init__(
+        self,
+        *,
+        nodes: IdentityCatalog,
+        associations: AssociationCatalog,
+    ) -> None:
         self._nodes = nodes
+        self._associations = associations
         self._by_id: dict[OccurrenceId, HistoricalOccurrence] = {}
 
     def add(self, occurrence: HistoricalOccurrence) -> HistoricalOccurrence:
@@ -78,6 +119,23 @@ class OccurrenceCatalog:
             raise ValueError(
                 "Historical Occurrence place must reference an IdentityKind.PLACE identity."
             )
+
+        for association_id in occurrence.started_associations:
+            try:
+                self._associations.get(association_id)
+            except KeyError as exc:
+                raise KeyError(
+                    "Unknown Historical Occurrence started Association: "
+                    f"{association_id}."
+                ) from exc
+        for association_id in occurrence.ended_associations:
+            try:
+                self._associations.get(association_id)
+            except KeyError as exc:
+                raise KeyError(
+                    "Unknown Historical Occurrence ended Association: "
+                    f"{association_id}."
+                ) from exc
 
         existing = self._by_id.get(occurrence.occurrence_id)
         if existing is not None:

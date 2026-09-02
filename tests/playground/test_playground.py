@@ -60,11 +60,24 @@ def test_association_view_resolves_source_and_target() -> None:
     assert refs(detail, "Target Identity") == {"royal_guard"}
 
 
-def test_occurrence_view_resolves_participants_and_place() -> None:
-    detail = PlaygroundAdapter(build_demo_world()).occurrence("alric_leaves_guard")
+def test_occurrence_view_resolves_participants_place_and_lifecycle() -> None:
+    adapter = PlaygroundAdapter(build_demo_world())
+    started = adapter.occurrence("alric_joins_guard")
+    ended = adapter.occurrence("alric_leaves_guard")
 
-    assert refs(detail, "Participants") == {"alric"}
-    assert refs(detail, "Place") == {"stonebridge"}
+    assert refs(ended, "Participants") == {"alric"}
+    assert refs(ended, "Place") == {"stonebridge"}
+    assert refs(started, "Started Associations") == {"alric_member_of_royal_guard"}
+    assert refs(ended, "Ended Associations") == {"alric_member_of_royal_guard"}
+
+
+def test_association_view_resolves_reverse_lifecycle_occurrences() -> None:
+    detail = PlaygroundAdapter(build_demo_world()).association(
+        "alric_member_of_royal_guard"
+    )
+
+    assert refs(detail, "Started By") == {"alric_joins_guard"}
+    assert refs(detail, "Ended By") == {"alric_leaves_guard"}
 
 
 @pytest.mark.parametrize("object_type", ["identity", "association", "occurrence"])

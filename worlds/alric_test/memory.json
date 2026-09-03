@@ -1,0 +1,77 @@
+{
+    "identities": [
+        {
+            "key": "alric",
+            "kind": "ENTITY",
+            "name": "Alric",
+            "description": "A veteran adventurer and member of the Royal Guard."
+        },
+        {
+            "key": "royal_guard",
+            "kind": "ENTITY",
+            "name": "Royal Guard",
+            "description": "A military organization sworn to protect the crown."
+        },
+        {
+            "key": "stonebridge",
+            "kind": "PLACE",
+            "name": "Stonebridge",
+            "description": "A fortified settlement built around an old stone crossing."
+        },
+        {
+            "key": "human",
+            "kind": "DESCRIBER",
+            "name": "Human",
+            "description": "A human being."
+        },
+        {
+            "key": "fighter",
+            "kind": "DESCRIBER",
+            "name": "Fighter",
+            "description": "A trained martial combatant."
+        }
+    ],
+    "associations": [
+        {
+            "key": "alric_is_human",
+            "source": "alric",
+            "relationship": "IS_A",
+            "target": "human"
+        },
+        {
+            "key": "alric_is_fighter",
+            "source": "alric",
+            "relationship": "IS_A",
+            "target": "fighter"
+        },
+        {
+            "key": "alric_guard_member",
+            "source": "alric",
+            "relationship": "MEMBER_OF",
+            "target": "royal_guard"
+        },
+        {
+            "key": "guard_based_in_stonebridge",
+            "source": "royal_guard",
+            "relationship": "BASED_IN",
+            "target": "stonebridge"
+        }
+    ],
+    "historical_occurrences": [
+        {
+            "key": "alric_joins_guard",
+            "participants": [
+                "alric"
+            ],
+            "place": "stonebridge",
+            "world_time": 100,
+            "system_time": 1,
+            "synopsis": "Alric joined the Royal Guard.",
+            "story": "Alric formally joined the Royal Guard while in Stonebridge.",
+            "started_associations": [
+                "alric_guard_member"
+            ],
+            "ended_associations": []
+        }
+    ]
+}

@@ -20,6 +20,21 @@ def test_identity_node_keeps_minimal_identity_shape() -> None:
     assert node.name == "Alric"
     assert node.kind is IdentityKind.ENTITY
     assert node.description == "A veteran guard."
+    assert node.synopsis == ""
+
+
+def test_identity_node_normalizes_optional_synopsis() -> None:
+    node = IdentityNode(
+        identity_id=ENTITY_1,
+        name="Alric",
+        kind=IdentityKind.ENTITY,
+        description=" Full authoritative detail. ",
+        synopsis=" Human fighter and veteran adventurer. ",
+    )
+
+    assert node.name == "Alric"
+    assert node.synopsis == "Human fighter and veteran adventurer."
+    assert node.description == "Full authoritative detail."
 
 
 def test_identity_kind_contains_only_current_identity_families() -> None:
@@ -86,3 +101,15 @@ def test_identity_catalog_create_generates_kind_specific_unique_ids() -> None:
     assert place.identity_id.value.startswith("P-")
     assert describer.identity_id.value.startswith("D-")
     assert catalog.all() == (entity, other_entity, place, describer)
+
+
+def test_identity_catalog_create_accepts_synopsis_without_affecting_id_type() -> None:
+    node = IdentityCatalog().create(
+        kind=IdentityKind.ENTITY,
+        name="Alric",
+        synopsis="Human fighter.",
+        description="Full authoritative detail.",
+    )
+
+    assert node.identity_id.value.startswith("E-")
+    assert node.synopsis == "Human fighter."

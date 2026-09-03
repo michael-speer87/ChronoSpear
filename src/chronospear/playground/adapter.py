@@ -6,6 +6,7 @@ from typing import Literal, TypedDict
 
 from chronospear.cam import Association, HistoricalOccurrence, IdentityNode
 from chronospear.playground.model import DemoWorld
+from chronospear.world_import import ImportedWorld
 
 ObjectType = Literal["identity", "association", "occurrence"]
 
@@ -32,7 +33,7 @@ class PlaygroundSnapshot(TypedDict):
 class PlaygroundAdapter:
     """Resolve CAM objects and their immediate connections without mutating CAM."""
 
-    def __init__(self, world: DemoWorld) -> None:
+    def __init__(self, world: DemoWorld | ImportedWorld) -> None:
         self._world = world
 
     def identity(self, object_id: str) -> Detail:
@@ -65,6 +66,7 @@ class PlaygroundAdapter:
                 ("IdentityId", str(node.identity_id)),
                 ("Name", node.name),
                 ("IdentityKind", node.kind.value),
+                ("Synopsis", node.synopsis),
                 ("Description", node.description),
             ],
             "groups": [

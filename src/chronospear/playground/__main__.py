@@ -8,8 +8,10 @@ import argparse
 import json
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
 
 from chronospear.playground import PlaygroundAdapter, build_demo_world
+from chronospear.world_import import import_world
 
 _PAGE = """<!doctype html>
 <html lang="en">
@@ -116,8 +118,14 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Run the read-only CAM visual playground.")
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", default=8000, type=int)
+    parser.add_argument(
+        "--world",
+        type=Path,
+        help="directory containing memory.json and optional catalog.json",
+    )
     args = parser.parse_args()
-    snapshot = json.dumps(PlaygroundAdapter(build_demo_world()).snapshot()).encode()
+    world = import_world(args.world) if args.world is not None else build_demo_world()
+    snapshot = json.dumps(PlaygroundAdapter(world).snapshot()).encode()
     server = ThreadingHTTPServer((args.host, args.port), _handler(snapshot))
     print(
         f"ChronoSpear CAM Playground: http://{args.host}:{server.server_port}",

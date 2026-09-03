@@ -21,6 +21,7 @@ class IdentityCatalog:
         kind: IdentityKind,
         name: str = "",
         description: str = "",
+        synopsis: str = "",
     ) -> IdentityNode:
         """Create and store an Identity with a CAM-owned typed UUID4."""
 
@@ -36,6 +37,7 @@ class IdentityCatalog:
                 name=name,
                 kind=kind,
                 description=description,
+                synopsis=synopsis,
             )
         )
 

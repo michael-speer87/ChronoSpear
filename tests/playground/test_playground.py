@@ -38,6 +38,14 @@ def test_demo_world_uses_production_cam_catalogs() -> None:
     assert len(world.occurrences.all()) == 2
 
 
+def test_identity_view_exposes_synopsis_between_name_and_description() -> None:
+    detail = PlaygroundAdapter(build_demo_world()).identity(str(ALRIC_ID))
+    field_names = [name for name, _ in detail["fields"]]
+
+    assert field_names.index("Name") < field_names.index("Synopsis")
+    assert field_names.index("Synopsis") < field_names.index("Description")
+
+
 def test_identity_view_resolves_associations_and_occurrences() -> None:
     adapter = PlaygroundAdapter(build_demo_world())
 

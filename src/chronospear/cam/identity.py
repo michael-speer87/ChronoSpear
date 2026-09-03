@@ -23,16 +23,17 @@ class IdentityKind(StrEnum):
 class IdentityNode:
     """An enduring addressable thing or concept known to CAM.
 
-    Description answers what the identity *is*. Mutable, secret, temporal, or
-    perspective-dependent world facts belong in Associations/History, not here.
-    That semantic rule is architectural and cannot be completely enforced by a
-    Python validator.
+    Synopsis gives compact orientation and Description gives authoritative detail
+    about what the identity *is*. Mutable, secret, temporal, or perspective-dependent
+    world facts belong in Associations/History, not here. That semantic rule is
+    architectural and cannot be completely enforced by a Python validator.
     """
 
     identity_id: IdentityId
     name: str
     kind: IdentityKind
     description: str = ""
+    synopsis: str = ""
 
     def __post_init__(self) -> None:
         expected_prefix = {
@@ -45,4 +46,5 @@ class IdentityNode:
                 f"Identity ID prefix must agree with IdentityKind.{self.kind.name}."
             )
         object.__setattr__(self, "name", self.name.strip())
+        object.__setattr__(self, "synopsis", self.synopsis.strip())
         object.__setattr__(self, "description", self.description.strip())

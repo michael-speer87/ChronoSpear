@@ -13,6 +13,7 @@ from typing import cast
 
 from chronospear.cam import RelationshipVocabulary
 from chronospear.world_builder import MemoryJsonSerializer
+from chronospear.world_import import validate_memory_document
 
 _PAGE = """<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -55,16 +56,20 @@ function refreshSelectors(){
 }
 function removeItem(family,index){world[family].splice(index,1);dirty();render()}
 function fill(form,item,index){form.reset();form.index.value=index;Object.entries(item).forEach(([key,value])=>{const input=form.elements.namedItem(key);if(!input)return;if(input.multiple)[...input.options].forEach(o=>o.selected=value.includes(o.value));else input.value=value})}
-function newIdentity(){const f=$('#identity-form');f.reset();f.index.value='';f.key.value=nextKey(f.kind.value==='ENTITY'?'e':f.kind.value==='PLACE'?'p':'d',world.identities)}
+function newIdentity(kind='ENTITY'){const f=$('#identity-form');f.reset();f.kind.value=kind;f.index.value='';f.key.value=nextKey(kind==='ENTITY'?'e':kind==='PLACE'?'p':'d',world.identities)}
 function editIdentity(i){fill($('#identity-form'),world.identities[i],i)}
 function newAssociation(){const f=$('#association-form');f.reset();f.index.value='';f.key.value=nextKey('a',world.associations)}
 function editAssociation(i){refreshSelectors();fill($('#association-form'),world.associations[i],i)}
 function newOccurrence(){const f=$('#occurrence-form');f.reset();f.index.value='';f.key.value=nextKey('ho',world.historical_occurrences);f.world_time.value=0;f.system_time.value=0}
 function editOccurrence(i){refreshSelectors();fill($('#occurrence-form'),world.historical_occurrences[i],i)}
-function apply(form,family,transform){form.addEventListener('submit',event=>{event.preventDefault();const data=new FormData(form),item=transform(data),index=form.index.value;if(index==='')world[family].push(item);else world[family][Number(index)]=item;dirty();render()})}
-apply($('#identity-form'),'identities',d=>({key:d.get('key'),kind:d.get('kind'),name:d.get('name'),synopsis:d.get('synopsis'),description:d.get('description')}));
-apply($('#association-form'),'associations',d=>({key:d.get('key'),source:d.get('source'),relationship:d.get('relationship'),target:d.get('target')}));
-apply($('#occurrence-form'),'historical_occurrences',d=>({key:d.get('key'),participants:d.getAll('participants'),place:d.get('place'),world_time:Number(d.get('world_time')),system_time:Number(d.get('system_time')),synopsis:d.get('synopsis'),story:d.get('story'),started_associations:d.getAll('started_associations'),ended_associations:d.getAll('ended_associations')}));
+async function validateCandidate(candidate){const response=await fetch('/api/validate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(candidate)});const result=await response.json();if(!response.ok)throw Error(result.error)}
+function apply(form,family,transform,reset){
+  form.addEventListener('invalid',()=>{const status=$('#status');status.textContent='Cannot apply: correct the highlighted form field.';status.className='error'},true);
+  form.addEventListener('submit',async event=>{event.preventDefault();const data=new FormData(form),item=transform(data),index=form.index.value,candidate=JSON.parse(JSON.stringify(world));if(index==='')candidate[family].push(item);else candidate[family][Number(index)]=item;try{await validateCandidate(candidate)}catch(error){const status=$('#status');status.textContent='Cannot apply: '+error.message;status.className='error';return}world=candidate;dirty();render();reset(item)})
+}
+apply($('#identity-form'),'identities',d=>({key:d.get('key'),kind:d.get('kind'),name:d.get('name'),synopsis:d.get('synopsis'),description:d.get('description')}),item=>newIdentity(item.kind));
+apply($('#association-form'),'associations',d=>({key:d.get('key'),source:d.get('source'),relationship:d.get('relationship'),target:d.get('target')}),newAssociation);
+apply($('#occurrence-form'),'historical_occurrences',d=>({key:d.get('key'),participants:d.getAll('participants'),place:d.get('place'),world_time:Number(d.get('world_time')),system_time:Number(d.get('system_time')),synopsis:d.get('synopsis'),story:d.get('story'),started_associations:d.getAll('started_associations'),ended_associations:d.getAll('ended_associations')}),newOccurrence);
 document.querySelectorAll('.tabs button').forEach(button=>button.onclick=()=>{document.querySelectorAll('.tabs button,.page').forEach(x=>x.classList.remove('active'));button.classList.add('active');$('#'+button.dataset.tab).classList.add('active')});
 $('#identity-form').kind.addEventListener('change',()=>{const f=$('#identity-form');if(f.index.value==='')f.key.value=nextKey(f.kind.value==='ENTITY'?'e':f.kind.value==='PLACE'?'p':'d',world.identities)});
 $('#save').onclick=async()=>{const status=$('#status');try{const response=await fetch('/api/save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(world)});const result=await response.json();if(!response.ok)throw Error(result.error);status.textContent='Saved';status.className='saved'}catch(error){status.textContent='Cannot save: '+error.message;status.className='error'}};
@@ -101,7 +106,7 @@ def _handler(
                 self.send_error(HTTPStatus.NOT_FOUND)
 
         def do_POST(self) -> None:  # noqa: N802
-            if self.path != "/api/save":
+            if self.path not in {"/api/save", "/api/validate"}:
                 self.send_error(HTTPStatus.NOT_FOUND)
                 return
             try:
@@ -110,7 +115,10 @@ def _handler(
                     raise ValueError("World document exceeds the 10 MB authoring limit.")
                 raw = cast(object, json.loads(self.rfile.read(length)))
                 world = serializer.from_document(raw)
-                serializer.save(package, world)
+                if self.path == "/api/save":
+                    serializer.save(package, world)
+                else:
+                    validate_memory_document(serializer.to_document(world))
             except (json.JSONDecodeError, KeyError, TypeError, ValueError) as exc:
                 self._respond(
                     _json_bytes({"error": str(exc)}),
@@ -118,9 +126,8 @@ def _handler(
                     HTTPStatus.BAD_REQUEST,
                 )
                 return
-            self._respond(
-                _json_bytes({"saved": True}), "application/json; charset=utf-8"
-            )
+            result = {"saved": True} if self.path == "/api/save" else {"valid": True}
+            self._respond(_json_bytes(result), "application/json; charset=utf-8")
 
         def _respond(
             self,

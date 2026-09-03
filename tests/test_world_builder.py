@@ -176,3 +176,42 @@ def test_builder_never_changes_catalog_json(tmp_path: Path) -> None:
     serializer.save(tmp_path, loaded)
 
     assert (tmp_path / "catalog.json").read_bytes() == catalog
+
+
+def test_apply_workflow_commits_only_after_validation_then_resets_to_add_mode() -> None:
+    from chronospear.world_builder.__main__ import _PAGE
+
+    failure = "catch(error){const status=$('#status');status.textContent='Cannot apply: '"
+    success = "world=candidate;dirty();render();reset(item)"
+
+    assert "await validateCandidate(candidate)" in _PAGE
+    assert failure in _PAGE
+    assert _PAGE.index("await validateCandidate(candidate)") < _PAGE.index(success)
+    assert "return}world=candidate" in _PAGE
+    assert "f.reset();f.kind.value=kind;f.index.value=''" in _PAGE
+    assert "f.reset();f.index.value='';f.key.value=nextKey('a'" in _PAGE
+    assert "f.reset();f.index.value='';f.key.value=nextKey('ho'" in _PAGE
+
+
+def test_apply_validation_is_separate_from_save_and_keeps_unsaved_status() -> None:
+    from chronospear.world_builder.__main__ import _PAGE
+
+    assert "fetch('/api/validate'" in _PAGE
+    assert "fetch('/api/save'" in _PAGE
+    assert "world=candidate;dirty();render();reset(item)" in _PAGE
+    assert "function dirty(){" in _PAGE
+    assert "status.textContent='Unsaved changes'" in _PAGE
+
+
+def test_gap_aware_suggestion_remains_after_apply_and_delete() -> None:
+    world = _world()
+    world.identities.append(IdentityDraft("e3", IdentityKind.ENTITY, "Third"))
+    del world.identities[1]
+    world.associations.append(AssociationDraft("a3", "e1", "IS_A", "d1"))
+    world.historical_occurrences.append(
+        HistoricalOccurrenceDraft("ho3", ["e1"], "p1", 200, 2, "Later.", "Later.")
+    )
+
+    assert world.suggest_key("ENTITY") == "e2"
+    assert world.suggest_key("association") == "a2"
+    assert world.suggest_key("historical_occurrence") == "ho2"

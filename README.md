@@ -26,6 +26,19 @@ Human-authored package keys may be any stable unique strings. Examples prefer
 Historical Occurrence records respectively. These are authoring conventions, not
 canonical CAM ID formats and are not enforced.
 
+## World Builder
+
+Create or edit a UUID-free world through the local visual authoring tool:
+
+```bash
+python -m chronospear.world_builder --world path/to/world
+```
+
+Open the printed address (by default `http://127.0.0.1:8001`). The Builder edits
+logical Identities, Associations, and Historical Occurrences, validates them through
+the production import boundary, and atomically saves the current representation to
+`memory.json`. It never reads or writes `catalog.json`.
+
 ChronoSpear is a historical reasoning brain built around **Chrono Associative Memory (CAM)**.
 
 This repository seed contains **Production Slice 1: CAM Core Primitives**. It is intentionally small. It establishes the canonical vocabulary that later CAM slices must build upon without prematurely implementing History, perspective, Language Surfaces, LLM integration, persistence, or memory formation.

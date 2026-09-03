@@ -88,7 +88,7 @@ def import_world(package_directory: str | Path) -> ImportedWorld:
     package = Path(package_directory)
     memory_path = package / "memory.json"
     catalog_path = package / "catalog.json"
-    memory = _parse_memory(_read_json(memory_path, "Memory"))
+    memory = parse_memory_document(_read_json(memory_path, "Memory"))
     catalog = _read_catalog(catalog_path)
     _reconcile(memory, catalog)
     try:
@@ -97,6 +97,24 @@ def import_world(package_directory: str | Path) -> ImportedWorld:
         raise WorldImportError(f"Memory could not construct valid CAM: {exc}") from exc
     _write_catalog(catalog_path, catalog)
     return world
+
+
+def parse_memory_document(raw: object) -> ParsedMemory:
+    """Parse and validate the human-facing structure without changing external state."""
+
+    return _parse_memory(raw)
+
+
+def validate_memory_document(raw: object) -> None:
+    """Run structural and production CAM validation without writing a Catalog."""
+
+    memory = parse_memory_document(raw)
+    catalog = _empty_catalog()
+    _reconcile(memory, catalog)
+    try:
+        _build_world(memory, catalog)
+    except (KeyError, TypeError, ValueError) as exc:
+        raise WorldImportError(f"Memory could not construct valid CAM: {exc}") from exc
 
 
 def _read_json(path: Path, label: str) -> object:

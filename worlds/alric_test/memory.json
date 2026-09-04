@@ -1,77 +1,733 @@
 {
-    "identities": [
-        {
-            "key": "alric",
-            "kind": "ENTITY",
-            "name": "Alric",
-            "description": "A veteran adventurer and member of the Royal Guard."
-        },
-        {
-            "key": "royal_guard",
-            "kind": "ENTITY",
-            "name": "Royal Guard",
-            "description": "A military organization sworn to protect the crown."
-        },
-        {
-            "key": "stonebridge",
-            "kind": "PLACE",
-            "name": "Stonebridge",
-            "description": "A fortified settlement built around an old stone crossing."
-        },
-        {
-            "key": "human",
-            "kind": "DESCRIBER",
-            "name": "Human",
-            "description": "A human being."
-        },
-        {
-            "key": "fighter",
-            "kind": "DESCRIBER",
-            "name": "Fighter",
-            "description": "A trained martial combatant."
-        }
-    ],
-    "associations": [
-        {
-            "key": "alric_is_human",
-            "source": "alric",
-            "relationship": "IS_A",
-            "target": "human"
-        },
-        {
-            "key": "alric_is_fighter",
-            "source": "alric",
-            "relationship": "IS_A",
-            "target": "fighter"
-        },
-        {
-            "key": "alric_guard_member",
-            "source": "alric",
-            "relationship": "MEMBER_OF",
-            "target": "royal_guard"
-        },
-        {
-            "key": "guard_based_in_stonebridge",
-            "source": "royal_guard",
-            "relationship": "BASED_IN",
-            "target": "stonebridge"
-        }
-    ],
-    "historical_occurrences": [
-        {
-            "key": "alric_joins_guard",
-            "participants": [
-                "alric"
-            ],
-            "place": "stonebridge",
-            "world_time": 100,
-            "system_time": 1,
-            "synopsis": "Alric joined the Royal Guard.",
-            "story": "Alric formally joined the Royal Guard while in Stonebridge.",
-            "started_associations": [
-                "alric_guard_member"
-            ],
-            "ended_associations": []
-        }
-    ]
+  "identities": [
+    {
+      "key": "e1",
+      "kind": "ENTITY",
+      "name": "Alric",
+      "synopsis": "Human fighter and member of Stonebridge's Royal Guard.",
+      "description": "A human Fighter that uses a Longsword and Shield"
+    },
+    {
+      "key": "e2",
+      "kind": "ENTITY",
+      "name": "Elara",
+      "synopsis": "Human wizard living in Stonebridge who secretly carries a vampiric nature.",
+      "description": "Human wizard that is secretly a Vampire"
+    },
+    {
+      "key": "e3",
+      "kind": "ENTITY",
+      "name": "Dorf",
+      "synopsis": "Dwarven fighter known for fighting with a two-handed battle-axe.",
+      "description": "A Dwarven Fighter that uses Two-Handed Battle-Axe"
+    },
+    {
+      "key": "p1",
+      "kind": "PLACE",
+      "name": "Stonebridge",
+      "synopsis": "Fortified settlement centered on an ancient stone crossing.",
+      "description": "A fortified settlement built around an old stone crossing."
+    },
+    {
+      "key": "e4",
+      "kind": "ENTITY",
+      "name": "Royal Guard",
+      "synopsis": "Crown-sworn military organization charged with protecting the realm.",
+      "description": "A military organization sworn to protect the crown."
+    },
+    {
+      "key": "d1",
+      "kind": "DESCRIBER",
+      "name": "Fighter",
+      "synopsis": "A martial combatant trained for direct physical conflict.",
+      "description": "A trained martial combatant."
+    },
+    {
+      "key": "d2",
+      "kind": "DESCRIBER",
+      "name": "Wizard",
+      "synopsis": "A trained arcane spell-caster.",
+      "description": "A trained Spell-Caster"
+    },
+    {
+      "key": "d3",
+      "kind": "DESCRIBER",
+      "name": "Human",
+      "synopsis": "A human ancestry or species identity.",
+      "description": "A human being"
+    },
+    {
+      "key": "d4",
+      "kind": "DESCRIBER",
+      "name": "Dwarf",
+      "synopsis": "A dwarven ancestry or species identity.",
+      "description": "A dwarf."
+    },
+    {
+      "key": "e5",
+      "kind": "ENTITY",
+      "name": "Captain Mara Vey",
+      "synopsis": "Veteran officer commanding Stonebridge's Royal Guard contingent.",
+      "description": "A disciplined human officer who commands the Royal Guard stationed around Stonebridge."
+    },
+    {
+      "key": "e6",
+      "kind": "ENTITY",
+      "name": "Bram Tallow",
+      "synopsis": "Owner and keeper of the Crow & Lantern Tavern.",
+      "description": "A broad-shouldered human innkeeper who hears more rumors than he admits."
+    },
+    {
+      "key": "e7",
+      "kind": "ENTITY",
+      "name": "Sister Ysra Fen",
+      "synopsis": "Traveling cleric passing through Stonebridge.",
+      "description": "A human cleric who tends the injured and collects stories about strange events along the old roads."
+    },
+    {
+      "key": "e8",
+      "kind": "ENTITY",
+      "name": "Kelren Moss",
+      "synopsis": "A courier with divided loyalties and dangerous contacts.",
+      "description": "A nervous human courier who knows hidden paths around Stonebridge and once worked for the Ashen Circle."
+    },
+    {
+      "key": "e9",
+      "kind": "ENTITY",
+      "name": "Ashen Circle",
+      "synopsis": "Secretive occult organization operating near Stonebridge.",
+      "description": "A clandestine organization that meets outside Stonebridge and pursues forbidden magical knowledge."
+    },
+    {
+      "key": "e10",
+      "kind": "ENTITY",
+      "name": "Stonebridge Merchants Guild",
+      "synopsis": "Trade organization representing Stonebridge's established merchants.",
+      "description": "A wealthy guild that regulates major trade agreements and caravan business in Stonebridge."
+    },
+    {
+      "key": "e11",
+      "kind": "ENTITY",
+      "name": "Mira Thorn",
+      "synopsis": "Scout recently recruited into the Royal Guard.",
+      "description": "A sharp-eyed human scout who knows the roads, ravines, and abandoned paths around Stonebridge."
+    },
+    {
+      "key": "e12",
+      "kind": "ENTITY",
+      "name": "Black Pike Company",
+      "synopsis": "Mercenary company working the roads around Stonebridge.",
+      "description": "A hard-edged mercenary company that sells caravan protection and muscle to whoever can afford it."
+    },
+    {
+      "key": "e13",
+      "kind": "ENTITY",
+      "name": "Ironhowl",
+      "synopsis": "Dorf's heavy two-handed battle-axe.",
+      "description": "A scarred dwarven-forged battle-axe with a dark iron head and a haft wrapped in old red leather."
+    },
+    {
+      "key": "p2",
+      "kind": "PLACE",
+      "name": "Crow & Lantern Tavern",
+      "synopsis": "Busy Stonebridge tavern where guards, merchants, and travelers cross paths.",
+      "description": "A warm but noisy tavern near the center of Stonebridge, known for cheap stew, strong ale, and overheard secrets."
+    },
+    {
+      "key": "p3",
+      "kind": "PLACE",
+      "name": "North Gate",
+      "synopsis": "Stonebridge's guarded northern entrance.",
+      "description": "A fortified gate controlling the northern road into Stonebridge."
+    },
+    {
+      "key": "p4",
+      "kind": "PLACE",
+      "name": "Old Quarry",
+      "synopsis": "Abandoned quarry outside Stonebridge used for secret meetings.",
+      "description": "A long-abandoned stone quarry cut into the hills beyond Stonebridge, filled with broken ledges and hidden recesses."
+    },
+    {
+      "key": "p5",
+      "kind": "PLACE",
+      "name": "Riverside Market",
+      "synopsis": "Stonebridge's crowded commercial market beside the river.",
+      "description": "A dense market of awnings, stalls, warehouses, and caravan yards along Stonebridge's riverfront."
+    },
+    {
+      "key": "d5",
+      "kind": "DESCRIBER",
+      "name": "Vampire",
+      "synopsis": "An undead or vampiric being sustained by blood.",
+      "description": "A supernatural blood-drinking creature with traits that distinguish it from ordinary mortals."
+    },
+    {
+      "key": "d6",
+      "kind": "DESCRIBER",
+      "name": "Cleric",
+      "synopsis": "A religious spell-caster and healer.",
+      "description": "A practitioner of divine magic who serves a faith, ideal, or sacred calling."
+    },
+    {
+      "key": "d7",
+      "kind": "DESCRIBER",
+      "name": "Innkeeper",
+      "synopsis": "A person who operates an inn or tavern.",
+      "description": "A proprietor responsible for lodging, food, drink, and the daily operation of an inn or tavern."
+    },
+    {
+      "key": "d8",
+      "kind": "DESCRIBER",
+      "name": "Merchant",
+      "synopsis": "A person engaged in trade and commerce.",
+      "description": "A trader who buys, sells, or brokers goods for profit."
+    },
+    {
+      "key": "d9",
+      "kind": "DESCRIBER",
+      "name": "Guard Captain",
+      "synopsis": "An officer who commands guards or soldiers.",
+      "description": "A military officer responsible for directing a body of guards."
+    },
+    {
+      "key": "d10",
+      "kind": "DESCRIBER",
+      "name": "Smuggler",
+      "synopsis": "A person who secretly moves restricted goods or messages.",
+      "description": "Someone who evades lawful inspection to transport prohibited goods, people, or information."
+    },
+    {
+      "key": "d11",
+      "kind": "DESCRIBER",
+      "name": "Scout",
+      "synopsis": "A skilled observer and pathfinder.",
+      "description": "A person trained to reconnoiter terrain, routes, threats, and movement."
+    },
+    {
+      "key": "d12",
+      "kind": "DESCRIBER",
+      "name": "Organization",
+      "synopsis": "A persistent group acting under a shared identity or purpose.",
+      "description": "A structured group of people recognized as a continuing collective entity."
+    },
+    {
+      "key": "d13",
+      "kind": "DESCRIBER",
+      "name": "Tavern",
+      "synopsis": "A public establishment serving food and drink.",
+      "description": "A social establishment where travelers and locals gather for meals, drink, lodging, and conversation."
+    },
+    {
+      "key": "d14",
+      "kind": "DESCRIBER",
+      "name": "Weapon",
+      "synopsis": "An object intended for combat.",
+      "description": "An object designed or commonly used to injure, threaten, or defend during combat."
+    }
+  ],
+  "associations": [
+    {
+      "key": "a1",
+      "source": "e1",
+      "relationship": "IS_A",
+      "target": "d1"
+    },
+    {
+      "key": "a2",
+      "source": "e1",
+      "relationship": "IS_A",
+      "target": "d3"
+    },
+    {
+      "key": "a3",
+      "source": "e2",
+      "relationship": "IS_A",
+      "target": "d2"
+    },
+    {
+      "key": "a4",
+      "source": "e2",
+      "relationship": "IS_A",
+      "target": "d3"
+    },
+    {
+      "key": "a5",
+      "source": "e3",
+      "relationship": "IS_A",
+      "target": "d4"
+    },
+    {
+      "key": "a6",
+      "source": "e3",
+      "relationship": "IS_A",
+      "target": "d1"
+    },
+    {
+      "key": "a7",
+      "source": "e1",
+      "relationship": "IS_A",
+      "target": "e4"
+    },
+    {
+      "key": "a8",
+      "source": "e5",
+      "relationship": "IS_A",
+      "target": "d9"
+    },
+    {
+      "key": "a9",
+      "source": "e5",
+      "relationship": "IS_A",
+      "target": "d3"
+    },
+    {
+      "key": "a10",
+      "source": "e5",
+      "relationship": "MEMBER_OF",
+      "target": "e4"
+    },
+    {
+      "key": "a11",
+      "source": "e4",
+      "relationship": "BASED_IN",
+      "target": "p1"
+    },
+    {
+      "key": "a12",
+      "source": "e6",
+      "relationship": "IS_A",
+      "target": "d7"
+    },
+    {
+      "key": "a13",
+      "source": "e6",
+      "relationship": "IS_A",
+      "target": "d3"
+    },
+    {
+      "key": "a14",
+      "source": "e6",
+      "relationship": "OWNS",
+      "target": "p2"
+    },
+    {
+      "key": "a15",
+      "source": "e7",
+      "relationship": "IS_A",
+      "target": "d6"
+    },
+    {
+      "key": "a16",
+      "source": "e7",
+      "relationship": "IS_A",
+      "target": "d3"
+    },
+    {
+      "key": "a17",
+      "source": "e8",
+      "relationship": "IS_A",
+      "target": "d3"
+    },
+    {
+      "key": "a18",
+      "source": "e8",
+      "relationship": "IS_A",
+      "target": "d10"
+    },
+    {
+      "key": "a19",
+      "source": "e8",
+      "relationship": "MEMBER_OF",
+      "target": "e9"
+    },
+    {
+      "key": "a20",
+      "source": "e9",
+      "relationship": "BASED_IN",
+      "target": "p4"
+    },
+    {
+      "key": "a21",
+      "source": "e9",
+      "relationship": "OPPOSES",
+      "target": "e4"
+    },
+    {
+      "key": "a22",
+      "source": "e10",
+      "relationship": "BASED_IN",
+      "target": "p1"
+    },
+    {
+      "key": "a23",
+      "source": "e10",
+      "relationship": "IS_A",
+      "target": "d12"
+    },
+    {
+      "key": "a24",
+      "source": "e9",
+      "relationship": "IS_A",
+      "target": "d12"
+    },
+    {
+      "key": "a25",
+      "source": "e4",
+      "relationship": "IS_A",
+      "target": "d12"
+    },
+    {
+      "key": "a26",
+      "source": "e11",
+      "relationship": "IS_A",
+      "target": "d11"
+    },
+    {
+      "key": "a27",
+      "source": "e11",
+      "relationship": "IS_A",
+      "target": "d3"
+    },
+    {
+      "key": "a28",
+      "source": "e11",
+      "relationship": "MEMBER_OF",
+      "target": "e4"
+    },
+    {
+      "key": "a29",
+      "source": "e12",
+      "relationship": "IS_A",
+      "target": "d12"
+    },
+    {
+      "key": "a30",
+      "source": "e12",
+      "relationship": "BASED_IN",
+      "target": "p3"
+    },
+    {
+      "key": "a31",
+      "source": "e12",
+      "relationship": "OPPOSES",
+      "target": "e10"
+    },
+    {
+      "key": "a32",
+      "source": "e2",
+      "relationship": "IS_A",
+      "target": "d5"
+    },
+    {
+      "key": "a33",
+      "source": "p2",
+      "relationship": "IS_A",
+      "target": "d13"
+    },
+    {
+      "key": "a34",
+      "source": "p4",
+      "relationship": "LOCATED_IN",
+      "target": "p1"
+    },
+    {
+      "key": "a35",
+      "source": "p3",
+      "relationship": "PART_OF",
+      "target": "p1"
+    },
+    {
+      "key": "a36",
+      "source": "p5",
+      "relationship": "PART_OF",
+      "target": "p1"
+    },
+    {
+      "key": "a37",
+      "source": "e13",
+      "relationship": "IS_A",
+      "target": "d14"
+    },
+    {
+      "key": "a38",
+      "source": "e3",
+      "relationship": "OWNS",
+      "target": "e13"
+    },
+    {
+      "key": "a39",
+      "source": "e2",
+      "relationship": "BASED_IN",
+      "target": "p2"
+    },
+    {
+      "key": "a40",
+      "source": "e8",
+      "relationship": "MEMBER_OF",
+      "target": "e4"
+    },
+    {
+      "key": "a41",
+      "source": "e3",
+      "relationship": "OPPOSES",
+      "target": "e12"
+    },
+    {
+      "key": "a42",
+      "source": "e9",
+      "relationship": "OPPOSES",
+      "target": "e8"
+    },
+    {
+      "key": "a43",
+      "source": "e10",
+      "relationship": "OWNS",
+      "target": "p5"
+    },
+    {
+      "key": "a44",
+      "source": "e4",
+      "relationship": "OWNS",
+      "target": "p3"
+    }
+  ],
+  "historical_occurrences": [
+    {
+      "key": "ho1",
+      "participants": [
+        "e1",
+        "e4"
+      ],
+      "place": "p1",
+      "world_time": 100,
+      "system_time": 1,
+      "synopsis": "Alric joined the Royal Guard.",
+      "story": "Alric formally joined the Royal Guard while in Stonebridge.",
+      "started_associations": [
+        "a7"
+      ],
+      "ended_associations": []
+    },
+    {
+      "key": "ho2",
+      "participants": [
+        "e1",
+        "e5"
+      ],
+      "place": "p3",
+      "world_time": 120,
+      "system_time": 2,
+      "synopsis": "Captain Mara gave Alric his first patrol assignment.",
+      "story": "At Stonebridge's North Gate, Captain Mara Vey assigned Alric to his first Royal Guard patrol and warned him about unusual nighttime traffic.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho3",
+      "participants": [
+        "e3",
+        "e6",
+        "e13"
+      ],
+      "place": "p2",
+      "world_time": 130,
+      "system_time": 3,
+      "synopsis": "Dorf acquired Ironhowl from Bram Tallow.",
+      "story": "Bram Tallow sold the scarred battle-axe Ironhowl to Dorf after the dwarf spent most of an evening inspecting the weapon and arguing over its price.",
+      "started_associations": [
+        "a38"
+      ],
+      "ended_associations": []
+    },
+    {
+      "key": "ho4",
+      "participants": [
+        "e2",
+        "e6"
+      ],
+      "place": "p2",
+      "world_time": 150,
+      "system_time": 4,
+      "synopsis": "Elara took a room at the Crow & Lantern.",
+      "story": "Elara rented a small upstairs room from Bram Tallow at the Crow & Lantern Tavern and began using it as her base while staying in Stonebridge.",
+      "started_associations": [
+        "a39"
+      ],
+      "ended_associations": []
+    },
+    {
+      "key": "ho5",
+      "participants": [
+        "e2",
+        "e8"
+      ],
+      "place": "p2",
+      "world_time": 170,
+      "system_time": 5,
+      "synopsis": "Kelren secretly delivered a sealed note to Elara.",
+      "story": "Kelren Moss met Elara in a quiet corner of the Crow & Lantern and slipped her a sealed note marked with gray ash before leaving without ordering a drink.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho6",
+      "participants": [
+        "e8",
+        "e9"
+      ],
+      "place": "p4",
+      "world_time": 180,
+      "system_time": 6,
+      "synopsis": "Kelren accepted work from the Ashen Circle.",
+      "story": "At the Old Quarry, the Ashen Circle recruited Kelren as a courier and ordered him to watch Royal Guard movements around Stonebridge.",
+      "started_associations": [
+        "a19",
+        "a21"
+      ],
+      "ended_associations": []
+    },
+    {
+      "key": "ho7",
+      "participants": [
+        "e1",
+        "e8",
+        "e11"
+      ],
+      "place": "p3",
+      "world_time": 200,
+      "system_time": 7,
+      "synopsis": "Alric and Mira caught Kelren carrying contraband at the North Gate.",
+      "story": "Alric and Mira Thorn stopped Kelren at the North Gate and discovered concealed contraband in his satchel. Kelren escaped into the crowd before the Guard could detain him.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho8",
+      "participants": [
+        "e5",
+        "e11",
+        "e4"
+      ],
+      "place": "p1",
+      "world_time": 210,
+      "system_time": 8,
+      "synopsis": "Mira Thorn formally joined the Royal Guard.",
+      "story": "Impressed by Mira Thorn's work during the North Gate incident, Captain Mara Vey formally recruited her into Stonebridge's Royal Guard.",
+      "started_associations": [
+        "a28"
+      ],
+      "ended_associations": []
+    },
+    {
+      "key": "ho9",
+      "participants": [
+        "e12",
+        "e10"
+      ],
+      "place": "p5",
+      "world_time": 250,
+      "system_time": 9,
+      "synopsis": "The Black Pike Company blockaded the Riverside Market.",
+      "story": "During a payment dispute, the Black Pike Company blocked wagon access to the Riverside Market and threatened representatives of the Stonebridge Merchants Guild.",
+      "started_associations": [
+        "a31"
+      ],
+      "ended_associations": []
+    },
+    {
+      "key": "ho10",
+      "participants": [
+        "e3",
+        "e6",
+        "e12"
+      ],
+      "place": "p2",
+      "world_time": 270,
+      "system_time": 10,
+      "synopsis": "Dorf drove Black Pike mercenaries out of the Crow & Lantern.",
+      "story": "When several Black Pike mercenaries tried to intimidate Bram Tallow over unpaid protection money, Dorf threw them out of the Crow & Lantern and made his hostility toward the company clear.",
+      "started_associations": [
+        "a41"
+      ],
+      "ended_associations": []
+    },
+    {
+      "key": "ho11",
+      "participants": [
+        "e2",
+        "e8"
+      ],
+      "place": "p4",
+      "world_time": 300,
+      "system_time": 11,
+      "synopsis": "Elara secretly fed on a wounded Kelren at the Old Quarry.",
+      "story": "After Kelren returned to the Old Quarry wounded and alone, Elara gave in to her vampiric hunger and fed on him, leaving him alive but badly weakened.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho12",
+      "participants": [
+        "e1",
+        "e5",
+        "e8"
+      ],
+      "place": "p1",
+      "world_time": 320,
+      "system_time": 12,
+      "synopsis": "Kelren defected from the Ashen Circle to the Royal Guard.",
+      "story": "Fearing the Ashen Circle would kill him, Kelren confessed his courier work to Alric and Captain Mara Vey and agreed to cooperate with the Royal Guard.",
+      "started_associations": [
+        "a40"
+      ],
+      "ended_associations": [
+        "a19"
+      ]
+    },
+    {
+      "key": "ho13",
+      "participants": [
+        "e1",
+        "e8",
+        "e9"
+      ],
+      "place": "p4",
+      "world_time": 340,
+      "system_time": 13,
+      "synopsis": "The Ashen Circle ambushed Kelren and Alric intervened.",
+      "story": "Ashen Circle agents cornered Kelren at the Old Quarry after his defection. Alric arrived during the attack and helped Kelren escape back toward Stonebridge.",
+      "started_associations": [
+        "a42"
+      ],
+      "ended_associations": []
+    },
+    {
+      "key": "ho14",
+      "participants": [
+        "e1",
+        "e7"
+      ],
+      "place": "p3",
+      "world_time": 360,
+      "system_time": 14,
+      "synopsis": "Alric escorted Sister Ysra Fen through the North Gate.",
+      "story": "After receiving reports of threats along the northern road, Alric met Sister Ysra Fen at the North Gate and escorted her safely into Stonebridge.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho15",
+      "participants": [
+        "e1",
+        "e3"
+      ],
+      "place": "p2",
+      "world_time": 380,
+      "system_time": 15,
+      "synopsis": "Alric and Dorf compared stories about the recent trouble.",
+      "story": "Over ale at the Crow & Lantern, Alric told Dorf about the Old Quarry ambush while Dorf described his confrontation with the Black Pike Company.",
+      "started_associations": [],
+      "ended_associations": []
+    }
+  ]
 }

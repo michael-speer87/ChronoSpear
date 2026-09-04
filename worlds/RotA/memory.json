@@ -1,0 +1,1620 @@
+{
+  "identities": [
+    {
+      "key": "e1",
+      "kind": "ENTITY",
+      "name": "Agent Camp",
+      "synopsis": "Bureau of Paranormal advance agent operating under FBI credentials.",
+      "description": "A Bureau of Paranormal advance agent operating under FBI credentials and familiar with paranormal residue."
+    },
+    {
+      "key": "e2",
+      "kind": "ENTITY",
+      "name": "Agent Freeman",
+      "synopsis": "Bureau of Paranormal advance agent operating under FBI credentials.",
+      "description": "A Bureau of Paranormal advance agent operating under FBI credentials and familiar with paranormal residue."
+    },
+    {
+      "key": "e3",
+      "kind": "ENTITY",
+      "name": "Andrew Bell",
+      "synopsis": "Awakened firefighter known as Hydro.",
+      "description": "A firefighter whose Awakened abilities allow him to control water and transform his body into water."
+    },
+    {
+      "key": "e4",
+      "kind": "ENTITY",
+      "name": "Angelica Thompson",
+      "synopsis": "Human known as Angie.",
+      "description": "A human named Angelica Thompson, also known as Angie."
+    },
+    {
+      "key": "e5",
+      "kind": "ENTITY",
+      "name": "Anna Steele",
+      "synopsis": "Human named Anna Steele.",
+      "description": "A human named Anna Steele."
+    },
+    {
+      "key": "e6",
+      "kind": "ENTITY",
+      "name": "Brandon Combs",
+      "synopsis": "Reporter known as The Reporter.",
+      "description": "A reporter for a fringe publication who investigates unusual events and conspiracies."
+    },
+    {
+      "key": "e7",
+      "kind": "ENTITY",
+      "name": "Captain Newman",
+      "synopsis": "Riverside Police captain.",
+      "description": "A captain in the Riverside Police Department."
+    },
+    {
+      "key": "e8",
+      "kind": "ENTITY",
+      "name": "Carter Langley",
+      "synopsis": "Riverside High student.",
+      "description": "A popular wealthy student at Riverside High."
+    },
+    {
+      "key": "e9",
+      "kind": "ENTITY",
+      "name": "Clayton Clarke Warde",
+      "synopsis": "Awakened healer.",
+      "description": "An Awakened individual with automatic self-healing who can heal others at the cost of losing his own healing ability."
+    },
+    {
+      "key": "e10",
+      "kind": "ENTITY",
+      "name": "David Steele",
+      "synopsis": "Awakened individual known as The Wolf.",
+      "description": "An accountant who can transform into a massive apex predator with extreme speed, scent tracking, and enhanced durability."
+    },
+    {
+      "key": "e11",
+      "kind": "ENTITY",
+      "name": "David Steele Jr. (Junior)",
+      "synopsis": "Human known as Junior.",
+      "description": "A human named David Steele Jr., commonly called Junior."
+    },
+    {
+      "key": "e12",
+      "kind": "ENTITY",
+      "name": "Dennis",
+      "synopsis": "Zodiac individual known as Rat Face or Huā Liǎn.",
+      "description": "A Zodiac individual known as Rat Face or Huā Liǎn."
+    },
+    {
+      "key": "e13",
+      "kind": "ENTITY",
+      "name": "Doomsday Dan",
+      "synopsis": "Awakened individual known as The Angel.",
+      "description": "An Awakened religious zealot known as The Angel."
+    },
+    {
+      "key": "e14",
+      "kind": "ENTITY",
+      "name": "Dorothy Thompson",
+      "synopsis": "Human known as Dodo.",
+      "description": "A human named Dorothy Thompson, also known as Dodo."
+    },
+    {
+      "key": "e15",
+      "kind": "ENTITY",
+      "name": "Dr. Rodney Norfolk",
+      "synopsis": "CEO of Norfolk Pharmaceuticals.",
+      "description": "A human businessman and chief executive of Norfolk Pharmaceuticals."
+    },
+    {
+      "key": "e16",
+      "kind": "ENTITY",
+      "name": "Elena Reynolds",
+      "synopsis": "Human named Elena Reynolds.",
+      "description": "A human named Elena Reynolds."
+    },
+    {
+      "key": "e17",
+      "kind": "ENTITY",
+      "name": "Georgie",
+      "synopsis": "Human known as Scrawny.",
+      "description": "A human known as Georgie or Scrawny."
+    },
+    {
+      "key": "e18",
+      "kind": "ENTITY",
+      "name": "Gerard Neucome",
+      "synopsis": "Norfolk Tower security guard.",
+      "description": "A human security guard working at Norfolk Tower."
+    },
+    {
+      "key": "e19",
+      "kind": "ENTITY",
+      "name": "Hannah Steele",
+      "synopsis": "Human named Hannah Steele.",
+      "description": "A human named Hannah Steele."
+    },
+    {
+      "key": "e20",
+      "kind": "ENTITY",
+      "name": "James Poole",
+      "synopsis": "Awakened individual known as The Paladin.",
+      "description": "An Awakened individual who manifests armor and has a mental block preventing his hammer from forming."
+    },
+    {
+      "key": "e21",
+      "kind": "ENTITY",
+      "name": "Johnny D",
+      "synopsis": "Kealen outcast known as the Red-Eyed Demon.",
+      "description": "A highly intelligent Kealen outcast with an extremely long lifespan who blends into human society."
+    },
+    {
+      "key": "e22",
+      "kind": "ENTITY",
+      "name": "Jordan Wright",
+      "synopsis": "Awakened individual known as The Ligui.",
+      "description": "An Awakened undead individual whose body bears glowing green scars after resurrection."
+    },
+    {
+      "key": "e23",
+      "kind": "ENTITY",
+      "name": "Lin Long",
+      "synopsis": "Zodiac individual known as Shadow Dragon.",
+      "description": "A Zodiac individual known as Shadow Dragon."
+    },
+    {
+      "key": "e24",
+      "kind": "ENTITY",
+      "name": "Mark Edwards",
+      "synopsis": "Human known as Johnny D's Messenger.",
+      "description": "A human vagrant used as a messenger."
+    },
+    {
+      "key": "e25",
+      "kind": "ENTITY",
+      "name": "Michael Black",
+      "synopsis": "Detective known as Detective Black.",
+      "description": "A Riverside police detective who investigates unusual events and conspiracies."
+    },
+    {
+      "key": "e26",
+      "kind": "ENTITY",
+      "name": "Mr. Braddick",
+      "synopsis": "Human named Mr. Braddick.",
+      "description": "A human named Mr. Braddick."
+    },
+    {
+      "key": "e27",
+      "kind": "ENTITY",
+      "name": "Mr. Nelson",
+      "synopsis": "Human named Mr. Nelson.",
+      "description": "A human named Mr. Nelson."
+    },
+    {
+      "key": "e28",
+      "kind": "ENTITY",
+      "name": "Mr. Zi",
+      "synopsis": "Leader within Yinshu operations.",
+      "description": "A Zodiac figure who leads the Yinshu Family's local operations."
+    },
+    {
+      "key": "e29",
+      "kind": "ENTITY",
+      "name": "Nina Weaver",
+      "synopsis": "Human named Nina Weaver.",
+      "description": "A human named Nina Weaver."
+    },
+    {
+      "key": "e30",
+      "kind": "ENTITY",
+      "name": "Officer Garfield",
+      "synopsis": "Riverside police officer.",
+      "description": "A police officer in Riverside."
+    },
+    {
+      "key": "e31",
+      "kind": "ENTITY",
+      "name": "Officer York",
+      "synopsis": "Riverside police officer.",
+      "description": "A Riverside police officer who works with Detective Black."
+    },
+    {
+      "key": "e32",
+      "kind": "ENTITY",
+      "name": "Tamara Wright",
+      "synopsis": "Awakened individual with telepathy and telekinesis.",
+      "description": "An Awakened individual with the ability to read minds and use telekinesis."
+    },
+    {
+      "key": "e33",
+      "kind": "ENTITY",
+      "name": "The Unnamed Girl",
+      "synopsis": "Awakened individual with a bonded guardian entity.",
+      "description": "An Awakened individual bonded to a separate guardian being that protects her and transforms under threat."
+    },
+    {
+      "key": "e34",
+      "kind": "ENTITY",
+      "name": "Thomas Thompson",
+      "synopsis": "Awakened individual known as The Inhuman.",
+      "description": "An Awakened individual surrounded by a disintegrating field that destroys matter contacting it."
+    },
+    {
+      "key": "e35",
+      "kind": "ENTITY",
+      "name": "David’s Company",
+      "synopsis": "Organization connected to David Steele's employment.",
+      "description": "A company connected to David Steele's employment."
+    },
+    {
+      "key": "e36",
+      "kind": "ENTITY",
+      "name": "Long (Dragon) Family",
+      "synopsis": "Zodiac family associated with dragon transformation.",
+      "description": "A Zodiac family whose inherited ability can manifest as transformation into a dragon."
+    },
+    {
+      "key": "e37",
+      "kind": "ENTITY",
+      "name": "Riverside Police",
+      "synopsis": "Riverside's police organization.",
+      "description": "The municipal police organization serving Riverside."
+    },
+    {
+      "key": "e38",
+      "kind": "ENTITY",
+      "name": "The Awakened",
+      "synopsis": "A group referred to as The Awakened.",
+      "description": "A group of individuals referred to collectively as The Awakened."
+    },
+    {
+      "key": "e39",
+      "kind": "ENTITY",
+      "name": "Yinshu (Rat) Family",
+      "synopsis": "Zodiac family associated with rat control.",
+      "description": "A Zodiac family whose inherited ability centers on controlling rats."
+    },
+    {
+      "key": "e40",
+      "kind": "ENTITY",
+      "name": "Bureau of Paranormal (BoP)",
+      "synopsis": "Covert government paranormal organization.",
+      "description": "A covert government organization that investigates and suppresses paranormal events while operating under conventional federal cover."
+    },
+    {
+      "key": "e41",
+      "kind": "ENTITY",
+      "name": "The Zodiac Families",
+      "synopsis": "Collective organization of inherited powered family lines.",
+      "description": "A collection of human family lines with inherited powers and long-standing organization predating the Riverside awakening event."
+    },
+    {
+      "key": "e42",
+      "kind": "ENTITY",
+      "name": "Pandora's Box",
+      "synopsis": "Artifact associated with the Pradhāna.",
+      "description": "A mysterious artifact capable of serving as an activating mechanism for a Pradhāna event."
+    },
+    {
+      "key": "e43",
+      "kind": "ENTITY",
+      "name": "Eternium",
+      "synopsis": "Cosmic substance known as Eternium.",
+      "description": "A cosmic substance or energy-bearing material known as Eternium."
+    },
+    {
+      "key": "e44",
+      "kind": "ENTITY",
+      "name": "Black Slime / Temporal Eternium Residue",
+      "synopsis": "Unusual Eternium-related residue.",
+      "description": "A biological and energetic residue associated with a human body acting as a conduit for Eternium energy; some of its properties remain uncertain."
+    },
+    {
+      "key": "e45",
+      "kind": "ENTITY",
+      "name": "The Pradhāna",
+      "synopsis": "Cosmic event also called The Storm or The Awakening.",
+      "description": "A named cosmic storm involving Eternium energy and large-scale awakening effects."
+    },
+    {
+      "key": "p1",
+      "kind": "PLACE",
+      "name": "Carter Langley's House",
+      "synopsis": "Private residence used as a gathering place by Riverside High students.",
+      "description": "The long-established Langley family home in Riverside, maintained as an affluent private residence and commonly used as a gathering place by local students."
+    },
+    {
+      "key": "p2",
+      "kind": "PLACE",
+      "name": "David Steele’s House",
+      "synopsis": "Home of David Steele and his family.",
+      "description": "The private residence where David Steele and his family live."
+    },
+    {
+      "key": "p3",
+      "kind": "PLACE",
+      "name": "Drunken Lily",
+      "synopsis": "A named location in the Riverside setting.",
+      "description": "A location known as the Drunken Lily."
+    },
+    {
+      "key": "p4",
+      "kind": "PLACE",
+      "name": "Elm & 12th Intersection",
+      "synopsis": "Street intersection in Riverside.",
+      "description": "The intersection of Elm and 12th in Riverside."
+    },
+    {
+      "key": "p5",
+      "kind": "PLACE",
+      "name": "Golden Lotus",
+      "synopsis": "Restaurant associated with Mr. Zi.",
+      "description": "A restaurant operated by Mr. Zi that includes a private suite used for closed meetings."
+    },
+    {
+      "key": "p6",
+      "kind": "PLACE",
+      "name": "Mary & Lutheran Intersection",
+      "synopsis": "Street intersection in Riverside.",
+      "description": "The intersection of Mary and Lutheran in Riverside."
+    },
+    {
+      "key": "p7",
+      "kind": "PLACE",
+      "name": "Morning Brew",
+      "synopsis": "Coffee shop in Riverside.",
+      "description": "A coffee shop in Riverside."
+    },
+    {
+      "key": "p8",
+      "kind": "PLACE",
+      "name": "Norfolk Tower",
+      "synopsis": "Major building in Riverside associated with Norfolk Pharmaceuticals.",
+      "description": "A prominent tower in Riverside associated with Norfolk Pharmaceuticals and containing a penthouse."
+    },
+    {
+      "key": "p9",
+      "kind": "PLACE",
+      "name": "Pizza Palace",
+      "synopsis": "Restaurant in Riverside.",
+      "description": "A restaurant in Riverside known as Pizza Palace."
+    },
+    {
+      "key": "p10",
+      "kind": "PLACE",
+      "name": "Riverside",
+      "synopsis": "Arkansas city at the center of Rise of the Awakened.",
+      "description": "A city in Arkansas that serves as the primary setting of the early Rise of the Awakened story."
+    },
+    {
+      "key": "p11",
+      "kind": "PLACE",
+      "name": "Riverside Fire Dept",
+      "synopsis": "Riverside fire department location.",
+      "description": "The Riverside Fire Department facility."
+    },
+    {
+      "key": "p12",
+      "kind": "PLACE",
+      "name": "Riverside Walk / Amphitheater",
+      "synopsis": "Downtown riverside public gathering area.",
+      "description": "A downtown riverside public area and amphitheater used for community gatherings."
+    },
+    {
+      "key": "p13",
+      "kind": "PLACE",
+      "name": "Svarga",
+      "synopsis": "Homeworld of the Kealen.",
+      "description": "The homeworld of the Kealen."
+    },
+    {
+      "key": "p14",
+      "kind": "PLACE",
+      "name": "The Alley off Luther Street",
+      "synopsis": "Alley branching from Luther Street in Riverside.",
+      "description": "An alley off Luther Street in Riverside."
+    },
+    {
+      "key": "p15",
+      "kind": "PLACE",
+      "name": "The Church",
+      "synopsis": "Church building used as a shelter.",
+      "description": "A church building in Riverside that can serve as a community shelter."
+    },
+    {
+      "key": "p16",
+      "kind": "PLACE",
+      "name": "The Local Morgue",
+      "synopsis": "Local morgue serving Riverside.",
+      "description": "The local morgue serving the Riverside area."
+    },
+    {
+      "key": "p17",
+      "kind": "PLACE",
+      "name": "The Woods",
+      "synopsis": "Wooded region near Riverside.",
+      "description": "A wooded region near Riverside."
+    },
+    {
+      "key": "d1",
+      "kind": "DESCRIBER",
+      "name": "Human",
+      "synopsis": "Human species classification.",
+      "description": "A human being."
+    },
+    {
+      "key": "d2",
+      "kind": "DESCRIBER",
+      "name": "Awakened",
+      "synopsis": "Classification for a person permanently transformed through Eternium anchoring.",
+      "description": "A person whose body and abilities have been permanently altered through an Eternium awakening."
+    },
+    {
+      "key": "d3",
+      "kind": "DESCRIBER",
+      "name": "Kealen",
+      "synopsis": "Extraterrestrial species connected to Eternium.",
+      "description": "An extraterrestrial species connected to Eternium and possessing a broader cosmic framework than humanity."
+    },
+    {
+      "key": "d4",
+      "kind": "DESCRIBER",
+      "name": "Zodiac",
+      "synopsis": "Classification for an individual from a powered Zodiac lineage.",
+      "description": "A person belonging to one of the inherited powered Zodiac family lines."
+    },
+    {
+      "key": "d5",
+      "kind": "DESCRIBER",
+      "name": "Undead",
+      "synopsis": "Classification for a being that is biologically dead but supernaturally active.",
+      "description": "A being whose body has died but continues in an active supernatural state."
+    },
+    {
+      "key": "d6",
+      "kind": "DESCRIBER",
+      "name": "Species",
+      "synopsis": "General biological or extraterrestrial species classification.",
+      "description": "A semantic category used to classify distinct species."
+    },
+    {
+      "key": "d7",
+      "kind": "DESCRIBER",
+      "name": "Organization",
+      "synopsis": "General organization classification.",
+      "description": "An organized body of people or entities acting with a shared structure or purpose."
+    },
+    {
+      "key": "d8",
+      "kind": "DESCRIBER",
+      "name": "Group",
+      "synopsis": "General group classification.",
+      "description": "A collection of people or entities treated as a coherent group."
+    },
+    {
+      "key": "d9",
+      "kind": "DESCRIBER",
+      "name": "Company",
+      "synopsis": "Commercial organization classification.",
+      "description": "A commercial or corporate organization."
+    },
+    {
+      "key": "d10",
+      "kind": "DESCRIBER",
+      "name": "Government Organization",
+      "synopsis": "Government organization classification.",
+      "description": "An organization operating as part of or on behalf of a government."
+    },
+    {
+      "key": "d11",
+      "kind": "DESCRIBER",
+      "name": "Covert Government Organization",
+      "synopsis": "Secret government organization classification.",
+      "description": "A government organization whose true identity, mission, or operations are concealed."
+    },
+    {
+      "key": "d12",
+      "kind": "DESCRIBER",
+      "name": "Police Department",
+      "synopsis": "Law-enforcement organization classification.",
+      "description": "A municipal or regional organization responsible for civil law enforcement."
+    },
+    {
+      "key": "d13",
+      "kind": "DESCRIBER",
+      "name": "Family",
+      "synopsis": "Family-line organization classification.",
+      "description": "A kinship-based family line treated as a coherent identity or organization."
+    },
+    {
+      "key": "d14",
+      "kind": "DESCRIBER",
+      "name": "Zodiac Family",
+      "synopsis": "Powered hereditary family classification.",
+      "description": "A Zodiac family line whose inherited supernatural ability is tied to the family's lineage."
+    },
+    {
+      "key": "d15",
+      "kind": "DESCRIBER",
+      "name": "Artifact",
+      "synopsis": "Artifact classification.",
+      "description": "A discrete created or discovered object of unusual importance or capability."
+    },
+    {
+      "key": "d16",
+      "kind": "DESCRIBER",
+      "name": "Substance",
+      "synopsis": "Material or energetic substance classification.",
+      "description": "A material, energetic medium, or other substance that can exist independently and affect the world."
+    },
+    {
+      "key": "d17",
+      "kind": "DESCRIBER",
+      "name": "Residue",
+      "synopsis": "Residual substance classification.",
+      "description": "A substance left behind as a byproduct or remnant of another process."
+    },
+    {
+      "key": "d18",
+      "kind": "DESCRIBER",
+      "name": "Event",
+      "synopsis": "Named event classification.",
+      "description": "A named occurrence or phenomenon that can be referred to as a distinct event."
+    },
+    {
+      "key": "d19",
+      "kind": "DESCRIBER",
+      "name": "Cosmic Event",
+      "synopsis": "Cosmic-scale event classification.",
+      "description": "An event driven by forces or mechanisms beyond ordinary terrestrial processes."
+    },
+    {
+      "key": "d20",
+      "kind": "DESCRIBER",
+      "name": "Cosmic Rule",
+      "synopsis": "World-law or cosmic-mechanism classification.",
+      "description": "A stable rule describing how a cosmic mechanism in the setting behaves."
+    },
+    {
+      "key": "d21",
+      "kind": "DESCRIBER",
+      "name": "Building",
+      "synopsis": "Building classification.",
+      "description": "A constructed enclosed place intended for habitation, work, gathering, or other use."
+    },
+    {
+      "key": "d22",
+      "kind": "DESCRIBER",
+      "name": "Region",
+      "synopsis": "Geographic region classification.",
+      "description": "A bounded or recognized geographic area."
+    },
+    {
+      "key": "d23",
+      "kind": "DESCRIBER",
+      "name": "Private Residence",
+      "synopsis": "Private residential building classification.",
+      "description": "A building primarily used as a private home."
+    },
+    {
+      "key": "d24",
+      "kind": "DESCRIBER",
+      "name": "Restaurant",
+      "synopsis": "Restaurant classification.",
+      "description": "A place primarily used for preparing and serving meals to customers."
+    },
+    {
+      "key": "d25",
+      "kind": "DESCRIBER",
+      "name": "Coffee Shop",
+      "synopsis": "Coffee-shop classification.",
+      "description": "A public business primarily serving coffee and related food or drinks."
+    },
+    {
+      "key": "d26",
+      "kind": "DESCRIBER",
+      "name": "Street Intersection",
+      "synopsis": "Street-intersection classification.",
+      "description": "A place where named streets or roads meet."
+    },
+    {
+      "key": "d27",
+      "kind": "DESCRIBER",
+      "name": "City",
+      "synopsis": "City classification.",
+      "description": "An incorporated or recognized urban settlement."
+    },
+    {
+      "key": "d28",
+      "kind": "DESCRIBER",
+      "name": "Fire Department Facility",
+      "synopsis": "Fire-service facility classification.",
+      "description": "A facility used by a municipal or regional fire service."
+    },
+    {
+      "key": "d29",
+      "kind": "DESCRIBER",
+      "name": "Public Gathering Area",
+      "synopsis": "Public gathering-place classification.",
+      "description": "A public place designed or commonly used for community gatherings."
+    },
+    {
+      "key": "d30",
+      "kind": "DESCRIBER",
+      "name": "Alley",
+      "synopsis": "Alley classification.",
+      "description": "A narrow access route or passage between or behind developed properties."
+    },
+    {
+      "key": "d31",
+      "kind": "DESCRIBER",
+      "name": "Church",
+      "synopsis": "Church-building classification.",
+      "description": "A building used for Christian worship and community activity."
+    },
+    {
+      "key": "d32",
+      "kind": "DESCRIBER",
+      "name": "Morgue",
+      "synopsis": "Morgue classification.",
+      "description": "A facility used to receive, store, and examine human remains."
+    },
+    {
+      "key": "d33",
+      "kind": "DESCRIBER",
+      "name": "Wooded Area",
+      "synopsis": "Wooded-region classification.",
+      "description": "A geographic area dominated by trees and natural woodland."
+    },
+    {
+      "key": "d34",
+      "kind": "DESCRIBER",
+      "name": "World",
+      "synopsis": "Planetary or homeworld classification.",
+      "description": "A world or planetary-scale place capable of serving as the home of a species or civilization."
+    },
+    {
+      "key": "d35",
+      "kind": "DESCRIBER",
+      "name": "Firefighter",
+      "synopsis": "Firefighter occupation classification.",
+      "description": "A person trained to respond to fires, rescues, and related emergencies."
+    },
+    {
+      "key": "d36",
+      "kind": "DESCRIBER",
+      "name": "Reporter",
+      "synopsis": "Reporter occupation classification.",
+      "description": "A person who investigates and reports news or events."
+    },
+    {
+      "key": "d37",
+      "kind": "DESCRIBER",
+      "name": "Police Officer",
+      "synopsis": "Police-officer occupation classification.",
+      "description": "A sworn law-enforcement officer."
+    },
+    {
+      "key": "d38",
+      "kind": "DESCRIBER",
+      "name": "Detective",
+      "synopsis": "Detective occupation classification.",
+      "description": "A law-enforcement investigator responsible for examining crimes and evidence."
+    },
+    {
+      "key": "d39",
+      "kind": "DESCRIBER",
+      "name": "Police Captain",
+      "synopsis": "Police command-rank classification.",
+      "description": "A senior police officer holding the rank of captain."
+    },
+    {
+      "key": "d40",
+      "kind": "DESCRIBER",
+      "name": "Student",
+      "synopsis": "Student role classification.",
+      "description": "A person enrolled in formal education."
+    },
+    {
+      "key": "d41",
+      "kind": "DESCRIBER",
+      "name": "Accountant",
+      "synopsis": "Accountant occupation classification.",
+      "description": "A professional who records, analyzes, or audits financial information."
+    },
+    {
+      "key": "d42",
+      "kind": "DESCRIBER",
+      "name": "Security Guard",
+      "synopsis": "Security-guard occupation classification.",
+      "description": "A person responsible for protecting a location, people, or property."
+    },
+    {
+      "key": "d43",
+      "kind": "DESCRIBER",
+      "name": "Chief Executive Officer",
+      "synopsis": "Chief-executive occupation classification.",
+      "description": "The senior executive responsible for leading a company or organization."
+    },
+    {
+      "key": "d44",
+      "kind": "DESCRIBER",
+      "name": "Religious Zealot",
+      "synopsis": "Religious-zealotry classification.",
+      "description": "A person whose actions are driven by extreme or uncompromising religious conviction."
+    },
+    {
+      "key": "d45",
+      "kind": "DESCRIBER",
+      "name": "Healer",
+      "synopsis": "Healing-role classification.",
+      "description": "A person whose defining capability or role includes healing others."
+    },
+    {
+      "key": "d46",
+      "kind": "DESCRIBER",
+      "name": "Kealen Outcast",
+      "synopsis": "Kealen social-status classification.",
+      "description": "A Kealen who has been cast out of or separated from ordinary Kealen society."
+    },
+    {
+      "key": "d47",
+      "kind": "DESCRIBER",
+      "name": "Norfolk Tower Employee",
+      "synopsis": "Employment-role classification.",
+      "description": "A person employed in work based at or associated with Norfolk Tower."
+    },
+    {
+      "key": "d48",
+      "kind": "DESCRIBER",
+      "name": "Adrenaline / Kinetic Anchoring",
+      "synopsis": "Canon cosmic rule governing Eternium anchoring.",
+      "description": "Eternium requires an extreme biological stress response to anchor to a living host; the anchor moment shapes the resulting ability, while unanchored exposure is fatal."
+    },
+    {
+      "key": "d49",
+      "kind": "DESCRIBER",
+      "name": "Mutations Are Permanent",
+      "synopsis": "Canon cosmic rule governing awakened transformation.",
+      "description": "Once Eternium anchors to a host, the resulting transformation is permanent and cannot be reversed, although control or expression may develop."
+    },
+    {
+      "key": "d50",
+      "kind": "DESCRIBER",
+      "name": "The Genie Rule",
+      "synopsis": "Canon cosmic rule linking Eternium power to cosmic knowledge.",
+      "description": "The scope of Eternium-based power is constrained by the user's ability to conceive and understand the universe; broader cosmic awareness permits broader potential."
+    }
+  ],
+  "associations": [
+    {
+      "key": "a1",
+      "source": "d3",
+      "relationship": "IS_A",
+      "target": "d6"
+    },
+    {
+      "key": "a2",
+      "source": "d4",
+      "relationship": "IS_A",
+      "target": "d1"
+    },
+    {
+      "key": "a3",
+      "source": "d9",
+      "relationship": "IS_A",
+      "target": "d7"
+    },
+    {
+      "key": "a4",
+      "source": "d10",
+      "relationship": "IS_A",
+      "target": "d7"
+    },
+    {
+      "key": "a5",
+      "source": "d11",
+      "relationship": "IS_A",
+      "target": "d10"
+    },
+    {
+      "key": "a6",
+      "source": "d12",
+      "relationship": "IS_A",
+      "target": "d10"
+    },
+    {
+      "key": "a7",
+      "source": "d14",
+      "relationship": "IS_A",
+      "target": "d13"
+    },
+    {
+      "key": "a8",
+      "source": "d14",
+      "relationship": "IS_A",
+      "target": "d7"
+    },
+    {
+      "key": "a9",
+      "source": "d17",
+      "relationship": "IS_A",
+      "target": "d16"
+    },
+    {
+      "key": "a10",
+      "source": "d19",
+      "relationship": "IS_A",
+      "target": "d18"
+    },
+    {
+      "key": "a11",
+      "source": "d23",
+      "relationship": "IS_A",
+      "target": "d21"
+    },
+    {
+      "key": "a12",
+      "source": "d28",
+      "relationship": "IS_A",
+      "target": "d21"
+    },
+    {
+      "key": "a13",
+      "source": "d31",
+      "relationship": "IS_A",
+      "target": "d21"
+    },
+    {
+      "key": "a14",
+      "source": "d32",
+      "relationship": "IS_A",
+      "target": "d21"
+    },
+    {
+      "key": "a15",
+      "source": "d38",
+      "relationship": "IS_A",
+      "target": "d37"
+    },
+    {
+      "key": "a16",
+      "source": "d39",
+      "relationship": "IS_A",
+      "target": "d37"
+    },
+    {
+      "key": "a17",
+      "source": "d46",
+      "relationship": "IS_A",
+      "target": "d3"
+    },
+    {
+      "key": "a18",
+      "source": "d48",
+      "relationship": "IS_A",
+      "target": "d20"
+    },
+    {
+      "key": "a19",
+      "source": "d49",
+      "relationship": "IS_A",
+      "target": "d20"
+    },
+    {
+      "key": "a20",
+      "source": "d50",
+      "relationship": "IS_A",
+      "target": "d20"
+    },
+    {
+      "key": "a21",
+      "source": "e3",
+      "relationship": "IS_A",
+      "target": "d2"
+    },
+    {
+      "key": "a22",
+      "source": "e3",
+      "relationship": "IS_A",
+      "target": "d35"
+    },
+    {
+      "key": "a23",
+      "source": "e4",
+      "relationship": "IS_A",
+      "target": "d1"
+    },
+    {
+      "key": "a24",
+      "source": "e5",
+      "relationship": "IS_A",
+      "target": "d1"
+    },
+    {
+      "key": "a25",
+      "source": "e6",
+      "relationship": "IS_A",
+      "target": "d1"
+    },
+    {
+      "key": "a26",
+      "source": "e6",
+      "relationship": "IS_A",
+      "target": "d36"
+    },
+    {
+      "key": "a27",
+      "source": "e7",
+      "relationship": "IS_A",
+      "target": "d1"
+    },
+    {
+      "key": "a28",
+      "source": "e7",
+      "relationship": "IS_A",
+      "target": "d39"
+    },
+    {
+      "key": "a29",
+      "source": "e8",
+      "relationship": "IS_A",
+      "target": "d1"
+    },
+    {
+      "key": "a30",
+      "source": "e8",
+      "relationship": "IS_A",
+      "target": "d40"
+    },
+    {
+      "key": "a31",
+      "source": "e9",
+      "relationship": "IS_A",
+      "target": "d2"
+    },
+    {
+      "key": "a32",
+      "source": "e9",
+      "relationship": "IS_A",
+      "target": "d45"
+    },
+    {
+      "key": "a33",
+      "source": "e10",
+      "relationship": "IS_A",
+      "target": "d2"
+    },
+    {
+      "key": "a34",
+      "source": "e10",
+      "relationship": "IS_A",
+      "target": "d41"
+    },
+    {
+      "key": "a35",
+      "source": "e11",
+      "relationship": "IS_A",
+      "target": "d1"
+    },
+    {
+      "key": "a36",
+      "source": "e12",
+      "relationship": "IS_A",
+      "target": "d4"
+    },
+    {
+      "key": "a37",
+      "source": "e13",
+      "relationship": "IS_A",
+      "target": "d2"
+    },
+    {
+      "key": "a38",
+      "source": "e13",
+      "relationship": "IS_A",
+      "target": "d44"
+    },
+    {
+      "key": "a39",
+      "source": "e14",
+      "relationship": "IS_A",
+      "target": "d1"
+    },
+    {
+      "key": "a40",
+      "source": "e15",
+      "relationship": "IS_A",
+      "target": "d1"
+    },
+    {
+      "key": "a41",
+      "source": "e15",
+      "relationship": "IS_A",
+      "target": "d43"
+    },
+    {
+      "key": "a42",
+      "source": "e16",
+      "relationship": "IS_A",
+      "target": "d1"
+    },
+    {
+      "key": "a43",
+      "source": "e17",
+      "relationship": "IS_A",
+      "target": "d1"
+    },
+    {
+      "key": "a44",
+      "source": "e18",
+      "relationship": "IS_A",
+      "target": "d1"
+    },
+    {
+      "key": "a45",
+      "source": "e18",
+      "relationship": "IS_A",
+      "target": "d42"
+    },
+    {
+      "key": "a46",
+      "source": "e18",
+      "relationship": "IS_A",
+      "target": "d47"
+    },
+    {
+      "key": "a47",
+      "source": "e19",
+      "relationship": "IS_A",
+      "target": "d1"
+    },
+    {
+      "key": "a48",
+      "source": "e20",
+      "relationship": "IS_A",
+      "target": "d2"
+    },
+    {
+      "key": "a49",
+      "source": "e21",
+      "relationship": "IS_A",
+      "target": "d3"
+    },
+    {
+      "key": "a50",
+      "source": "e21",
+      "relationship": "IS_A",
+      "target": "d46"
+    },
+    {
+      "key": "a51",
+      "source": "e22",
+      "relationship": "IS_A",
+      "target": "d2"
+    },
+    {
+      "key": "a52",
+      "source": "e22",
+      "relationship": "IS_A",
+      "target": "d5"
+    },
+    {
+      "key": "a53",
+      "source": "e23",
+      "relationship": "IS_A",
+      "target": "d4"
+    },
+    {
+      "key": "a54",
+      "source": "e24",
+      "relationship": "IS_A",
+      "target": "d1"
+    },
+    {
+      "key": "a55",
+      "source": "e25",
+      "relationship": "IS_A",
+      "target": "d1"
+    },
+    {
+      "key": "a56",
+      "source": "e25",
+      "relationship": "IS_A",
+      "target": "d38"
+    },
+    {
+      "key": "a57",
+      "source": "e26",
+      "relationship": "IS_A",
+      "target": "d1"
+    },
+    {
+      "key": "a58",
+      "source": "e27",
+      "relationship": "IS_A",
+      "target": "d1"
+    },
+    {
+      "key": "a59",
+      "source": "e28",
+      "relationship": "IS_A",
+      "target": "d4"
+    },
+    {
+      "key": "a60",
+      "source": "e29",
+      "relationship": "IS_A",
+      "target": "d1"
+    },
+    {
+      "key": "a61",
+      "source": "e30",
+      "relationship": "IS_A",
+      "target": "d1"
+    },
+    {
+      "key": "a62",
+      "source": "e30",
+      "relationship": "IS_A",
+      "target": "d37"
+    },
+    {
+      "key": "a63",
+      "source": "e31",
+      "relationship": "IS_A",
+      "target": "d1"
+    },
+    {
+      "key": "a64",
+      "source": "e31",
+      "relationship": "IS_A",
+      "target": "d37"
+    },
+    {
+      "key": "a65",
+      "source": "e32",
+      "relationship": "IS_A",
+      "target": "d2"
+    },
+    {
+      "key": "a66",
+      "source": "e33",
+      "relationship": "IS_A",
+      "target": "d2"
+    },
+    {
+      "key": "a67",
+      "source": "e34",
+      "relationship": "IS_A",
+      "target": "d2"
+    },
+    {
+      "key": "a68",
+      "source": "e35",
+      "relationship": "IS_A",
+      "target": "d9"
+    },
+    {
+      "key": "a69",
+      "source": "e36",
+      "relationship": "IS_A",
+      "target": "d14"
+    },
+    {
+      "key": "a70",
+      "source": "e37",
+      "relationship": "IS_A",
+      "target": "d12"
+    },
+    {
+      "key": "a71",
+      "source": "e38",
+      "relationship": "IS_A",
+      "target": "d8"
+    },
+    {
+      "key": "a72",
+      "source": "e39",
+      "relationship": "IS_A",
+      "target": "d14"
+    },
+    {
+      "key": "a73",
+      "source": "e40",
+      "relationship": "IS_A",
+      "target": "d11"
+    },
+    {
+      "key": "a74",
+      "source": "e41",
+      "relationship": "IS_A",
+      "target": "d7"
+    },
+    {
+      "key": "a75",
+      "source": "e42",
+      "relationship": "IS_A",
+      "target": "d15"
+    },
+    {
+      "key": "a76",
+      "source": "e43",
+      "relationship": "IS_A",
+      "target": "d16"
+    },
+    {
+      "key": "a77",
+      "source": "e44",
+      "relationship": "IS_A",
+      "target": "d17"
+    },
+    {
+      "key": "a78",
+      "source": "e45",
+      "relationship": "IS_A",
+      "target": "d19"
+    },
+    {
+      "key": "a79",
+      "source": "p1",
+      "relationship": "IS_A",
+      "target": "d23"
+    },
+    {
+      "key": "a80",
+      "source": "p2",
+      "relationship": "IS_A",
+      "target": "d23"
+    },
+    {
+      "key": "a81",
+      "source": "p4",
+      "relationship": "IS_A",
+      "target": "d26"
+    },
+    {
+      "key": "a82",
+      "source": "p5",
+      "relationship": "IS_A",
+      "target": "d24"
+    },
+    {
+      "key": "a83",
+      "source": "p5",
+      "relationship": "IS_A",
+      "target": "d21"
+    },
+    {
+      "key": "a84",
+      "source": "p6",
+      "relationship": "IS_A",
+      "target": "d26"
+    },
+    {
+      "key": "a85",
+      "source": "p7",
+      "relationship": "IS_A",
+      "target": "d25"
+    },
+    {
+      "key": "a86",
+      "source": "p8",
+      "relationship": "IS_A",
+      "target": "d21"
+    },
+    {
+      "key": "a87",
+      "source": "p9",
+      "relationship": "IS_A",
+      "target": "d24"
+    },
+    {
+      "key": "a88",
+      "source": "p9",
+      "relationship": "IS_A",
+      "target": "d21"
+    },
+    {
+      "key": "a89",
+      "source": "p10",
+      "relationship": "IS_A",
+      "target": "d27"
+    },
+    {
+      "key": "a90",
+      "source": "p11",
+      "relationship": "IS_A",
+      "target": "d28"
+    },
+    {
+      "key": "a91",
+      "source": "p12",
+      "relationship": "IS_A",
+      "target": "d29"
+    },
+    {
+      "key": "a92",
+      "source": "p12",
+      "relationship": "IS_A",
+      "target": "d22"
+    },
+    {
+      "key": "a93",
+      "source": "p13",
+      "relationship": "IS_A",
+      "target": "d34"
+    },
+    {
+      "key": "a94",
+      "source": "p14",
+      "relationship": "IS_A",
+      "target": "d30"
+    },
+    {
+      "key": "a95",
+      "source": "p15",
+      "relationship": "IS_A",
+      "target": "d31"
+    },
+    {
+      "key": "a96",
+      "source": "p16",
+      "relationship": "IS_A",
+      "target": "d32"
+    },
+    {
+      "key": "a97",
+      "source": "p17",
+      "relationship": "IS_A",
+      "target": "d33"
+    },
+    {
+      "key": "a98",
+      "source": "p17",
+      "relationship": "IS_A",
+      "target": "d22"
+    },
+    {
+      "key": "a99",
+      "source": "e1",
+      "relationship": "MEMBER_OF",
+      "target": "e40"
+    },
+    {
+      "key": "a100",
+      "source": "e2",
+      "relationship": "MEMBER_OF",
+      "target": "e40"
+    },
+    {
+      "key": "a101",
+      "source": "e7",
+      "relationship": "MEMBER_OF",
+      "target": "e37"
+    },
+    {
+      "key": "a102",
+      "source": "e25",
+      "relationship": "MEMBER_OF",
+      "target": "e37"
+    },
+    {
+      "key": "a103",
+      "source": "e30",
+      "relationship": "MEMBER_OF",
+      "target": "e37"
+    },
+    {
+      "key": "a104",
+      "source": "e31",
+      "relationship": "MEMBER_OF",
+      "target": "e37"
+    },
+    {
+      "key": "a105",
+      "source": "e12",
+      "relationship": "MEMBER_OF",
+      "target": "e39"
+    },
+    {
+      "key": "a106",
+      "source": "e17",
+      "relationship": "MEMBER_OF",
+      "target": "e39"
+    },
+    {
+      "key": "a107",
+      "source": "e28",
+      "relationship": "MEMBER_OF",
+      "target": "e39"
+    },
+    {
+      "key": "a108",
+      "source": "e23",
+      "relationship": "MEMBER_OF",
+      "target": "e36"
+    },
+    {
+      "key": "a109",
+      "source": "e36",
+      "relationship": "PART_OF",
+      "target": "e41"
+    },
+    {
+      "key": "a110",
+      "source": "e39",
+      "relationship": "PART_OF",
+      "target": "e41"
+    },
+    {
+      "key": "a111",
+      "source": "p1",
+      "relationship": "PART_OF",
+      "target": "p10"
+    },
+    {
+      "key": "a112",
+      "source": "p2",
+      "relationship": "PART_OF",
+      "target": "p10"
+    },
+    {
+      "key": "a113",
+      "source": "p4",
+      "relationship": "PART_OF",
+      "target": "p10"
+    },
+    {
+      "key": "a114",
+      "source": "p5",
+      "relationship": "PART_OF",
+      "target": "p10"
+    },
+    {
+      "key": "a115",
+      "source": "p6",
+      "relationship": "PART_OF",
+      "target": "p10"
+    },
+    {
+      "key": "a116",
+      "source": "p7",
+      "relationship": "PART_OF",
+      "target": "p10"
+    },
+    {
+      "key": "a117",
+      "source": "p8",
+      "relationship": "PART_OF",
+      "target": "p10"
+    },
+    {
+      "key": "a118",
+      "source": "p9",
+      "relationship": "PART_OF",
+      "target": "p10"
+    },
+    {
+      "key": "a119",
+      "source": "p11",
+      "relationship": "PART_OF",
+      "target": "p10"
+    },
+    {
+      "key": "a120",
+      "source": "p12",
+      "relationship": "PART_OF",
+      "target": "p10"
+    },
+    {
+      "key": "a121",
+      "source": "p14",
+      "relationship": "PART_OF",
+      "target": "p10"
+    },
+    {
+      "key": "a122",
+      "source": "p15",
+      "relationship": "PART_OF",
+      "target": "p10"
+    },
+    {
+      "key": "a123",
+      "source": "p16",
+      "relationship": "PART_OF",
+      "target": "p10"
+    },
+    {
+      "key": "a124",
+      "source": "p17",
+      "relationship": "PART_OF",
+      "target": "p10"
+    },
+    {
+      "key": "a125",
+      "source": "e37",
+      "relationship": "BASED_IN",
+      "target": "p10"
+    },
+    {
+      "key": "a126",
+      "source": "e28",
+      "relationship": "BASED_IN",
+      "target": "p5"
+    }
+  ],
+  "historical_occurrences": [
+    {
+      "key": "ho1",
+      "participants": [
+        "e10",
+        "e5",
+        "e19",
+        "e11"
+      ],
+      "place": "p2",
+      "world_time": 21600,
+      "system_time": 1,
+      "synopsis": "David Steele began New Year's Eve morning at home with his family.",
+      "story": "Beginning around 6:00 AM CST on December 31, 2025, David Steele woke at home, spent the morning with Anna, Hannah, and Junior, and ate breakfast with his family. They discussed their plans for the New Year's Eve party before David left for work. The source timeline spans approximately 6:00-8:15 AM.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho2",
+      "participants": [
+        "e10"
+      ],
+      "place": "p10",
+      "world_time": 29700,
+      "system_time": 2,
+      "synopsis": "David Steele commuted through Riverside to Norfolk Tower.",
+      "story": "At approximately 8:15 AM CST on December 31, 2025, David Steele left his morning routine behind and commuted through Riverside toward Norfolk Tower for work. The source timeline spans approximately 8:15-9:00 AM.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho3",
+      "participants": [
+        "e10",
+        "e27"
+      ],
+      "place": "p8",
+      "world_time": 32400,
+      "system_time": 3,
+      "synopsis": "Mr. Nelson accused David Steele of embezzlement and fired him.",
+      "story": "Beginning around 9:00 AM CST on December 31, 2025, Mr. Nelson confronted David Steele at Norfolk Tower with records accusing David of embezzlement. David disputed the records and produced a backup thumb drive containing what he believed were the correct books. Nelson fired David. David retained the thumb drive, packed his belongings, was escorted out, and left the office. The source timeline places his office departure between approximately 9:00 and 10:00 AM.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho4",
+      "participants": [
+        "e20",
+        "e16",
+        "e29"
+      ],
+      "place": "p7",
+      "world_time": 21600,
+      "system_time": 4,
+      "synopsis": "James Poole worked the New Year's Eve morning shift at Morning Brew.",
+      "story": "Beginning around 6:00 AM CST on December 31, 2025, James Poole worked his morning shift at Morning Brew as the rush faded. He served regular customer Elena Reynolds while Nina Weaver worked nearby. The source timeline spans James's shift approximately 6:00 AM-noon.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho5",
+      "participants": [
+        "e20",
+        "e32"
+      ],
+      "place": "p7",
+      "world_time": 32400,
+      "system_time": 5,
+      "synopsis": "Tamara Wright visited James Poole and they spoke about Jordan's death.",
+      "story": "At approximately 9:00 AM CST on December 31, 2025, Tamara Wright visited James Poole at Morning Brew. She was visibly grieving her brother Jordan, who had been killed by police. James and Tamara spoke outside about Jordan before shifting the conversation to the New Year's Eve party. Tamara encouraged James to attend and he agreed. The source timeline places Tamara's visit at approximately 9:00-9:30 AM.",
+      "started_associations": [],
+      "ended_associations": []
+    }
+  ]
+}

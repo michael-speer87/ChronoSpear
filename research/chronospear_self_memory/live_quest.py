@@ -69,6 +69,18 @@ def call_groq(messages: list[dict[str, str]]) -> ProviderResult:
     model = os.environ.get("GROQ_MODEL")
     if not api_key or not model:
         raise RuntimeError("GROQ_API_KEY and GROQ_MODEL must be set for Groq")
+    return call_groq_model(messages, model, api_key=api_key)
+
+
+def call_groq_model(
+    messages: list[dict[str, str]],
+    model: str,
+    *,
+    api_key: str | None = None,
+) -> ProviderResult:
+    api_key = api_key or os.environ.get("GROQ_API_KEY")
+    if not api_key:
+        raise RuntimeError("GROQ_API_KEY must be set for Groq")
     body = json.dumps({"model": model, "messages": messages, "temperature": 0}).encode()
     request = urllib.request.Request(
         "https://api.groq.com/openai/v1/chat/completions",

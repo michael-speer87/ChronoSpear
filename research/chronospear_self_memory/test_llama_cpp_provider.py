@@ -3,10 +3,9 @@ from __future__ import annotations
 import json
 from urllib.error import URLError
 
-import pytest
-
 import llama_cpp_provider as provider_module
-from llama_cpp_provider import LlamaCppCamNativeProvider
+import pytest
+from llama_cpp_provider import LlamaCppCamNativeProvider, LlamaCppToolProvider
 
 
 class _FakeResponse:
@@ -108,3 +107,105 @@ def test_llama_cpp_provider_reports_unreachable_server(monkeypatch) -> None:
 
     with pytest.raises(RuntimeError, match="Could not reach llama.cpp server"):
         LlamaCppCamNativeProvider()([{"role": "user", "content": "packet"}])
+
+
+@pytest.mark.parametrize("tool_choice", ["auto", "required"])
+def test_llama_cpp_tool_provider_sends_and_parses_native_tool_messages(
+    monkeypatch,
+    tool_choice,
+) -> None:
+    captured_bodies: list[dict[str, object]] = []
+    responses = iter(
+        [
+            {
+                "choices": [{
+                    "message": {
+                        "role": "assistant",
+                        "content": None,
+                        "tool_calls": [{
+                            "id": "history-1",
+                            "type": "function",
+                            "function": {
+                                "name": "get_history",
+                                "arguments": '{"name":"Alric"}',
+                            },
+                        }],
+                    }
+                }],
+                "usage": {"prompt_tokens": 10, "completion_tokens": 3},
+            },
+            {
+                "choices": [{
+                    "message": {
+                        "role": "assistant",
+                        "content": None,
+                        "tool_calls": [{
+                            "id": "answer-1",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_answer",
+                                "arguments": '{"answer":"North Gate","evidence_ids":["HO-1"]}',
+                            },
+                        }],
+                    }
+                }],
+                "usage": {},
+            },
+        ]
+    )
+
+    def fake_urlopen(request, timeout):
+        assert timeout == 7.5
+        captured_bodies.append(json.loads(request.data.decode("utf-8")))
+        return _FakeResponse(next(responses))
+
+    monkeypatch.setattr(provider_module, "urlopen", fake_urlopen)
+    tools = (
+        {"type": "function", "function": {"name": "get_history"}},
+        {"type": "function", "function": {"name": "submit_answer"}},
+    )
+    provider = LlamaCppToolProvider(
+        timeout_seconds=7.5,
+        tool_choice=tool_choice,
+    )
+    messages: list[dict[str, object]] = [
+        {"role": "system", "content": "contract"},
+        {"role": "user", "content": "opening packet"},
+    ]
+
+    history = provider(messages, tools)
+    messages.extend(
+        [
+            {
+                "role": "assistant",
+                "content": None,
+                "tool_calls": [{
+                    "id": "history-1",
+                    "type": "function",
+                    "function": {
+                        "name": "get_history",
+                        "arguments": '{"name":"Alric"}',
+                    },
+                }],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "history-1",
+                "name": "get_history",
+                "content": "admitted History delta",
+            },
+        ]
+    )
+    answer = provider(messages, tools)
+
+    assert captured_bodies[0]["tools"] == list(tools)
+    assert captured_bodies[1]["tools"] == list(tools)
+    assert captured_bodies[1]["messages"] == messages
+    assert captured_bodies[0]["tool_choice"] == tool_choice
+    assert captured_bodies[1]["tool_choice"] == tool_choice
+    assert history.tool_calls[0].name == "get_history"
+    assert history.tool_calls[0].arguments == '{"name":"Alric"}'
+    assert history.tool_calls_present is True
+    assert history.raw_assistant_message["tool_calls"]
+    assert history.usage["total_tokens"] == 13
+    assert answer.tool_calls[0].name == "submit_answer"

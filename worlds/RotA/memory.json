@@ -783,6 +783,139 @@
       "name": "The Genie Rule",
       "synopsis": "Canon cosmic rule linking Eternium power to cosmic knowledge.",
       "description": "The scope of Eternium-based power is constrained by the user's ability to conceive and understand the universe; broader cosmic awareness permits broader potential."
+    },
+    {
+      "key": "e46",
+      "kind": "ENTITY",
+      "name": "Captain Holt",
+      "synopsis": "Fire captain and Andrew Bell's commanding officer.",
+      "description": "Andrew Bell's commanding officer on Engine 7, a steady mentor who values Andrew's drive while warning him to pace himself and survive the job."
+    },
+    {
+      "key": "e47",
+      "kind": "ENTITY",
+      "name": "Pruitt",
+      "synopsis": "Taciturn firefighter in Andrew Bell's Engine 7 crew.",
+      "description": "A taciturn firefighter on Engine 7 whose rare approval carries substantial weight with Andrew Bell."
+    },
+    {
+      "key": "e48",
+      "kind": "ENTITY",
+      "name": "Torres",
+      "synopsis": "Firefighter and enthusiastic cook in Andrew Bell's Engine 7 crew.",
+      "description": "A firefighter on Engine 7 known among the crew as an enthusiastic cook."
+    },
+    {
+      "key": "e49",
+      "kind": "ENTITY",
+      "name": "Engine 7",
+      "synopsis": "Fire engine assigned to Andrew Bell's Riverside fire crew.",
+      "description": "The fire apparatus used by Andrew Bell's crew, stationed in Riverside near Elm & 12th and prepared for New Year's Eve duty."
+    },
+    {
+      "key": "e50",
+      "kind": "ENTITY",
+      "name": "Norfolk Pharmaceuticals",
+      "synopsis": "Company that employed David Steele before his firing on December 31, 2025.",
+      "description": "A company associated with Norfolk Tower and the financial records David Steele handled during his employment."
+    },
+    {
+      "key": "e51",
+      "kind": "ENTITY",
+      "name": "David Steele's Backup Thumb Drive",
+      "synopsis": "Portable drive containing David Steele's backup copy of Norfolk financial records.",
+      "description": "A backup thumb drive carried by David Steele containing financial records he believes show the correct books and evidence of deeper financial wrongdoing."
+    },
+    {
+      "key": "e52",
+      "kind": "ENTITY",
+      "name": "Sandra",
+      "synopsis": "Gerard Neucome's wife.",
+      "description": "Gerard Neucome's wife, who supports his habit of working New Year's Eve shifts and leaves him a handwritten reminder to eat."
+    },
+    {
+      "key": "e53",
+      "kind": "ENTITY",
+      "name": "Marcus",
+      "synopsis": "Gerard Neucome's son.",
+      "description": "Gerard Neucome's son, whose wife was expecting their first child around New Year's 2026."
+    },
+    {
+      "key": "e54",
+      "kind": "ENTITY",
+      "name": "Diane",
+      "synopsis": "Gerard Neucome's daughter.",
+      "description": "Gerard Neucome's daughter, who regularly calls him on Sundays."
+    },
+    {
+      "key": "e55",
+      "kind": "ENTITY",
+      "name": "Unidentified Frat Boy",
+      "synopsis": "Unidentified young man killed outside the Drunken Lily at the onset of the Pradhāna.",
+      "description": "An unidentified member of a group celebrating outside the Drunken Lily. Immediately after midnight he was struck during the Pradhāna, underwent a catastrophic rapid physical transformation, and died when his body burst."
+    },
+    {
+      "key": "e56",
+      "kind": "ENTITY",
+      "name": "Sergeant Cole",
+      "synopsis": "Army Ranger sergeant whose death in an EFP attack defines Clayton Clarke Warde's survivor guilt.",
+      "description": "Clayton Clarke Warde's Ranger sergeant during an Iraq deployment. Cole was killed instantly in an EFP attack while Clayton was driving."
+    },
+    {
+      "key": "e57",
+      "kind": "ENTITY",
+      "name": "Hendricks",
+      "synopsis": "Army Ranger who served with Clayton Clarke Warde and Sergeant Cole.",
+      "description": "A fellow Ranger present with Clayton Clarke Warde during the EFP attack that killed Sergeant Cole."
+    },
+    {
+      "key": "e58",
+      "kind": "ENTITY",
+      "name": "Kowalski",
+      "synopsis": "Soldier who drove the trailing up-armored Humvee in Clayton Clarke Warde's EFP memory.",
+      "description": "A member of the convoy present during the EFP attack remembered by Clayton Clarke Warde."
+    },
+    {
+      "key": "e59",
+      "kind": "ENTITY",
+      "name": "Unidentified Diplomat",
+      "synopsis": "Unidentified diplomat riding with Clayton Clarke Warde's convoy during the EFP attack.",
+      "description": "An unidentified diplomat traveling in the convoy during the Iraq EFP incident remembered by Clayton."
+    },
+    {
+      "key": "p18",
+      "kind": "PLACE",
+      "name": "Riverside Inn",
+      "synopsis": "Hotel where Clayton Clarke Warde stayed while visiting Riverside.",
+      "description": "A Riverside hotel where Clayton Clarke Warde had room 214 while in town to meet Rodney Norfolk."
+    },
+    {
+      "key": "p19",
+      "kind": "PLACE",
+      "name": "Route Tampa",
+      "synopsis": "Iraq route associated with the EFP incident that killed Sergeant Cole.",
+      "description": "A convoy route in Iraq remembered by Clayton Clarke Warde as the setting of the EFP attack that killed Sergeant Cole."
+    },
+    {
+      "key": "e60",
+      "kind": "ENTITY",
+      "name": "Unidentified Woman at Elm & 12th",
+      "synopsis": "Unidentified civilian shielded by Andrew Bell from Eternium rain at Elm & 12th.",
+      "description": "An unidentified woman caught in the Pradhāna at Elm & 12th. Andrew Bell gave her his turnout coat to shield her from the falling Eternium rain, leaving himself exposed."
+    },
+    {
+      "key": "e61",
+      "kind": "ENTITY",
+      "name": "Unidentified Party Guest",
+      "synopsis": "Unidentified party guest who transformed and attacked people at Carter Langley's house during the Pradhāna.",
+      "description": "An unidentified man who had stepped outside Carter Langley's New Year's Eve party. He returned soaked during the Pradhāna, underwent a catastrophic physical transformation, attacked the people inside, and died when his transformed body could no longer sustain itself."
+    },
+    {
+      "key": "e62",
+      "kind": "ENTITY",
+      "name": "Unidentified Victim Dropped by Doomsday Dan",
+      "synopsis": "Unidentified person seized and dropped from a great height by Doomsday Dan near Norfolk Tower.",
+      "description": "An unidentified person Gerard Neucome saw Doomsday Dan seize from near the Norfolk Tower district, carry high into the air, and release. Gerard heard the impact after the victim fell behind a nearby building."
     }
   ],
   "associations": [
@@ -1541,6 +1674,108 @@
       "source": "e28",
       "relationship": "BASED_IN",
       "target": "p5"
+    },
+    {
+      "key": "a127",
+      "source": "e46",
+      "relationship": "IS_A",
+      "target": "d35"
+    },
+    {
+      "key": "a128",
+      "source": "e47",
+      "relationship": "IS_A",
+      "target": "d35"
+    },
+    {
+      "key": "a129",
+      "source": "e48",
+      "relationship": "IS_A",
+      "target": "d35"
+    },
+    {
+      "key": "a130",
+      "source": "e49",
+      "relationship": "BASED_IN",
+      "target": "p11"
+    },
+    {
+      "key": "a131",
+      "source": "e50",
+      "relationship": "IS_A",
+      "target": "d9"
+    },
+    {
+      "key": "a132",
+      "source": "e51",
+      "relationship": "IS_A",
+      "target": "d15"
+    },
+    {
+      "key": "a133",
+      "source": "e52",
+      "relationship": "IS_A",
+      "target": "d1"
+    },
+    {
+      "key": "a134",
+      "source": "e53",
+      "relationship": "IS_A",
+      "target": "d1"
+    },
+    {
+      "key": "a135",
+      "source": "e54",
+      "relationship": "IS_A",
+      "target": "d1"
+    },
+    {
+      "key": "a136",
+      "source": "e55",
+      "relationship": "IS_A",
+      "target": "d1"
+    },
+    {
+      "key": "a137",
+      "source": "e56",
+      "relationship": "IS_A",
+      "target": "d1"
+    },
+    {
+      "key": "a138",
+      "source": "e57",
+      "relationship": "IS_A",
+      "target": "d1"
+    },
+    {
+      "key": "a139",
+      "source": "e58",
+      "relationship": "IS_A",
+      "target": "d1"
+    },
+    {
+      "key": "a140",
+      "source": "e59",
+      "relationship": "IS_A",
+      "target": "d1"
+    },
+    {
+      "key": "a141",
+      "source": "e60",
+      "relationship": "IS_A",
+      "target": "d1"
+    },
+    {
+      "key": "a142",
+      "source": "e61",
+      "relationship": "IS_A",
+      "target": "d1"
+    },
+    {
+      "key": "a143",
+      "source": "e62",
+      "relationship": "IS_A",
+      "target": "d1"
     }
   ],
   "historical_occurrences": [
@@ -1577,7 +1812,8 @@
       "key": "ho3",
       "participants": [
         "e10",
-        "e27"
+        "e27",
+        "e51"
       ],
       "place": "p8",
       "world_time": 32400,
@@ -1613,6 +1849,565 @@
       "system_time": 5,
       "synopsis": "Tamara Wright visited James Poole and they spoke about Jordan's death.",
       "story": "At approximately 9:00 AM CST on December 31, 2025, Tamara Wright visited James Poole at Morning Brew. She was visibly grieving her brother Jordan, who had been killed by police. James and Tamara spoke outside about Jordan before shifting the conversation to the New Year's Eve party. Tamara encouraged James to attend and he agreed. The source timeline places Tamara's visit at approximately 9:00-9:30 AM.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho6",
+      "participants": [
+        "e34",
+        "e14"
+      ],
+      "place": "p10",
+      "world_time": 54000,
+      "system_time": 6,
+      "synopsis": "Thomas Thompson picked up Dorothy and discussed their New Year's Eve plans.",
+      "story": "At approximately 3:00 PM CST on December 31, 2025, Thomas 'Tommy' Thompson picked up his daughter Dorothy ('DoDo') from daycare in Riverside. During the drive, DoDo asked whether her mother would be with them. Tommy told her that Angelica had died from cancer the previous year and admitted how painful the repeated questions were. They then turned toward their evening plans and agreed to eat at Pizza Palace before going downtown. The source timeline spans approximately 3:00-3:30 PM.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho7",
+      "participants": [
+        "e34",
+        "e14"
+      ],
+      "place": "p9",
+      "world_time": 68400,
+      "system_time": 7,
+      "synopsis": "Thomas and Dorothy ate and played arcade games at Pizza Palace.",
+      "story": "Beginning around 7:00 PM CST on December 31, 2025, Tommy and DoDo ate at Pizza Palace and played arcade games together. DoDo collected tickets and redeemed them for small prizes before the pair stepped back out into Riverside's New Year's Eve activity. The Timeline Keeper record for this scene spans approximately 7:00-10:00 PM, although its chapter relation currently points to a different chapter record than the Chapter 3 page whose prose contains the scene.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho8",
+      "participants": [
+        "e3",
+        "e46",
+        "e47",
+        "e48",
+        "e49"
+      ],
+      "place": "p11",
+      "world_time": 54000,
+      "system_time": 8,
+      "synopsis": "Andrew Bell prepared Engine 7 for New Year's Eve duty and Captain Holt warned him to pace himself.",
+      "story": "Beginning around 3:00 PM CST on December 31, 2025, probationary firefighter Andrew Bell repeatedly cleaned and checked Engine 7 at the Riverside fire station while anticipating a busy New Year's Eve shift. Captain Holt told Andrew that his drive and instinct toward danger were valuable, but warned that firefighters who could not pace themselves could end up dead. Pruitt and Torres were part of the crew around the station as the shift moved toward evening. Later in the chapter, a welfare-check call for an elderly woman came over the scanner and Engine 7 rolled out. The source Timeline Keeper entry explicitly spans approximately 3:00-6:00 PM for Andrew cleaning Engine 7 and speaking with Holt; the dispatch follows in prose but has no separate trustworthy exact timestamp yet.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho9",
+      "participants": [
+        "e12",
+        "e28",
+        "e51",
+        "e50"
+      ],
+      "place": "p5",
+      "world_time": 54000,
+      "system_time": 9,
+      "synopsis": "Mr. Zi ordered Dennis to recover David Steele's backup thumb drive before midnight.",
+      "story": "Beginning around 3:00 PM CST on December 31, 2025, Dennis met privately with Mr. Zi at Golden Lotus. Mr. Zi told Dennis that David Steele had worked for Norfolk Pharmaceuticals until that afternoon and had left with a thumb drive containing financial records capable of creating problems if they reached the wrong hands. Mr. Zi ordered Dennis to recover the drive that night, ideally before midnight. The source Timeline Keeper entry spans approximately 3:00-4:00 PM.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho10",
+      "participants": [
+        "e10"
+      ],
+      "place": "p10",
+      "world_time": 36000,
+      "system_time": 10,
+      "synopsis": "After being fired, David Steele wandered Riverside for much of the day thinking about the altered financial records.",
+      "story": "Beginning after David Steele left Norfolk Tower around 10:00 AM CST on December 31, 2025, he wandered through Riverside without a planned route. He spent much of the day replaying his firing and thinking through how someone had altered his financial records well enough to frame him. The source Timeline Keeper entry spans approximately 10:00 AM-9:15 PM.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho11",
+      "participants": [
+        "e12",
+        "e17",
+        "e10"
+      ],
+      "place": "p10",
+      "world_time": 57600,
+      "system_time": 11,
+      "synopsis": "Dennis and Georgie spent the evening searching Riverside for David Steele and the thumb drive.",
+      "story": "Beginning around 4:00 PM CST on December 31, 2025, Dennis and Georgie acted on Mr. Zi's order and searched Riverside for David Steele so they could recover the thumb drive. The source Timeline Keeper record spans the search through the later attack, ending around 10:15 PM; the actual attack is represented separately.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho12",
+      "participants": [
+        "e10",
+        "e6",
+        "e51"
+      ],
+      "place": "p6",
+      "world_time": 76500,
+      "system_time": 12,
+      "synopsis": "David Steele contacted Brandon Combs and arranged to meet at the Drunken Lily about the financial records.",
+      "story": "At approximately 9:15 PM CST on December 31, 2025, David Steele stopped near Mary and Lutheran in Riverside and contacted longtime friend and reporter Brandon Combs. David said something bad had happened at work, that he had evidence they would want back, and that he needed to discuss it in person. Brandon called back shortly afterward. They agreed to meet publicly at the Drunken Lily around 11:00-11:30 PM so David could explain what he had found.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho13",
+      "participants": [
+        "e10",
+        "e12",
+        "e17",
+        "e51"
+      ],
+      "place": "p6",
+      "world_time": 77400,
+      "system_time": 13,
+      "synopsis": "Dennis and Georgie ambushed David Steele, knocked him unconscious, and took the thumb drive.",
+      "story": "Around 9:30 PM CST on December 31, 2025, after David had arranged to meet Brandon, Dennis and Georgie approached him near Mary and Lutheran. Dennis struck David with a crowbar, and David recognized the large rat tattoo covering Dennis's face before a second blow rendered him unconscious. Chapter 6's plot notes and Timeline Keeper identify the attack as the operation in which Dennis and Georgie took the thumb drive. The exact minute of the attack is approximate within the broader 9:15-10:15 PM source window.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho14",
+      "participants": [
+        "e34",
+        "e14"
+      ],
+      "place": "p12",
+      "world_time": 79200,
+      "system_time": 14,
+      "synopsis": "Thomas Thompson and Dorothy walked downtown to the amphitheater for the New Year's Eve countdown.",
+      "story": "Beginning around 10:00 PM CST on December 31, 2025, Thomas 'Tommy' Thompson and Dorothy ('DoDo') moved through downtown Riverside toward the amphitheater. DoDo carried her partly eaten candy apple and talked with Tommy about her mother, Angelica. Tommy told DoDo that her mother was still with her in memory. They continued toward the waterfront celebration and joined the crowd for the New Year's Eve countdown. The Timeline Keeper record spans approximately 10:00 PM through shortly after midnight.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho15",
+      "participants": [
+        "e20",
+        "e32",
+        "e8",
+        "e23"
+      ],
+      "place": "p1",
+      "world_time": 84600,
+      "system_time": 15,
+      "synopsis": "James Poole attended Carter Langley's New Year's Eve party with Tamara Wright and encountered Lin Long.",
+      "story": "At approximately 11:30 PM CST on December 31, 2025, James Poole was at Carter Langley's New Year's Eve party with Tamara Wright. Carter moved easily through the wealthy social circle and treated James with mild condescension. James also noticed Lin Long watching the room with unusual alertness. The Timeline Keeper records the party from roughly 11:30 PM until shortly after midnight.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho16",
+      "participants": [
+        "e20",
+        "e32"
+      ],
+      "place": "p1",
+      "world_time": 84600,
+      "system_time": 16,
+      "synopsis": "Tamara Wright spoke privately with James Poole about missing her brother Jordan before midnight.",
+      "story": "After approximately 11:30 PM CST on December 31, 2025, Tamara found James outside on the back porch at Carter Langley's house. Away from the party, she admitted that she kept thinking about Jordan and said she would give anything to have him there, even causing trouble. James remembered how Jordan could fill a room and sat with Tamara in her grief before they went back inside for the midnight countdown.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho17",
+      "participants": [
+        "e45",
+        "e43",
+        "e34",
+        "e14",
+        "e20",
+        "e32",
+        "e23"
+      ],
+      "place": "p10",
+      "world_time": 86400,
+      "system_time": 17,
+      "synopsis": "The Pradhāna began over Riverside at midnight as the sky tore open and Eternium rain started to fall.",
+      "story": "At midnight CST at the start of January 1, 2026, the New Year's Eve countdown ended across Riverside and the sky changed. Clouds appeared and moved unnaturally, pale green-gold light formed overhead, and the sky tore open. A luminous substance later understood as Eternium began falling over the city as part of the Pradhāna. Thomas Thompson and Dorothy witnessed the onset from the riverside amphitheater crowd. James Poole, Tamara Wright, and Lin Long witnessed the same onset from Carter Langley's house, with Lin already watching Norfolk Tower as the phenomenon began.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho18",
+      "participants": [
+        "e18"
+      ],
+      "place": "p8",
+      "world_time": 82800,
+      "system_time": 18,
+      "synopsis": "Gerard Neucome noticed escalating unexplained anomalies inside Norfolk Tower before midnight.",
+      "story": "Beginning around 11:00 PM CST on December 31, 2025, security guard Gerard Neucome noticed Norfolk Tower behaving abnormally. An elevator cycled without passengers, the floor developed a rhythmic vibration, security monitors flickered in sequence, the lobby temperature dropped without an apparent source, and stairwell lighting began pulsing unnaturally. The anomalies intensified as midnight approached.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho19",
+      "participants": [
+        "e18",
+        "e21"
+      ],
+      "place": "p8",
+      "world_time": 85560,
+      "system_time": 19,
+      "synopsis": "Johnny D told Gerard Neucome that the Awakened were coming and left Norfolk Tower.",
+      "story": "At approximately 11:46 PM CST on December 31, 2025, Johnny D passed through the Norfolk Tower lobby while Gerard Neucome was on duty. Outside the entrance, Johnny looked toward the sky and told Gerard, 'The Awakened are coming' and that he was going out to meet them. Gerard recorded only Johnny's departure time in the security log.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho20",
+      "participants": [
+        "e18",
+        "e45"
+      ],
+      "place": "p8",
+      "world_time": 86400,
+      "system_time": 20,
+      "synopsis": "At the onset of the Pradhāna, Norfolk Tower convulsed and Gerard Neucome opened the lobby to fleeing civilians.",
+      "story": "At midnight CST on January 1, 2026, Gerard experienced a violent pressure wave through Norfolk Tower as the building's lights and monitors failed and the sky above the tower changed into the Pradhāna storm. After recovering, Gerard saw people running through the storm toward the building. He opened the main doors, directed frightened civilians inside, and moved them away from the windows.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho21",
+      "participants": [
+        "e6",
+        "e10"
+      ],
+      "place": "p3",
+      "world_time": 84600,
+      "system_time": 21,
+      "synopsis": "Brandon Combs went to the Drunken Lily to meet David Steele, but David never arrived.",
+      "story": "At approximately 11:30 PM CST on December 31, 2025, reporter Brandon Combs arrived at the Drunken Lily and reserved a stool for David Steele. David had arranged to meet him there to discuss what had happened at Norfolk Tower and the evidence he was carrying. Brandon waited, repeatedly checked the door and his phone, and became increasingly concerned when David failed to appear.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho22",
+      "participants": [
+        "e6",
+        "e21",
+        "e10"
+      ],
+      "place": "p3",
+      "world_time": 86100,
+      "system_time": 22,
+      "synopsis": "Johnny D warned Brandon Combs that the Awakened were coming and told him to stay inside.",
+      "story": "At approximately 11:55 PM CST on December 31, 2025, Johnny D sat beside Brandon Combs at the Drunken Lily. Johnny demonstrated knowledge of Brandon's investigation into Norfolk Tower and implied that David Steele was already having an eventful night. He told Brandon that 'The Awakened are coming,' called it the real story, advised him to have his pen ready, and warned him to stay inside regardless of what happened outside.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho23",
+      "participants": [
+        "e6",
+        "e55",
+        "e45",
+        "e43"
+      ],
+      "place": "p3",
+      "world_time": 86400,
+      "system_time": 23,
+      "synopsis": "Brandon Combs witnessed an unidentified young man die during a catastrophic transformation at the start of the Pradhāna.",
+      "story": "Immediately after midnight CST on January 1, 2026, Brandon watched the sky tear open from inside the Drunken Lily. A bolt struck the pavement near the bar and the power failed. One young man who had been celebrating outside remained standing after being struck. His body rapidly swelled and distorted before catastrophically bursting, killing him. Green mist rose where the strange rain struck the street. Brandon picked up his pen and began documenting what he was witnessing.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho24",
+      "participants": [
+        "e10",
+        "e5",
+        "e30"
+      ],
+      "place": "p10",
+      "world_time": 81000,
+      "system_time": 24,
+      "synopsis": "David Steele regained consciousness after the mugging, discovered the thumb drive was gone, called Anna, and received a ride from Officer Garfield to his car.",
+      "story": "At approximately 10:30 PM CST on December 31, 2025, David Steele regained consciousness after being beaten and left in an alley. He discovered his wallet, watch, and backup thumb drive were gone and realized the attackers had specifically targeted the drive. David called Anna Steele, told her he had been fired and would explain everything at home, but concealed the seriousness of his head injury. Officer Garfield then found David, examined the wound, offered medical care, and ultimately drove him to the Norfolk Tower garage so he could recover his car. The Chapter 11 prose explicitly shows 10:30 PM; the linked Timeline Keeper record uses a later broader window, so the prose clock is retained here as the more direct evidence.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho25",
+      "participants": [
+        "e10",
+        "e5",
+        "e45",
+        "e43"
+      ],
+      "place": "p2",
+      "world_time": 87300,
+      "system_time": 25,
+      "synopsis": "David Steele was struck during the Pradhāna outside his home and transformed into the Wolf.",
+      "story": "At approximately 12:15 AM CST on January 1, 2026, David Steele finally reached his home after driving through the worsening storm with a concussion. Crossing his front lawn, he was struck by the Pradhāna's lightning and underwent an agonizing physical transformation into a massive pale wolf-like predator. Anna Steele opened the door and saw him immediately afterward. Her scream triggered a powerful instinctive response and David fled into the woods. Alone there, he fought to preserve his human identity by repeating that he was still David Steele and remembering Anna, Junior, and Hannah. This HO begins David's Awakened classification.",
+      "started_associations": [
+        "a33"
+      ],
+      "ended_associations": []
+    },
+    {
+      "key": "ho26",
+      "participants": [
+        "e9",
+        "e15"
+      ],
+      "place": "p10",
+      "world_time": 84600,
+      "system_time": 26,
+      "synopsis": "Clayton Clarke Warde walked downtown Riverside on New Year's Eve while awaiting a January 1 meeting with Rodney Norfolk.",
+      "story": "Around 11:30 PM CST on December 31, 2025, Clayton Clarke Warde was walking through downtown Riverside after leaving his hotel room. He was in town specifically for a January 1 meeting with Rodney Norfolk and carried a Riverside Inn keycard for room 214. As midnight approached, Clayton noticed the smell of ozone, saw unnatural green-gold activity forming above Norfolk Tower, and began assessing exits and crowd movement with his old Ranger instincts.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho27",
+      "participants": [
+        "e9",
+        "e45",
+        "e43"
+      ],
+      "place": "p10",
+      "world_time": 86400,
+      "system_time": 27,
+      "synopsis": "Clayton Clarke Warde was struck during the Pradhāna, relived the EFP attack that killed Sergeant Cole, and manifested continuous self-healing.",
+      "story": "Shortly after the Pradhāna began at midnight on January 1, 2026, Clayton Clarke Warde moved through downtown Riverside as people transformed or died around him and green Eternium mist spread along the street. Lightning struck Clayton and threw him into a vivid memory of the Iraq EFP attack in which Sergeant Cole was killed while Clayton was driving. When Clayton returned to awareness on the pavement, green electrified mist rose from his body and traced his skin. The manifestation marked the beginning of his Awakened state and continuous self-healing ability. The linked Timeline Keeper record spans roughly 11:30 PM to 1:30 AM, so WT=86400 anchors this HO to the known Pradhāna onset rather than inventing a more precise strike minute.",
+      "started_associations": [
+        "a31"
+      ],
+      "ended_associations": []
+    },
+    {
+      "key": "ho28",
+      "participants": [
+        "e34",
+        "e14",
+        "e45",
+        "e43"
+      ],
+      "place": "p12",
+      "world_time": 87000,
+      "system_time": 28,
+      "synopsis": "Dorothy Thompson died during a failed Pradhāna transformation, and Thomas Thompson awakened while desperately holding her.",
+      "story": "At approximately 12:10 AM CST on January 1, 2026, at the Riverside amphitheater, Dorothy 'DoDo' Thompson was exposed to the Eternium rain and began to transform. Her body could not complete the mutation and she died in her father Thomas Thompson's arms. Tommy's maximum stress response fired while he desperately tried to hold her together, anchoring the Eternium to him and awakening a destructive ability that causes matter he touches to decay or dissolve. Timeline Keeper brackets this combined death-and-awakening sequence from about 12:10-12:30 AM.",
+      "started_associations": [
+        "a67"
+      ],
+      "ended_associations": []
+    },
+    {
+      "key": "ho29",
+      "participants": [
+        "e34",
+        "e14"
+      ],
+      "place": "p12",
+      "world_time": 87000,
+      "system_time": 29,
+      "synopsis": "Overcome by grief after Dorothy died, Thomas lost control of his new decay ability and begged witnesses to kill him.",
+      "story": "During the same approximately 12:10-12:30 AM CST interval following Dorothy's death, Thomas Thompson's new ability spread outward through the ground and vegetation around him in a widening circle of decay. Grief-stricken and horrified by what he had become, he shouted that he was not human and begged the people around him to kill him, believing he had killed his daughter. This follows HO28 within the same bounded Timeline Keeper interval and is ordered by SystemTime.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho30",
+      "participants": [
+        "e13",
+        "e34",
+        "e45",
+        "e43"
+      ],
+      "place": "p12",
+      "world_time": 87300,
+      "system_time": 30,
+      "synopsis": "Doomsday Dan was struck by lightning at the amphitheater and manifested enormous feathered wings while Thomas witnessed it.",
+      "story": "At approximately 12:15 AM CST on January 1, 2026, during the Pradhāna at the Riverside amphitheater, Doomsday Dan was struck by lightning. His body changed and enormous white feathered wings tore through the back of his coat. Thomas Thompson witnessed the manifestation as Dan became airborne and climbed into the storm. This HO begins Dan's Awakened classification.",
+      "started_associations": [
+        "a37"
+      ],
+      "ended_associations": []
+    },
+    {
+      "key": "ho31",
+      "participants": [
+        "e3",
+        "e46",
+        "e47",
+        "e48",
+        "e49"
+      ],
+      "place": "p4",
+      "world_time": 86700,
+      "system_time": 31,
+      "synopsis": "Engine 7 stopped at Elm & 12th during the Pradhāna and the crew began responding to civilians and nearby fires.",
+      "story": "At approximately 12:05 AM CST on January 1, 2026, Captain Holt ordered Engine 7 to stop at Elm & 12th as the Pradhāna tore through Riverside. Holt deployed the crew into the intersection: Torres was directed toward an eastern fire, Pruitt began a civilian sweep, and Andrew Bell moved into the scene as the crew tried to help people amid lightning, green mist, burning vehicles, and falling Eternium rain.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho32",
+      "participants": [
+        "e3",
+        "e46",
+        "e47",
+        "e48",
+        "e60",
+        "e45",
+        "e43"
+      ],
+      "place": "p4",
+      "world_time": 86700,
+      "system_time": 32,
+      "synopsis": "Andrew Bell gave an unidentified woman his turnout coat, was exposed to Eternium rain, and transformed into living water.",
+      "story": "At approximately 12:05 AM CST on January 1, 2026, Andrew Bell stripped off his turnout coat and used it to shield an unidentified woman at Elm & 12th from the falling Eternium rain. Captain Holt helped tuck the coat around her, but removing the protective layer left Drew exposed. The rain soaked through his shirt and triggered an agonizing anchoring response. His body lost its solid structure and converted completely into living water, collapsing into a puddle on the pavement while Holt, Pruitt, and Torres were nearby. This HO begins Andrew Bell's Awakened classification. Earlier Timeline Keeper metadata placed this later, but Chapter 18 explicitly establishes that Drew remained a puddle for ten minutes and reformed roughly fifteen minutes after an ordinary midnight countdown, while separate Andrew/Elm & 12th continuity notes also place the transformation at 12:05 AM. The stronger converging continuity evidence is used for WorldTime; the metadata discrepancy remains noted.",
+      "started_associations": [
+        "a21"
+      ],
+      "ended_associations": []
+    },
+    {
+      "key": "ho33",
+      "participants": [
+        "e20",
+        "e32",
+        "e23",
+        "e8",
+        "e45"
+      ],
+      "place": "p1",
+      "world_time": 86400,
+      "system_time": 33,
+      "synopsis": "As the Pradhāna struck Carter Langley's party, Lin Long disappeared and James Poole and Tamara Wright began moving people to safety.",
+      "story": "At the onset of the Pradhāna around midnight CST on January 1, 2026, the New Year's Eve party at Carter Langley's house collapsed into panic. James Poole noticed that Lin Long had vanished, leaving his cup behind. Tamara Wright moved to James's side and began directing frightened guests toward safer parts of the house while James stayed close to protect her. This local consequence of the global Pradhāna is distinct from the earlier citywide onset HO.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho34",
+      "participants": [
+        "e20",
+        "e32",
+        "e8",
+        "e61",
+        "e45",
+        "e43"
+      ],
+      "place": "p1",
+      "world_time": 87300,
+      "system_time": 34,
+      "synopsis": "An unidentified party guest transformed and attacked Carter Langley's party, triggering James Poole's crystalline armor.",
+      "story": "Beginning around 12:15 AM CST on January 1, 2026, an unidentified man who had gone outside returned soaked to Carter Langley's house and underwent a violent physical transformation. Still audibly human beneath the mutation, he attacked the party and smashed part of the house. When collapsing debris threatened Tamara Wright, James Poole instinctively manifested translucent crystalline armor and shielded her. James then physically held back the transformed attacker. James reached instinctively for his expected hammer, but it did not manifest. The attacker's body eventually failed and he died on the ruined floor. This HO begins James Poole's Awakened classification. The linked Timeline Keeper entry spans approximately 12:15-12:25 AM CST.",
+      "started_associations": [
+        "a48"
+      ],
+      "ended_associations": []
+    },
+    {
+      "key": "ho35",
+      "participants": [
+        "e13",
+        "e45"
+      ],
+      "place": "p10",
+      "world_time": 87300,
+      "system_time": 35,
+      "synopsis": "After awakening, Doomsday Dan flew over storm-ravaged Riverside and interpreted the chaos as divine judgment.",
+      "story": "After his approximately 12:15 AM Awakening on January 1, 2026, Doomsday Dan flew hundreds of feet above Riverside, surveying fires, damaged buildings, fleeing civilians, strange transformations, and areas affected by the Pradhāna. Dan interpreted his new wings and the city's destruction through his longstanding religious worldview, treating the event as proof of divine judgment. The Chapter 16 Timeline Keeper entry spans roughly 12:05-12:25 AM CST, but Dan's independently established wing manifestation occurs around 12:15 AM, so this post-Awakening HO is anchored to 12:15 rather than placing Dan in flight before his wings existed.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho36",
+      "participants": [
+        "e13",
+        "e21"
+      ],
+      "place": "p10",
+      "world_time": 87300,
+      "system_time": 36,
+      "synopsis": "Johnny D met Doomsday Dan on a rooftop and manipulated him into seeing people who rejected the Pradhāna as targets for judgment.",
+      "story": "After Doomsday Dan began flying over Riverside, he noticed a dry rooftop in the tower district where the rain appeared to part around Johnny D. Dan landed and spoke with him. Johnny deliberately framed Dan's wings as proof that he had been made into an instrument and suggested that people who had refused the Pradhāna's 'gift' needed visible judgment so others could learn from their refusal. Dan accepted the framing, concluded that such people needed to be shown the cost of refusing what he believed was the Lord's offering, spread his wings, and departed to act on that belief. Johnny remained behind, satisfied that events were proceeding according to plan. This is a direct historical link between Johnny D's manipulation and Dan's later zealotry.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho37",
+      "participants": [
+        "e18",
+        "e13",
+        "e62"
+      ],
+      "place": "p8",
+      "world_time": 87300,
+      "system_time": 37,
+      "synopsis": "Gerard Neucome witnessed Doomsday Dan seize an unidentified person, carry them high above the Norfolk Tower district, and drop them.",
+      "story": "Sometime after Doomsday Dan's approximately 12:15 AM Awakening and within the Chapter 17 Timeline Keeper window of roughly 12:10–12:30 AM CST on January 1, 2026, Gerard Neucome was holding the Norfolk Tower entrance for civilians when he saw a large winged figure cross the plaza. Gerard watched Doomsday Dan dive out of sight, rise again carrying an unidentified person, climb higher, and deliberately release them. The victim fell behind a nearby building and Gerard heard the impact. Because the source gives only a range and Dan cannot coherently perform this action before his wings manifest, WT=87300 anchors the occurrence to the earliest supported post-Awakening moment rather than inventing a more precise minute.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho38",
+      "participants": [
+        "e18",
+        "e34"
+      ],
+      "place": "p8",
+      "world_time": 87300,
+      "system_time": 38,
+      "synopsis": "Gerard Neucome saw Thomas Thompson walk past Norfolk Tower in anguish, leaving decayed pavement behind him and crying that he had killed his daughter.",
+      "story": "Later in the same Chapter 17 sequence, within roughly 12:15–12:30 AM CST on January 1, 2026, Gerard Neucome saw Thomas 'Tommy' Thompson approach the Norfolk Tower plaza from the river direction. Tommy moved at a steady walk while the pavement around his feet darkened into ash-like decay and nearby people instinctively gave him room. He repeatedly cried that he was inhuman, begged someone to kill him, and said that he had killed his daughter. Tommy passed the Tower without stopping while Gerard remained at his post sheltering civilians. This occurrence records an external witness to Tommy's immediate post-Awakening breakdown rather than duplicating Dorothy's death or Tommy's Awakening.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho39",
+      "participants": [
+        "e3",
+        "e46",
+        "e47",
+        "e48"
+      ],
+      "place": "p4",
+      "world_time": 87300,
+      "system_time": 39,
+      "synopsis": "Andrew Bell re-formed into a solid human body at Elm & 12th after spending ten minutes as living water.",
+      "story": "At approximately 12:15 AM CST on January 1, 2026, ten minutes after dissolving completely into living water at Elm & 12th, Andrew Bell abruptly re-formed on the pavement. From Drew's perspective there had been no darkness or passage of time: one moment he was gone and the next he was breathing, solid, and on his hands and knees in the rain. Captain Holt had remained beside the puddle and had carefully collected and folded Drew's turnout gear while Pruitt and Torres continued working the scene. Drew checked his hands and body, realized he was solid again, and confronted the fact that he had just spent ten minutes as water. The older Timeline Keeper metadata places this later, around 12:55–1:05 AM when interpreted as Arkansas local time, but Chapter 18's explicit ten-minute interval plus the locked 12:05 AM transformation continuity support WT=87300.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho40",
+      "participants": [
+        "e10"
+      ],
+      "place": "p17",
+      "world_time": 87300,
+      "system_time": 40,
+      "synopsis": "In Wolf form, David Steele hunted and killed a doe in the woods while struggling to retain his human identity.",
+      "story": "Sometime within the Chapter 20 Timeline Keeper window of approximately 12:15–1:15 AM CST on January 1, 2026, David Steele ran through the woods in his newly transformed Wolf body. David remained mentally present but initially lacked control over the predator's actions. The Wolf detected a doe near a creek, stalked it with instinctive patience, killed it quickly, and fed. David experienced the hunt from inside the body and repeatedly held onto the names Anna, Junior, and Hannah as anchors to his human identity. The prose establishes sequence but not an exact minute, so WT=87300 anchors the occurrence to the beginning of the supported range without inventing precision.",
+      "started_associations": [],
+      "ended_associations": []
+    },
+    {
+      "key": "ho41",
+      "participants": [
+        "e10",
+        "e12",
+        "e17"
+      ],
+      "place": "p17",
+      "world_time": 87300,
+      "system_time": 41,
+      "synopsis": "After feeding, David Steele's Wolf form caught the lingering scent of Dennis and Georgie and turned back toward Riverside.",
+      "story": "After the hunt in Chapter 20, David Steele's Wolf form detected a familiar enemy scent carried from the direction of Riverside. The Wolf recognized the scent as belonging to the people who had attacked David and taken what belonged to him. The chapter's plot note names Dennis specifically, while the linked Timeline Keeper record identifies the scent as Dennis and Georgie. The recognition shifted the Wolf's attention away from prey and back toward the city. David understood that the deer had only been the beginning and that the Wolf was now tracking the men connected to his earlier attack. No exact minute separates this from the hunt, so the same WT is retained and SystemTime records sequence.",
       "started_associations": [],
       "ended_associations": []
     }

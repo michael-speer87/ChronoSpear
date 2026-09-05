@@ -44,13 +44,6 @@ def _package(tmp_path: Path) -> Path:
                 "synopsis": "The crown's guard.",
                 "description": "The Royal Guard protects the crown.",
             },
-            {
-                "key": "e3",
-                "kind": "ENTITY",
-                "name": "Elara",
-                "synopsis": "A wizard elsewhere in the world.",
-                "description": "Elara is not involved in this scene.",
-            },
         ],
         "associations": [
             {
@@ -138,7 +131,7 @@ class ToolCallingLibrarian:
         assert tools is tool_question_module.CAM_TOOLS
         if self.calls == 1:
             return memory_call_for_librarian(
-                "activate", {"name": "Elara"}, "activate-1"
+                "get_history", {"name": "Alric"}, "history-1"
             )
         evidence = next(
             match.group(1)
@@ -199,7 +192,9 @@ def test_groq_writer_forwards_tool_choice_and_redacts_http_error(
     assert str(error.value) == f"Groq HTTP 403: {response_body.decode()}"
     assert api_key not in str(error.value)
     assert captured_request is not None
-    request_body = json.loads(captured_request.data.decode())
+    request_data = captured_request.data
+    assert isinstance(request_data, bytes)
+    request_body = json.loads(request_data.decode())
     assert request_body["tool_choice"] == tool_choice
     assert captured_request.get_header("Authorization") == f"Bearer {api_key}"
     assert captured_request.get_header("Content-type") == "application/json"
@@ -481,11 +476,17 @@ def test_writer_memory_tool_reuses_tool_driven_librarian_end_to_end(
     assert result.librarian.queries == 1
     assert result.librarian.mini_igor_calls == 2
     assert result.librarian.cam_tool_calls == 2
-    assert result.cam.activation_count >= 2
+    assert result.librarian.history_calls == 1
+    assert result.librarian.submit_attempts == 1
+    assert result.librarian.initial_activations == 2
+    assert result.librarian.explicit_activations == 0
+    assert result.cam.activation_count == 2
     assert result.cam.estimated_packet_tokens > 0
     canon = writer.messages[-1][-1]["content"]
     assert isinstance(canon, str)
     assert "CANON RESPONSE" in canon
+    assert "CHRONOSPEAR MEMORY SESSION" not in canon
+    assert "Memory availability map" not in canon
     assert (package / "memory.json").read_bytes() == original
 
 
@@ -508,7 +509,7 @@ def test_exhausted_librarian_provider_failure_never_reaches_writer(
         librarian_runner=lambda *_args, **_kwargs: failed,
     )
 
-    assert result.status == "librarian_provider_failure"
+    assert result.status == "librarian_session_failure"
     assert result.error == "Groq HTTP 429: still rate limited"
     assert len(writer.messages) == 1
     assert not any(

@@ -100,9 +100,17 @@ class LibrarianTelemetry:
     queries: int = 0
     mini_igor_calls: int = 0
     cam_tool_calls: int = 0
+    searches: int = 0
     history_calls: int = 0
     association_calls: int = 0
     description_calls: int = 0
+    node_suggestions: int = 0
+    submit_attempts: int = 0
+    language_matches: int = 0
+    ambiguous_language_matches: int = 0
+    unrecognized_query_phrases: int = 0
+    initial_activations: int = 0
+    explicit_activations: int = 0
     cam_expansions: int = 0
     prompt_tokens: int = 0
     completion_tokens: int = 0
@@ -313,12 +321,34 @@ def _add_librarian_telemetry(
     result.librarian.mini_igor_calls += librarian_result.llm_calls
     result.librarian.cam_expansions += getattr(librarian_result, "cam_expansions", 0)
     result.librarian.cam_tool_calls += getattr(librarian_result, "cam_tool_calls", 0)
+    result.librarian.searches += getattr(librarian_result, "searches", 0)
     result.librarian.history_calls += getattr(librarian_result, "history_calls", 0)
     result.librarian.association_calls += getattr(
         librarian_result, "association_calls", 0
     )
     result.librarian.description_calls += getattr(
         librarian_result, "description_calls", 0
+    )
+    result.librarian.node_suggestions += getattr(
+        librarian_result, "node_suggestions", 0
+    )
+    result.librarian.submit_attempts += getattr(
+        librarian_result, "submit_attempts", 0
+    )
+    result.librarian.language_matches += getattr(
+        librarian_result, "language_matches", 0
+    )
+    result.librarian.ambiguous_language_matches += getattr(
+        librarian_result, "ambiguous_language_matches", 0
+    )
+    result.librarian.unrecognized_query_phrases += getattr(
+        librarian_result, "unrecognized_query_phrases", 0
+    )
+    result.librarian.initial_activations += getattr(
+        librarian_result, "initial_activations", 0
+    )
+    result.librarian.explicit_activations += getattr(
+        librarian_result, "explicit_activations", 0
     )
     result.librarian.prompt_tokens += librarian_result.provider_prompt_tokens
     result.librarian.completion_tokens += librarian_result.provider_completion_tokens
@@ -429,8 +459,8 @@ def run_world_writer(
             max_rounds=max_librarian_rounds,
         )
         _add_librarian_telemetry(result, librarian_result)
-        if librarian_result.status == "provider_failure":
-            result.status = "librarian_provider_failure"
+        if librarian_result.status != "answered":
+            result.status = "librarian_session_failure"
             result.error = librarian_result.error
             break
         for message in librarian_result.transcript:
@@ -492,9 +522,23 @@ def print_writer_transcript(result: WriterRunResult) -> None:
     print(f"  queries={result.librarian.queries}")
     print(f"  LLM calls={result.librarian.mini_igor_calls}")
     print(f"  CAM tool calls={result.librarian.cam_tool_calls}")
+    print(f"  searches={result.librarian.searches}")
     print(f"  history calls={result.librarian.history_calls}")
     print(f"  association calls={result.librarian.association_calls}")
     print(f"  description calls={result.librarian.description_calls}")
+    print(f"  node suggestions={result.librarian.node_suggestions}")
+    print(f"  submit attempts={result.librarian.submit_attempts}")
+    print(f"  language matches={result.librarian.language_matches}")
+    print(
+        "  ambiguous language matches="
+        f"{result.librarian.ambiguous_language_matches}"
+    )
+    print(
+        "  unrecognized query phrases="
+        f"{result.librarian.unrecognized_query_phrases}"
+    )
+    print(f"  initial activations={result.librarian.initial_activations}")
+    print(f"  explicit activations={result.librarian.explicit_activations}")
     print(f"  CAM expansions={result.librarian.cam_expansions}")
     print(f"  prompt_tokens={result.librarian.prompt_tokens}")
     print(f"  completion_tokens={result.librarian.completion_tokens}")
